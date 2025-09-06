@@ -1,16 +1,12 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Vizamaster Admin
+
+This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app) and using [Bun](https://bun.sh/) as the JavaScript runtime.
 
 ## Getting Started
 
 First, run the development server:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
 bun dev
 ```
 
@@ -28,6 +24,53 @@ To learn more about Next.js, take a look at the following resources:
 - [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
 
 You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+
+## Code Quality and Standards
+
+This project uses the following tools to ensure code quality and consistency:
+
+### Linting and Formatting
+
+- **ESLint**: For code linting
+- **Prettier**: For code formatting
+
+Run the following commands:
+
+```bash
+# Lint code
+bun run lint
+
+# Format code
+bun run format
+
+# Check formatting without making changes
+bun run format:check
+
+# Type checking
+bun run type-check
+```
+
+### Git Hooks and Commit Standards
+
+This project uses:
+
+- **Husky**: For Git hooks
+- **lint-staged**: For running linters on staged files
+- **commitlint**: For enforcing commit message conventions
+
+Commit messages should follow the [Conventional Commits](https://www.conventionalcommits.org/) format:
+
+```
+<type>[optional scope]: <description>
+
+[optional body]
+
+[optional footer(s)]
+```
+
+Types include: `build`, `chore`, `ci`, `docs`, `feat`, `fix`, `perf`, `refactor`, `revert`, `style`, `test`
+
+Example: `feat: add user authentication`
 
 ## Deploy on Vercel
 
