@@ -1,8 +1,6 @@
 'use client';
 
-import { usePathname } from 'next/navigation';
-
-import { Globe } from 'lucide-react';
+import { Check, Globe } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
 import { Button } from '@/components/ui/button';
@@ -12,21 +10,11 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { useRouter } from '@/i18n/routing';
+import useTranslation from '@/hooks/common/use-translation';
 
 export function LanguageToggle() {
   const t = useTranslations();
-  const router = useRouter();
-  const pathname = usePathname();
-
-  // Extract locale from pathname
-  const currentLocale = pathname.split('/')[1] || 'en';
-
-  const handleLanguageChange = (locale: string) => {
-    // Use the current pathname but strip the locale part
-    const pathWithoutLocale = '/' + pathname.split('/').slice(2).join('/');
-    router.push(pathWithoutLocale as any, { locale });
-  };
+  const { handleLocale, currentLocale } = useTranslation();
 
   return (
     <DropdownMenu>
@@ -37,11 +25,11 @@ export function LanguageToggle() {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        <DropdownMenuItem onClick={() => handleLanguageChange('en')}>
-          English {currentLocale === 'en' && '✓'}
+        <DropdownMenuItem onClick={() => handleLocale('en')}>
+          {currentLocale === 'en' && <Check className="h-4 w-4 text-primary mr-2" />} English
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => handleLanguageChange('ru')}>
-          Русский {currentLocale === 'ru' && '✓'}
+        <DropdownMenuItem onClick={() => handleLocale('ru')}>
+          {currentLocale === 'ru' && <Check className="h-4 w-4 text-primary mr-2" />} Русский
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

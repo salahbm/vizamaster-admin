@@ -1,7 +1,8 @@
 'use client';
 import { FC, useEffect, useMemo, useState } from 'react';
 
-import { usePathname } from 'next/navigation';
+import Link from 'next/link';
+import { usePathname as useNextPathname } from 'next/navigation';
 
 import { useTranslations } from 'next-intl';
 
@@ -12,7 +13,7 @@ import {
   AccordionTrigger,
 } from '@/components/ui/accordion';
 import { SIDENAV, SideNavItem } from '@/constants/routes';
-import { Link } from '@/i18n/routing';
+import { usePathname } from '@/i18n/routing';
 import { cn } from '@/lib/utils';
 import { useSidebar } from '@/store/sidebar';
 
@@ -20,21 +21,30 @@ import { DynamicIcon } from './icon';
 
 const isPathActive = (pathname: string | null, href: string) => {
   if (!pathname) return false;
+
   if (href === '/') return pathname === '/';
-  return pathname === href || pathname.startsWith(href);
+
+  // Check if the path matches the href
+  return (
+    pathname === href ||
+    (pathname.startsWith(href) && href !== '/' && pathname.charAt(href.length) === '/')
+  );
 };
 
 const SidebarNav: FC = () => {
   const t = useTranslations();
+  // Use the localized pathname from next-intl (without locale prefix)
   const pathname = usePathname();
+  const fullPathname = useNextPathname();
   const { isMinimized } = useSidebar();
   const [expanded, setExpanded] = useState<string[]>([]);
 
   const { activeParent, activeChild } = useMemo(() => {
     let parent: SideNavItem | undefined;
     let child: SideNavItem | undefined;
+
+    // First check for exact child matches
     for (const item of SIDENAV) {
-      if (isPathActive(pathname, item.href)) parent ??= item;
       if (item.children) {
         for (const c of item.children) {
           if (isPathActive(pathname, c.href)) {
@@ -46,6 +56,17 @@ const SidebarNav: FC = () => {
       }
       if (child) break;
     }
+
+    // If no child match, check for parent match
+    if (!parent) {
+      for (const item of SIDENAV) {
+        if (isPathActive(pathname, item.href)) {
+          parent = item;
+          break;
+        }
+      }
+    }
+
     return { activeParent: parent, activeChild: child };
   }, [pathname]);
 
@@ -60,17 +81,17 @@ const SidebarNav: FC = () => {
 
   const navItemClasses = (isActive: boolean) =>
     cn(
-      'flex items-center gap-2 rounded-md px-4 py-3 text-lg w-full transition-colors',
+      'flex items-center gap-2 rounded-md px-4 py-3 text-md w-full duration-300 cursor-pointer transition-colors truncate hover:bg-accent hover:text-sidebar-accent-foreground',
       isActive
-        ? 'bg-primary/15 text-primary font-medium'
-        : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
+        ? 'bg-sidebar-primary/10 text-sidebar-primary font-medium hover:bg-sidebar-primary/20'
+        : 'text-sidebar-foreground'
     );
 
   return (
     <nav
       aria-label={t('sidebar.navigation') ?? 'Sidebar'}
       className={cn(
-        'flex-1 overflow-y-auto px-2 py-5 truncate transition-all duration-200',
+        'flex-1 overflow-y-auto px-2 py-5 transition-all duration-500',
         isMinimized ? 'lg:w-16 w-0' : 'w-64'
       )}
     >
@@ -91,23 +112,17 @@ const SidebarNav: FC = () => {
                 <AccordionItem value={item.label} className="border-none">
                   <AccordionTrigger
                     className={cn(
-                      navItemClasses(isActive || isChildActive),
-                      'justify-between',
+                      navItemClasses(
+                        isActive || (activeParent?.label === item.label && isChildActive)
+                      ),
                       isMinimized && 'px-2 [&>svg]:hidden justify-center'
                     )}
-                    title={item.label}
+                    title={t(`Sidebar.${item.label}`)}
                   >
-                    <div className="flex items-center gap-2">
-                      <DynamicIcon
-                        name={item.icon}
-                        className={cn(
-                          'size-6',
-                          isActive || isChildActive ? 'text-primary' : 'text-muted-foreground'
-                        )}
-                        aria-hidden
-                      />
-                      {!isMinimized && <span>{t(`Sidebar.${item.label}`)}</span>}
-                    </div>
+                    <span className="flex items-center gap-2 ">
+                      <DynamicIcon name={item.icon} className="size-5 text-current" aria-hidden />
+                      {!isMinimized && t(`Sidebar.${item.label}`)}
+                    </span>
                   </AccordionTrigger>
                   {!isMinimized && (
                     <AccordionContent>
@@ -117,10 +132,15 @@ const SidebarNav: FC = () => {
                           return (
                             <Link
                               key={child.href}
-                              href={child.href as any}
+                              href={child.href}
                               className={navItemClasses(childActive)}
                               aria-current={childActive ? 'page' : undefined}
                             >
+                              <DynamicIcon
+                                name={child.icon}
+                                className="size-5 text-current"
+                                aria-hidden
+                              />
                               {t(`Sidebar.${child.label}`)}
                             </Link>
                           );
@@ -137,16 +157,13 @@ const SidebarNav: FC = () => {
           return (
             <Link
               key={item.href}
-              href={item.href as any}
+              href={item.href}
               className={cn(navItemClasses(isItemActive), isMinimized && 'justify-center px-2')}
               aria-current={isItemActive ? 'page' : undefined}
               title={item.label}
             >
-              <DynamicIcon
-                name={item.icon}
-                className={cn('size-5', isItemActive ? 'text-primary' : 'text-muted-foreground')}
-              />
-              {!isMinimized && <span>{t(`Sidebar.${item.label}`)}</span>}
+              <DynamicIcon name={item.icon} className="size-5 text-current" />
+              {!isMinimized && t(`Sidebar.${item.label}`)}
             </Link>
           );
         })}

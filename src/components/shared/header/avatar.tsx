@@ -2,6 +2,7 @@
 
 import { User } from 'lucide-react';
 
+import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -12,8 +13,11 @@ import {
 const Avatar = () => {
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger className="rounded-full">
-        <User className="size-6" />
+      <DropdownMenuTrigger asChild>
+        <Button variant="outline" size="icon">
+          <User className="h-[1.2rem] w-[1.2rem]" />
+          <span className="sr-only">Avatar</span>
+        </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" forceMount className="w-40">
         <DropdownMenuItem>

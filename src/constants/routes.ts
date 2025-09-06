@@ -7,11 +7,9 @@ export const routes = {
   users: '/users',
   documents: '/documents',
   settings: '/settings',
-  profile: '/profile',
-  admins: '/admins',
-  companyInfo: '/company/info',
-  companyStorefront: '/company/storefront',
-  products: '/products',
+  profile: '/settings/profile',
+  admins: '/settings/admins',
+  preferences: '/settings/preferences',
 };
 
 export interface SideNavItem {
@@ -52,6 +50,11 @@ export const SIDENAV: SideNavItem[] = [
         href: routes.admins,
         label: 'admins',
         icon: 'Users',
+      },
+      {
+        href: routes.preferences,
+        label: 'preferences',
+        icon: 'Settings',
       },
     ],
   },

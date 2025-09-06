@@ -1,0 +1,53 @@
+/**
+ * Break words
+ */
+.break-words {
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
+/* LOADER */
+.loader {
+  width: 56px;
+  height: 56px;
+  border: 6px solid var(--gray-3);
+  border-bottom-color: var(--red);
+  border-radius: 50%;
+  display: inline-block;
+  box-sizing: border-box;
+  animation: rotation 1s linear infinite;
+}
+
+/* ROTATION ANIMATION */
+@keyframes rotation {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* HIDE SCROLL BAR ON THE TABLET AND MOBILE */
+.no-scrollbar {
+  scrollbar-width: none;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+::-webkit-scrollbar {
+  width: 14px;
+  height: 14px;
+}
+
+::-webkit-scrollbar-track {
+  background-color: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: var(--gray-4);
+  border-radius: 8px;
+  border: 4px solid transparent;
+  background-clip: content-box;
+}

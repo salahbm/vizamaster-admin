@@ -3,8 +3,9 @@ import React, { Suspense } from 'react';
 import { notFound } from 'next/navigation';
 
 import { hasLocale } from 'next-intl';
-import { setRequestLocale, getTranslations } from 'next-intl/server';
+import { getTranslations, setRequestLocale } from 'next-intl/server';
 
+import Loader from '@/components/ui/loader';
 import { routing } from '@/i18n/routing';
 import RootLayout from '@/providers/root';
 
@@ -38,7 +39,7 @@ export default async function IndexLayout({
   return (
     <html lang={locale} suppressHydrationWarning>
       <body>
-        <Suspense fallback={<div>Loading...</div>}>
+        <Suspense fallback={<Loader />}>
           <RootLayout>{children}</RootLayout>
         </Suspense>
       </body>

@@ -14,7 +14,9 @@
     "users": "Users",
     "documents": "Documents",
     "settings": "Settings",
-    "admins": "Admins"
+    "admins": "Admins",
+    "profile": "Profile",
+    "preferences": "Preferences"
   },
   "Navigation": {
     "home": "Home",
