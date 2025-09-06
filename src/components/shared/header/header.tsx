@@ -6,6 +6,7 @@ import { Menu } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
 import { Button } from '@/components/ui/button';
+import { BRAND } from '@/constants/brand';
 import { IMAGES } from '@/constants/images';
 import { Link } from '@/i18n/routing';
 import { useSidebar } from '@/store/sidebar';
@@ -27,22 +28,25 @@ export default function Header() {
             size="icon"
             onClick={() => toggle()}
             className="lg:hidden"
-            aria-label={t('toggleSidebar')}
+            aria-label="toggleSidebar"
           >
             <Menu className="size-5" />
           </Button>
           <Link href="/" className="flex items-center">
             <Image
               src={IMAGES.logo}
-              alt="Logo"
+              alt="Viza Master Logo"
               width={60}
               height={60}
+              priority
               className="size-12 lg:size-16"
             />
-            <h1 className="linear-gradient lg:font-bold lg:text-3xl font-body-1">Viza Master</h1>
+            <h1 className="linear-gradient font-bold lg:text-2xl text-md font-roboto">
+              {BRAND.name}
+            </h1>
           </Link>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center lg:gap-3 gap-1">
           <LanguageToggle />
           <ThemeToggle />
           <Avatar />

@@ -78,7 +78,7 @@ const SidebarNav: FC = () => {
 
   const navItemClasses = (isActive: boolean) =>
     cn(
-      'flex items-center gap-2 rounded-md px-4 py-3 text-md w-full duration-300 cursor-pointer transition-colors truncate hover:bg-accent hover:text-sidebar-accent-foreground',
+      'flex items-center gap-2 rounded-md px-4 py-3 w-full duration-300 cursor-pointer transition-colors truncate hover:bg-accent hover:text-sidebar-accent-foreground',
       isActive
         ? 'bg-sidebar-primary/10 text-sidebar-primary font-medium hover:bg-sidebar-primary/20'
         : 'text-sidebar-foreground'
@@ -86,9 +86,9 @@ const SidebarNav: FC = () => {
 
   return (
     <nav
-      aria-label={t('sidebar.navigation') ?? 'Sidebar'}
+      aria-label={'Sidebar Navigation'}
       className={cn(
-        'flex-1 overflow-y-auto px-2 py-5 transition-all duration-300',
+        'flex-1 overflow-y-auto no-scrollbar px-2 py-5 transition-all duration-300 h-full',
         isMinimized ? 'lg:w-16 w-0 hidden lg:block' : 'w-64'
       )}
     >

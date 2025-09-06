@@ -13,10 +13,10 @@ export default async function ProtectedLayout({
     <Suspense fallback={<Loader />}>
       <main className="flex min-h-screen flex-col">
         <Header />
-        <div className="flex flex-1">
+        <div className="flex flex-1 overflow-hidden">
           <Sidebar />
-          <div className="flex-1 overflow-y-auto bg-background pt-7 md:bg-gray lg:pt-13">
-            <div className="md:px-6 lg:px-10">{children}</div>
+          <div className="w-full overflow-y-auto h-[calc(100vh-4rem)]">
+            <div className="px-4 md:px-6 py-6">{children}</div>
           </div>
         </div>
       </main>

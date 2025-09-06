@@ -3,12 +3,20 @@
     "title": "Добро пожаловать в Vizamaster Admin",
     "description": "Это панель администратора для Vizamaster"
   },
-  "Navigation": {
-    "home": "Главная",
+  "Header": {
+    "language": "Язык",
+    "profile": "Профиль",
+    "theme": "Тема",
+    "toggleSidebar": "Переключить боковую панель"
+  },
+  "Sidebar": {
     "dashboard": "Панель управления",
+    "users": "Пользователи",
+    "documents": "Документы",
     "settings": "Настройки",
-    "logout": "Выход",
-    "preferences": "Настройки"
+    "admins": "Администраторы",
+    "profile": "Профиль",
+    "preferences": "Предпочтения"
   },
   "Common": {
     "save": "Сохранить",

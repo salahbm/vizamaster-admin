@@ -8,14 +8,14 @@ import Loader from '@/components/ui/loader';
 export default function DashboardPage() {
   const t = useTranslations();
   return (
-    <div className="container py-10">
+    <div className="">
       <h1 className="text-3xl font-bold mb-6">Theme Demo</h1>
 
       <h2>{t('Metadata.title')}</h2>
       <p>{t('Metadata.description')}</p>
 
       <div className="grid gap-8">
-        <section className="space-y-4 mt-10">
+        <section className="space-y-4 ">
           <h2 className="text-2xl font-semibold">UI Components</h2>
           <div className="grid gap-6">
             <div className="grid gap-4">

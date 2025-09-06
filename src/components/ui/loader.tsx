@@ -1,11 +1,9 @@
 import { FC } from 'react';
 
-const Loader: FC = () => {
-  return (
-    <div className="flex-center h-[100vh] w-[100vw]">
-      <span className="loader" />
-    </div>
-  );
-};
+const Loader: FC = () => (
+  <div className="flex-center h-[100vh] w-full">
+    <span className="loader" />
+  </div>
+);
 
 export default Loader;

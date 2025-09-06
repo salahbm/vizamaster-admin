@@ -15,7 +15,7 @@ export default function Sidebar() {
   return (
     <aside
       className={cn(
-        'flex flex-col border-r bg-background transition-all duration-300 relative',
+        'flex flex-col border-r bg-background transition-all duration-300 sticky top-0 h-[calc(100vh-4rem)]',
         isMinimized ? 'lg:w-16 w-0' : 'w-64'
       )}
     >
