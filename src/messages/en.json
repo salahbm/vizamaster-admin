@@ -3,6 +3,19 @@
     "title": "Welcome to Vizamaster Admin",
     "description": "This is the admin panel for Vizamaster"
   },
+  "Header": {
+    "language": "Language",
+    "profile": "Profile",
+    "theme": "Theme",
+    "toggleSidebar": "Toggle sidebar"
+  },
+  "Sidebar": {
+    "dashboard": "Dashboard",
+    "users": "Users",
+    "documents": "Documents",
+    "settings": "Settings",
+    "admins": "Admins"
+  },
   "Navigation": {
     "home": "Home",
     "dashboard": "Dashboard",

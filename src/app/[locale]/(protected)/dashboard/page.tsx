@@ -3,7 +3,7 @@
 import { Laptop, Moon, Sun } from 'lucide-react';
 import { useTheme } from 'next-themes';
 
-import { ThemeToggle } from '@/components/theme-toggle';
+import { ThemeToggle } from '@/components/shared/header/theme-toggle';
 import { Button } from '@/components/ui/button';
 
 export default function DashboardPage() {

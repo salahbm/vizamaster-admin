@@ -22,6 +22,14 @@ export const routing = defineRouting({
   pathnames: {
     '/': '/',
     '/dashboard': '/dashboard',
+    '/users': '/users',
+    '/documents': '/documents',
+    '/settings': '/settings',
+    '/profile': '/profile',
+    '/logout': '/logout',
+    '/company/info': '/company/info',
+    '/company/storefront': '/company/storefront',
+    '/products': '/products',
   },
 });
 
