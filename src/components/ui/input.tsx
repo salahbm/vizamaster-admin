@@ -18,4 +18,7 @@ function Input({ className, type, ...props }: React.ComponentProps<'input'>) {
   );
 }
 
+// Re-export specialized inputs for convenience
+export { PasswordInput } from './password-input';
+export { TelephoneInput } from './tel-input';
 export { Input };

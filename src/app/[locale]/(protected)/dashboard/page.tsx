@@ -7,9 +7,11 @@ import { z } from 'zod';
 
 import { FormFields } from '@/components/shared/form-fields';
 import { Button } from '@/components/ui/button';
+import { Combobox } from '@/components/ui/combobox';
 import { Form } from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
+import { Input, PasswordInput, TelephoneInput } from '@/components/ui/input';
 import Loader from '@/components/ui/loader';
+import { Textarea } from '@/components/ui/textarea';
 
 const schema = z.object({
   username: z.string().min(3, 'Username must be at least 3 characters long'),
@@ -17,7 +19,7 @@ const schema = z.object({
   password: z.string().min(6, 'Password must be at least 6 characters long'),
   description: z.string().min(10, 'Description must be at least 10 characters long'),
   telephone: z.string().min(10, 'Telephone must be at least 10 characters long'),
-  gender: z.enum(['male', 'female']),
+  gender: z.string().min(1, 'Gender is required'),
   birthday: z.string().min(10, 'Birthday must be at least 10 characters long'),
   country: z.string().min(2, 'Country must be at least 2 characters long'),
   address: z.string().min(10, 'Address must be at least 10 characters long'),
@@ -125,31 +127,42 @@ export default function DashboardPage() {
               label="Email"
               required
               control={form.control}
-              render={({ field }) => <Input placeholder="Enter email" {...field} />}
+              render={({ field }) => <Input placeholder="Enter email" type="email" {...field} />}
             />
             <FormFields
               name="password"
               label="Password"
               control={form.control}
-              render={({ field }) => <Input placeholder="Enter password" {...field} />}
+              render={({ field }) => <PasswordInput placeholder="Enter password" {...field} />}
             />
             <FormFields
               name="description"
               label="Description"
               control={form.control}
-              render={({ field }) => <Input placeholder="Enter description" {...field} />}
+              render={({ field }) => <Textarea placeholder="Enter description" {...field} />}
             />
             <FormFields
               name="telephone"
               label="Telephone"
               control={form.control}
-              render={({ field }) => <Input placeholder="Enter telephone" {...field} />}
+              render={({ field }) => <TelephoneInput placeholder="Enter telephone" {...field} />}
             />
             <FormFields
               name="gender"
               label="Gender"
               control={form.control}
-              render={({ field }) => <Input placeholder="Enter gender" {...field} />}
+              render={({ field }) => (
+                <Combobox
+                  placeholder="Enter gender"
+                  options={[
+                    { value: 'male', label: 'Male' },
+                    { value: 'female', label: 'Female' },
+                  ]}
+                  {...field}
+                  onValueChange={field.onChange}
+                  value={field.value}
+                />
+              )}
             />
             <FormFields
               name="birthday"
