@@ -21,6 +21,7 @@ export const routing = defineRouting({
   // The list of paths that should use the default locale
   pathnames: {
     '/': '/',
+    '/dashboard': '/dashboard',
   },
 });
 

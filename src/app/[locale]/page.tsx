@@ -37,13 +37,13 @@ export default function Home({ params: { locale } }: { params: { locale: string 
         </div>
 
         <nav className="flex gap-4">
-          <Link href={{ pathname: '/' }} locale={locale} className="text-blue-500 hover:underline">
+          <Link href="/" locale={locale} className="text-blue-500 hover:underline">
             {t('Navigation.home')}
           </Link>
-          <Link href={{ pathname: '/' }} locale={locale} className="text-blue-500 hover:underline">
+          <Link href="/dashboard" locale={locale} className="text-blue-500 hover:underline">
             {t('Navigation.dashboard')}
           </Link>
-          <Link href={{ pathname: '/' }} locale={locale} className="text-blue-500 hover:underline">
+          <Link href="/" locale={locale} className="text-blue-500 hover:underline">
             {t('Navigation.settings')}
           </Link>
         </nav>
