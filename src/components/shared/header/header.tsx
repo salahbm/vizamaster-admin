@@ -16,12 +16,12 @@ import { ThemeToggle } from './theme-toggle';
 
 export default function Header() {
   const t = useTranslations('Header');
-  const { toggle, isMinimized } = useSidebar();
+  const { toggle } = useSidebar();
 
   return (
     <header className="sticky top-0 z-40 w-full border-b bg-background">
       <div className="flex h-16 items-center justify-between px-4 sm:px-6">
-        <div className="flex items-center gap-4 md:gap-0">
+        <div className="flex items-center lg:gap-4 gap-1 md:gap-0">
           <Button
             variant="ghost"
             size="icon"
@@ -32,8 +32,14 @@ export default function Header() {
             <Menu className="size-5" />
           </Button>
           <Link href="/" className="flex items-center">
-            <Image src={IMAGES.logo} alt="Logo" width={60} height={60} />
-            <h1 className="linear-gradient text-2xl font-bold">Viza Master</h1>
+            <Image
+              src={IMAGES.logo}
+              alt="Logo"
+              width={60}
+              height={60}
+              className="size-12 lg:size-16"
+            />
+            <h1 className="linear-gradient lg:font-bold lg:text-3xl font-body-1">Viza Master</h1>
           </Link>
         </div>
         <div className="flex items-center gap-3">

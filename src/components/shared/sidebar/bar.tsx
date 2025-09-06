@@ -2,7 +2,6 @@
 import { FC, useEffect, useMemo, useState } from 'react';
 
 import Link from 'next/link';
-import { usePathname as useNextPathname } from 'next/navigation';
 
 import { useTranslations } from 'next-intl';
 
@@ -33,9 +32,7 @@ const isPathActive = (pathname: string | null, href: string) => {
 
 const SidebarNav: FC = () => {
   const t = useTranslations();
-  // Use the localized pathname from next-intl (without locale prefix)
   const pathname = usePathname();
-  const fullPathname = useNextPathname();
   const { isMinimized } = useSidebar();
   const [expanded, setExpanded] = useState<string[]>([]);
 
@@ -91,8 +88,8 @@ const SidebarNav: FC = () => {
     <nav
       aria-label={t('sidebar.navigation') ?? 'Sidebar'}
       className={cn(
-        'flex-1 overflow-y-auto px-2 py-5 transition-all duration-500',
-        isMinimized ? 'lg:w-16 w-0' : 'w-64'
+        'flex-1 overflow-y-auto px-2 py-5 transition-all duration-300',
+        isMinimized ? 'lg:w-16 w-0 hidden lg:block' : 'w-64'
       )}
     >
       <div className="space-y-1">
