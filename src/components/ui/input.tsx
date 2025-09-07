@@ -2,7 +2,11 @@ import * as React from 'react';
 
 import { cn } from '@/lib/utils';
 
-function Input({ className, type, ...props }: React.ComponentProps<'input'>) {
+interface InputProps extends Omit<React.ComponentProps<'input'>, 'value'> {
+  value?: string | number | Date | string[] | undefined;
+}
+
+function Input({ className, type, value, ...props }: InputProps) {
   return (
     <input
       type={type}

@@ -5,9 +5,10 @@ import { cn } from '@/lib/utils';
 
 import { Input } from './input';
 
-interface TelephoneInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
+interface TelephoneInputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'value'> {
   showIcon?: boolean;
   formatPhoneNumber?: boolean;
+  value?: string | number | Date | string[] | undefined;
 }
 
 export function TelephoneInput({

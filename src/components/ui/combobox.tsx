@@ -16,8 +16,10 @@ import {
 } from '@/components/ui/command';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { cn } from '@/lib/utils';
+import { TFieldValues } from '@/types/global';
 
-interface ComboboxProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+interface ComboboxProps
+  extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, 'value' | 'onValueChange'> {
   options?: Array<{
     value: string;
     label: string;
@@ -26,7 +28,7 @@ interface ComboboxProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
     id?: string;
   }>;
   onValueChange: (value: string | string[]) => void;
-  value: string | string[];
+  value: TFieldValues;
   placeholder?: string;
   modalPopover?: boolean;
   className?: string;
@@ -117,7 +119,7 @@ export const Combobox = React.forwardRef<HTMLButtonElement, ComboboxProps>(
         <PopoverTrigger
           ref={ref}
           className={cn(
-            'file:text-foreground placeholder:text-muted-foreground selection:bg-primary selection:text-primary-foreground dark:bg-input/30 hover:border-muted-foreground border-input flex h-11 w-full min-w-0 rounded-md border bg-transparent px-4 py-3 font-caption-1 shadow-xs transition-[color,box-shadow] outline-none disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:font-body-1 justify-between',
+            'selection:bg-primary selection:text-primary-foreground dark:bg-input/30 hover:border-muted-foreground border-input flex h-11 w-full min-w-0 rounded-md border bg-transparent px-4 py-3 font-caption-1 shadow-xs transition-[color,box-shadow] outline-none disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:font-body-1 justify-between',
             'focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]',
             'aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive',
             error && 'border-red',
@@ -126,7 +128,7 @@ export const Combobox = React.forwardRef<HTMLButtonElement, ComboboxProps>(
           {...props}
         >
           <div className="flex-1 truncate text-ellipsis overflow-hidden text-left">
-            {displayValue}
+            {displayValue as string}
           </div>
           <div className="flex items-center gap-1">
             {selectedValues.length > 0 && (

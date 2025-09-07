@@ -8,8 +8,9 @@ import { cn } from '@/lib/utils';
 
 import { Input } from './input';
 
-interface PasswordInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
+interface PasswordInputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'value'> {
   showToggle?: boolean;
+  value?: string | number | Date | string[] | undefined;
 }
 
 export function PasswordInput({ className, showToggle = true, ...props }: PasswordInputProps) {

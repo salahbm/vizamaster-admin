@@ -1,5 +1,5 @@
 :root {
-  --font-main: 'Roboto', sans-serif;
+  --font-main: 'Manrope', sans-serif;
   --ls: 0.01em;
 }
 
@@ -46,11 +46,11 @@
 }
 .font-caption-2 {
   font-size: 12px;
-  font-weight: 500;
+  font-weight: 400;
   line-height: 1.33; /* 16px */
 }
 .font-caption-3 {
   font-size: 10px;
-  font-weight: 500;
+  font-weight: 400;
   line-height: 1.4; /* 14px */
 }

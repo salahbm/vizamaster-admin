@@ -6,7 +6,9 @@ import { hasLocale } from 'next-intl';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 
 import Loader from '@/components/ui/loader';
+import { manrope } from '@/constants/fonts';
 import { routing } from '@/i18n/routing';
+import { cn } from '@/lib/utils';
 import RootLayout from '@/providers/root';
 
 import '@/styles/globals.css';
@@ -30,6 +32,7 @@ export default async function IndexLayout({
   params: Promise<{ locale: string }>;
 }>) {
   const { locale } = await params;
+
   if (!hasLocale(routing.locales, locale)) {
     notFound();
   }
@@ -38,7 +41,7 @@ export default async function IndexLayout({
 
   return (
     <html lang={locale} suppressHydrationWarning>
-      <body>
+      <body className={cn('overflow-hidden', manrope.className)}>
         <Suspense fallback={<Loader />}>
           <RootLayout>{children}</RootLayout>
         </Suspense>

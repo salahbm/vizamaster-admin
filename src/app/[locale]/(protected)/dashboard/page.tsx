@@ -8,6 +8,7 @@ import { z } from 'zod';
 import { FormFields } from '@/components/shared/form-fields';
 import { Button } from '@/components/ui/button';
 import { Combobox } from '@/components/ui/combobox';
+import DatePicker from '@/components/ui/dates-picker';
 import { Form } from '@/components/ui/form';
 import { Input, PasswordInput, TelephoneInput } from '@/components/ui/input';
 import Loader from '@/components/ui/loader';
@@ -15,20 +16,27 @@ import { Textarea } from '@/components/ui/textarea';
 
 const schema = z.object({
   username: z.string().min(3, 'Username must be at least 3 characters long'),
-  email: z.string().email('Invalid email address'),
+  email: z.email('Invalid email format'),
   password: z.string().min(6, 'Password must be at least 6 characters long'),
-  description: z.string().min(10, 'Description must be at least 10 characters long'),
-  telephone: z.string().min(10, 'Telephone must be at least 10 characters long'),
-  gender: z.string().min(1, 'Gender is required'),
-  interest: z.array(z.string().min(1, 'Interest is required')),
-  birthday: z.string().min(10, 'Birthday must be at least 10 characters long'),
+  description: z.string().optional(),
+  telephone: z.string().optional(),
+  gender: z.string().optional(),
+  returnYear: z.string().optional(),
+  returnMonth: z.string().optional(),
+  returnDay: z.string().optional(),
   country: z.string().min(2, 'Country must be at least 2 characters long'),
   address: z.string().min(10, 'Address must be at least 10 characters long'),
-  postalCode: z.string().min(10, 'Postal code must be at least 10 characters long'),
+  postalCode: z.string().min(5, 'Postal code must be at least 5 characters long'),
   city: z.string().min(2, 'City must be at least 2 characters long'),
   province: z.string().min(2, 'Province must be at least 2 characters long'),
-
-  photo: z.string().min(1, 'Photo is required'),
+  photo: z.string().optional(),
+  interests: z.array(z.string()).optional(),
+  birthday: z.date().optional(),
+  customFormatDate: z.date().optional(),
+  minMaxDate: z.date().optional(),
+  errorDate: z.date().optional(),
+  birthDate: z.date().optional(),
+  appointmentDate: z.date().optional(),
 });
 
 export default function DashboardPage() {
@@ -43,20 +51,28 @@ export default function DashboardPage() {
       description: '',
       telephone: '',
       gender: '',
-      birthday: '',
+      returnYear: '',
+      returnMonth: '',
+      returnDay: '',
       country: '',
       address: '',
       postalCode: '',
       city: '',
       province: '',
       photo: '',
-      interest: [],
+      interests: [],
+      birthday: undefined,
+      customFormatDate: undefined,
+      minMaxDate: undefined,
+      errorDate: undefined,
     },
   });
 
   const onSubmit = (data: z.infer<typeof schema>) => {
     console.log(data);
   };
+
+  console.log(form.getValues());
 
   return (
     <div className="">
@@ -168,24 +184,23 @@ export default function DashboardPage() {
               )}
             />
             <FormFields
-              name="interest"
-              label="Interest"
+              name="interests"
+              label="Interests"
               control={form.control}
               render={({ field }) => (
                 <Combobox
-                  placeholder="Enter interest"
+                  placeholder="Select interests"
                   searchable
                   multiple
                   options={[
-                    { value: 'sports', label: 'Sports' },
-                    { value: 'music', label: 'Music' },
-                    { value: 'movies', label: 'Movies' },
-                    { value: 'books', label: 'Books' },
-                    { value: 'games', label: 'Games' },
-                    { value: 'travel', label: 'Travel' },
-                    { value: 'food', label: 'Food' },
+                    { value: 'react', label: 'React' },
+                    { value: 'vue', label: 'Vue' },
+                    { value: 'angular', label: 'Angular' },
+                    { value: 'svelte', label: 'Svelte' },
+                    { value: 'nextjs', label: 'Next.js' },
+                    { value: 'nuxtjs', label: 'Nuxt.js' },
+                    { value: 'gatsby', label: 'Gatsby' },
                   ]}
-                  {...field}
                   onValueChange={field.onChange}
                   value={field.value}
                 />
@@ -197,7 +212,13 @@ export default function DashboardPage() {
               name="birthday"
               label="Birthday"
               control={form.control}
-              render={({ field }) => <Input placeholder="Enter birthday" {...field} />}
+              render={({ field }) => (
+                <DatePicker
+                  placeholder="Select birthday"
+                  value={field.value}
+                  onValueChange={field.onChange}
+                />
+              )}
             />
             <FormFields
               name="country"
@@ -237,8 +258,73 @@ export default function DashboardPage() {
               control={form.control}
               render={({ field }) => <Input placeholder="Enter photo" {...field} />}
             />
+
+            <div className="space-y-8">
+              <div className="space-y-4">
+                <h2 className="text-lg font-medium">DatePicker Examples</h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <p className="text-sm text-muted-foreground mb-2">Basic DatePicker</p>
+                    <FormFields
+                      name="birthday"
+                      label="Birthday"
+                      control={form.control}
+                      render={({ field }) => (
+                        <DatePicker value={field.value} onValueChange={field.onChange} />
+                      )}
+                    />
+                  </div>
+                  <div>
+                    <p className="text-sm text-muted-foreground mb-2">With custom date format</p>
+                    <FormFields
+                      name="customFormatDate"
+                      control={form.control}
+                      render={({ field }) => (
+                        <DatePicker
+                          value={field.value}
+                          onValueChange={field.onChange}
+                          dateFormat="yyyy-MM-dd"
+                        />
+                      )}
+                    />
+                  </div>
+                  <div>
+                    <p className="text-sm text-muted-foreground mb-2">With min/max date</p>
+                    <FormFields
+                      name="minMaxDate"
+                      control={form.control}
+                      render={({ field }) => (
+                        <DatePicker
+                          value={field.value}
+                          onValueChange={field.onChange}
+                          minDate={new Date(2023, 0, 1)}
+                          maxDate={new Date(2025, 11, 31)}
+                        />
+                      )}
+                    />
+                  </div>
+                  <div>
+                    <p className="text-sm text-muted-foreground mb-2">With error state</p>
+                    <FormFields
+                      name="errorDate"
+                      control={form.control}
+                      render={({ field }) => (
+                        <DatePicker
+                          value={field.value}
+                          onValueChange={field.onChange}
+                          error={true}
+                          errorMessage="Please select a valid date"
+                        />
+                      )}
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+            <Button type="submit">Submit</Button>
           </form>
         </Form>
+
         <Loader />
       </div>
     </div>

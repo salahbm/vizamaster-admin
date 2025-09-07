@@ -69,6 +69,10 @@ module.exports = {
           ring: 'hsl(var(--sidebar-ring))',
         },
       },
+      fontFamily: {
+        main: ['Manrope', 'sans-serif'],
+        manrope: 'var(--font-main)',
+      },
       borderRadius: {
         lg: 'var(--radius)',
         md: 'calc(var(--radius) - 2px)',
