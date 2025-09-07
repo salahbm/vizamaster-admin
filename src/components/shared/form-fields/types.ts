@@ -17,7 +17,7 @@ export interface CustomProps<T extends FieldValues> {
   required?: boolean;
   className?: string;
   labelClassName?: string;
-  message?: string;
+  message?: string | ReactNode;
   messageClassName?: string;
   render: (params: {
     field: ControllerRenderProps<T, Path<T>>;

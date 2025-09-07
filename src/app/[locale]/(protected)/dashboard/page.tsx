@@ -20,6 +20,7 @@ const schema = z.object({
   description: z.string().min(10, 'Description must be at least 10 characters long'),
   telephone: z.string().min(10, 'Telephone must be at least 10 characters long'),
   gender: z.string().min(1, 'Gender is required'),
+  interest: z.array(z.string().min(1, 'Interest is required')),
   birthday: z.string().min(10, 'Birthday must be at least 10 characters long'),
   country: z.string().min(2, 'Country must be at least 2 characters long'),
   address: z.string().min(10, 'Address must be at least 10 characters long'),
@@ -49,6 +50,7 @@ export default function DashboardPage() {
       city: '',
       province: '',
       photo: '',
+      interest: [],
     },
   });
 
@@ -154,6 +156,7 @@ export default function DashboardPage() {
               render={({ field }) => (
                 <Combobox
                   placeholder="Enter gender"
+                  searchable
                   options={[
                     { value: 'male', label: 'Male' },
                     { value: 'female', label: 'Female' },
@@ -163,6 +166,32 @@ export default function DashboardPage() {
                   value={field.value}
                 />
               )}
+            />
+            <FormFields
+              name="interest"
+              label="Interest"
+              control={form.control}
+              render={({ field }) => (
+                <Combobox
+                  placeholder="Enter interest"
+                  searchable
+                  multiple
+                  options={[
+                    { value: 'sports', label: 'Sports' },
+                    { value: 'music', label: 'Music' },
+                    { value: 'movies', label: 'Movies' },
+                    { value: 'books', label: 'Books' },
+                    { value: 'games', label: 'Games' },
+                    { value: 'travel', label: 'Travel' },
+                    { value: 'food', label: 'Food' },
+                  ]}
+                  {...field}
+                  onValueChange={field.onChange}
+                  value={field.value}
+                />
+              )}
+              message="Please select at least one interest"
+              messageClassName="text-red-500"
             />
             <FormFields
               name="birthday"
@@ -186,7 +215,9 @@ export default function DashboardPage() {
               name="postalCode"
               label="Postal Code"
               control={form.control}
-              render={({ field }) => <Input placeholder="Enter postal code" {...field} />}
+              render={({ field }) => (
+                <Input type="number" placeholder="Enter postal code" {...field} />
+              )}
             />
             <FormFields
               name="city"

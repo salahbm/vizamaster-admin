@@ -18,9 +18,9 @@ export const FormFields = <T extends FieldValues>(props: CustomProps<T>) => {
   const {
     control,
     name,
-    label,
     required,
     className,
+    label,
     labelClassName,
     message,
     messageClassName,

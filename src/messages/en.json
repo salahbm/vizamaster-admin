@@ -30,6 +30,7 @@
     "delete": "Delete",
     "edit": "Edit",
     "create": "Create",
-    "search": "Search"
+    "search": "Search",
+    "noData": "There is no data"
   }
 }

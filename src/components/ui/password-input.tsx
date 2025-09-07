@@ -31,9 +31,9 @@ export function PasswordInput({ className, showToggle = true, ...props }: Passwo
           aria-label={showPassword ? 'Hide password' : 'Show password'}
         >
           {showPassword ? (
-            <EyeOff className="h-5 w-5" aria-hidden="true" />
+            <EyeOff className="h-5 w-5 text-neutral-500" aria-hidden="true" />
           ) : (
-            <Eye className="h-5 w-5" aria-hidden="true" />
+            <Eye className="h-5 w-5 text-neutral-500" aria-hidden="true" />
           )}
         </button>
       )}
