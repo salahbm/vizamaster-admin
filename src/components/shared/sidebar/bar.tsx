@@ -77,7 +77,7 @@ const SidebarNav: FC = () => {
     if (activeParent?.label && !expanded.includes(activeParent.label)) {
       setExpanded((prev) => [...prev, activeParent.label]);
     }
-  }, [activeParent?.label, expanded]);
+  }, [activeParent?.label]);
 
   const onAccordionChange = (value: string | string[]) =>
     setExpanded(value ? (Array.isArray(value) ? value : [value]) : []);

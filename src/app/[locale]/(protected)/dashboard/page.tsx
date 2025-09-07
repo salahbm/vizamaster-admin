@@ -15,22 +15,36 @@ import Loader from '@/components/ui/loader';
 import { Textarea } from '@/components/ui/textarea';
 
 const schema = z.object({
-  username: z.string().min(3, 'Username must be at least 3 characters long'),
-  email: z.email('Invalid email format'),
-  password: z.string().min(6, 'Password must be at least 6 characters long'),
+  // Using refine with custom error message
+  username: z.string().refine((value) => value.trim() !== '', {
+    params: { i18nKey: 'required' },
+  }),
+  // Using standard email validation
+  email: z.string().email(),
+  // Using min length validation
+  password: z.string().min(6),
   description: z.string().optional(),
   telephone: z.string().optional(),
   gender: z.string().optional(),
   returnYear: z.string().optional(),
   returnMonth: z.string().optional(),
   returnDay: z.string().optional(),
-  country: z.string().min(2, 'Country must be at least 2 characters long'),
-  address: z.string().min(10, 'Address must be at least 10 characters long'),
+  // Using min length validation with custom message
+  country: z
+    .string()
+    .min(2, { message: 'Country name must be at least 2 characters' }),
+  address: z
+    .string()
+    .min(10, { message: 'Address must be at least 10 characters' }),
   postalCode: z
     .string()
-    .min(5, 'Postal code must be at least 5 characters long'),
-  city: z.string().min(2, 'City must be at least 2 characters long'),
-  province: z.string().min(2, 'Province must be at least 2 characters long'),
+    .min(5, { message: 'Postal code must be at least 5 characters' }),
+  city: z
+    .string()
+    .min(2, { message: 'City name must be at least 2 characters' }),
+  province: z
+    .string()
+    .min(2, { message: 'Province name must be at least 2 characters' }),
   photo: z.string().optional(),
   interests: z.array(z.string()).optional(),
   birthday: z.date().optional(),
