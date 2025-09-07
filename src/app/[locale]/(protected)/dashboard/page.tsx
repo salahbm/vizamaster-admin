@@ -5,23 +5,48 @@ import { useTranslations } from 'next-intl';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
+import { DataTable } from '@/components/shared/data-table';
 import { DatePicker } from '@/components/shared/date-pickers';
 import { FormFields } from '@/components/shared/form-fields';
 import { Button } from '@/components/ui/button';
 import { Combobox } from '@/components/ui/combobox';
 import { Form } from '@/components/ui/form';
 import { Input, PasswordInput, TelephoneInput } from '@/components/ui/input';
-import Loader from '@/components/ui/loader';
 import { Textarea } from '@/components/ui/textarea';
 
+const columns = [
+  {
+    accessorKey: 'username',
+    header: 'Username',
+  },
+  {
+    accessorKey: 'email',
+    header: 'Email',
+  },
+  {
+    accessorKey: 'password',
+    header: 'Password',
+  },
+];
+
+const data = [
+  {
+    username: 'John Doe',
+    email: 'john.doe@example.com',
+    password: 'password',
+  },
+  {
+    username: 'Jane Doe',
+    email: 'jane.doe@example.com',
+    password: 'password',
+  },
+];
+
 const schema = z.object({
-  // Using refine with custom error message
   username: z.string().refine((value) => value.trim() !== '', {
     params: { i18nKey: 'required' },
   }),
-  // Using standard email validation
-  email: z.string().email(),
-  // Using min length validation
+  email: z.email(),
   password: z.string().min(6),
   description: z.string().optional(),
   telephone: z.string().optional(),
@@ -29,22 +54,11 @@ const schema = z.object({
   returnYear: z.string().optional(),
   returnMonth: z.string().optional(),
   returnDay: z.string().optional(),
-  // Using min length validation with custom message
-  country: z
-    .string()
-    .min(2, { message: 'Country name must be at least 2 characters' }),
-  address: z
-    .string()
-    .min(10, { message: 'Address must be at least 10 characters' }),
-  postalCode: z
-    .string()
-    .min(5, { message: 'Postal code must be at least 5 characters' }),
-  city: z
-    .string()
-    .min(2, { message: 'City name must be at least 2 characters' }),
-  province: z
-    .string()
-    .min(2, { message: 'Province name must be at least 2 characters' }),
+  country: z.string().min(2),
+  address: z.string().min(10),
+  postalCode: z.string().min(5),
+  city: z.string().min(2),
+  province: z.string().min(2),
   photo: z.string().optional(),
   interests: z.array(z.string()).optional(),
   birthday: z.date().optional(),
@@ -461,7 +475,7 @@ export default function DashboardPage() {
           </form>
         </Form>
 
-        <Loader />
+        <DataTable columns={columns} data={data} />
       </div>
     </div>
   );
