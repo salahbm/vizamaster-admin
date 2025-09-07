@@ -8,13 +8,13 @@ interface SidebarStore {
 
 export const useSidebar = create<SidebarStore>()(
   persist(
-    set => ({
+    (set) => ({
       isMinimized: false,
-      toggle: () => set(state => ({ isMinimized: !state.isMinimized })),
+      toggle: () => set((state) => ({ isMinimized: !state.isMinimized })),
     }),
     {
       name: 'sidebar',
       storage: createJSONStorage(() => localStorage),
-    }
-  )
+    },
+  ),
 );

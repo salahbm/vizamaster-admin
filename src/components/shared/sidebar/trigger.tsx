@@ -1,31 +1,32 @@
 'use client';
 
 import { ChevronRight } from 'lucide-react';
-import { useLocale } from 'next-intl';
 
 import { cn } from '@/lib/utils';
+
 import { useSidebar } from '@/store/sidebar';
 
 import SidebarNav from './bar';
 
 export default function Sidebar() {
   const { isMinimized, toggle } = useSidebar();
-  const locale = useLocale();
 
   return (
     <aside
       className={cn(
-        'flex flex-col border-r bg-background transition-all duration-300 sticky top-0 h-[calc(100vh-4rem)]',
-        isMinimized ? 'lg:w-16 w-0' : 'w-64'
+        'bg-background sticky top-0 flex h-[calc(100vh-4rem)] flex-col border-r transition-all duration-300',
+        isMinimized ? 'w-0 lg:w-16' : 'w-64',
       )}
     >
       <button
         type="button"
         aria-label="Toggle sidebar"
-        className="shadow-1 hidden cursor-pointer absolute right-0 top-4 lg:flex w-5 translate-x-full items-center justify-center rounded-r border border-l-0 border-border-200 bg-background py-4"
+        className="shadow-1 border-border-200 bg-background absolute top-4 right-0 hidden w-5 translate-x-full cursor-pointer items-center justify-center rounded-r border border-l-0 py-4 lg:flex"
         onClick={toggle}
       >
-        <ChevronRight className={cn('size-5', isMinimized ? 'rotate-0' : 'rotate-180')} />
+        <ChevronRight
+          className={cn('size-5', isMinimized ? 'rotate-0' : 'rotate-180')}
+        />
       </button>
 
       {/* Navigation */}

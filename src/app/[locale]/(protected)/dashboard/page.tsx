@@ -5,10 +5,10 @@ import { useTranslations } from 'next-intl';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
+import { DatePicker } from '@/components/shared/date-pickers';
 import { FormFields } from '@/components/shared/form-fields';
 import { Button } from '@/components/ui/button';
 import { Combobox } from '@/components/ui/combobox';
-import DatePicker from '@/components/ui/dates-picker';
 import { Form } from '@/components/ui/form';
 import { Input, PasswordInput, TelephoneInput } from '@/components/ui/input';
 import Loader from '@/components/ui/loader';
@@ -26,7 +26,9 @@ const schema = z.object({
   returnDay: z.string().optional(),
   country: z.string().min(2, 'Country must be at least 2 characters long'),
   address: z.string().min(10, 'Address must be at least 10 characters long'),
-  postalCode: z.string().min(5, 'Postal code must be at least 5 characters long'),
+  postalCode: z
+    .string()
+    .min(5, 'Postal code must be at least 5 characters long'),
   city: z.string().min(2, 'City must be at least 2 characters long'),
   province: z.string().min(2, 'Province must be at least 2 characters long'),
   photo: z.string().optional(),
@@ -37,6 +39,12 @@ const schema = z.object({
   errorDate: z.date().optional(),
   birthDate: z.date().optional(),
   appointmentDate: z.date().optional(),
+  interval: z
+    .object({
+      from: z.date().optional(),
+      to: z.date().optional(),
+    })
+    .optional(),
 });
 
 export default function DashboardPage() {
@@ -65,6 +73,10 @@ export default function DashboardPage() {
       customFormatDate: undefined,
       minMaxDate: undefined,
       errorDate: undefined,
+      interval: {
+        from: undefined,
+        to: undefined,
+      },
     },
   });
 
@@ -76,13 +88,13 @@ export default function DashboardPage() {
 
   return (
     <div className="">
-      <h1 className="text-3xl font-bold mb-6">Theme Demo</h1>
+      <h1 className="mb-6 text-3xl font-bold">Theme Demo</h1>
 
       <h2>{t('Metadata.title')}</h2>
       <p>{t('Metadata.description')}</p>
 
       <div className="grid gap-8">
-        <section className="space-y-4 ">
+        <section className="space-y-4">
           <h2 className="text-2xl font-semibold">UI Components</h2>
           <div className="grid gap-6">
             <div className="grid gap-4">
@@ -99,24 +111,30 @@ export default function DashboardPage() {
 
             <div className="grid gap-4">
               <h3 className="text-xl font-medium">Cards</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
                 <div className="card">
                   <h4 className="font-semibold">Card Title</h4>
-                  <p className="text-sm text-muted-foreground">Card description goes here</p>
+                  <p className="text-muted-foreground text-sm">
+                    Card description goes here
+                  </p>
                 </div>
                 <div className="card-md">
                   <h4 className="font-semibold">Card Title</h4>
-                  <p className="text-sm text-muted-foreground">Card description goes here</p>
+                  <p className="text-muted-foreground text-sm">
+                    Card description goes here
+                  </p>
                 </div>
                 <div className="card-lg">
                   <h4 className="font-semibold">Card Title</h4>
-                  <p className="text-sm text-muted-foreground">Card description goes here</p>
+                  <p className="text-muted-foreground text-sm">
+                    Card description goes here
+                  </p>
                 </div>
               </div>
             </div>
             <div className="grid gap-4">
               <h3 className="text-xl font-medium">FONTS</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
                 <div className="card p-4">
                   <h4 className="font-header">Header</h4>
                   <p className="font-title">Title</p>
@@ -138,32 +156,42 @@ export default function DashboardPage() {
               label="Username"
               required
               control={form.control}
-              render={({ field }) => <Input placeholder="Enter username" {...field} />}
+              render={({ field }) => (
+                <Input placeholder="Enter username" {...field} />
+              )}
             />
             <FormFields
               name="email"
               label="Email"
               required
               control={form.control}
-              render={({ field }) => <Input placeholder="Enter email" type="email" {...field} />}
+              render={({ field }) => (
+                <Input placeholder="Enter email" type="email" {...field} />
+              )}
             />
             <FormFields
               name="password"
               label="Password"
               control={form.control}
-              render={({ field }) => <PasswordInput placeholder="Enter password" {...field} />}
+              render={({ field }) => (
+                <PasswordInput placeholder="Enter password" {...field} />
+              )}
             />
             <FormFields
               name="description"
               label="Description"
               control={form.control}
-              render={({ field }) => <Textarea placeholder="Enter description" {...field} />}
+              render={({ field }) => (
+                <Textarea placeholder="Enter description" {...field} />
+              )}
             />
             <FormFields
               name="telephone"
               label="Telephone"
               control={form.control}
-              render={({ field }) => <TelephoneInput placeholder="Enter telephone" {...field} />}
+              render={({ field }) => (
+                <TelephoneInput placeholder="Enter telephone" {...field} />
+              )}
             />
             <FormFields
               name="gender"
@@ -174,8 +202,8 @@ export default function DashboardPage() {
                   placeholder="Enter gender"
                   searchable
                   options={[
-                    { value: 'male', label: 'Male' },
-                    { value: 'female', label: 'Female' },
+                    { value: '1', label: 'Male' },
+                    { value: '2', label: 'Female' },
                   ]}
                   {...field}
                   onValueChange={field.onChange}
@@ -224,58 +252,79 @@ export default function DashboardPage() {
               name="country"
               label="Country"
               control={form.control}
-              render={({ field }) => <Input placeholder="Enter country" {...field} />}
+              render={({ field }) => (
+                <Input placeholder="Enter country" {...field} />
+              )}
             />
             <FormFields
               name="address"
               label="Address"
               control={form.control}
-              render={({ field }) => <Input placeholder="Enter address" {...field} />}
+              render={({ field }) => (
+                <Input placeholder="Enter address" {...field} />
+              )}
             />
             <FormFields
               name="postalCode"
               label="Postal Code"
               control={form.control}
               render={({ field }) => (
-                <Input type="number" placeholder="Enter postal code" {...field} />
+                <Input
+                  type="number"
+                  placeholder="Enter postal code"
+                  {...field}
+                />
               )}
             />
             <FormFields
               name="city"
               label="City"
               control={form.control}
-              render={({ field }) => <Input placeholder="Enter city" {...field} />}
+              render={({ field }) => (
+                <Input placeholder="Enter city" {...field} />
+              )}
             />
             <FormFields
               name="province"
               label="Province"
               control={form.control}
-              render={({ field }) => <Input placeholder="Enter province" {...field} />}
+              render={({ field }) => (
+                <Input placeholder="Enter province" {...field} />
+              )}
             />
             <FormFields
               name="photo"
               label="Photo"
               control={form.control}
-              render={({ field }) => <Input placeholder="Enter photo" {...field} />}
+              render={({ field }) => (
+                <Input placeholder="Enter photo" {...field} />
+              )}
             />
 
             <div className="space-y-8">
               <div className="space-y-4">
                 <h2 className="text-lg font-medium">DatePicker Examples</h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                   <div>
-                    <p className="text-sm text-muted-foreground mb-2">Basic DatePicker</p>
+                    <p className="text-muted-foreground mb-2 text-sm">
+                      Basic DatePicker
+                    </p>
                     <FormFields
                       name="birthday"
                       label="Birthday"
                       control={form.control}
                       render={({ field }) => (
-                        <DatePicker value={field.value} onValueChange={field.onChange} />
+                        <DatePicker
+                          value={field.value}
+                          onValueChange={field.onChange}
+                        />
                       )}
                     />
                   </div>
                   <div>
-                    <p className="text-sm text-muted-foreground mb-2">With custom date format</p>
+                    <p className="text-muted-foreground mb-2 text-sm">
+                      With custom date format
+                    </p>
                     <FormFields
                       name="customFormatDate"
                       control={form.control}
@@ -289,7 +338,9 @@ export default function DashboardPage() {
                     />
                   </div>
                   <div>
-                    <p className="text-sm text-muted-foreground mb-2">With min/max date</p>
+                    <p className="text-muted-foreground mb-2 text-sm">
+                      With min/max date
+                    </p>
                     <FormFields
                       name="minMaxDate"
                       control={form.control}
@@ -304,21 +355,92 @@ export default function DashboardPage() {
                     />
                   </div>
                   <div>
-                    <p className="text-sm text-muted-foreground mb-2">With error state</p>
+                    <p className="text-muted-foreground mb-2 text-sm">
+                      With error state
+                    </p>
                     <FormFields
                       name="errorDate"
                       control={form.control}
-                      render={({ field }) => (
+                      render={({ field, formState }) => (
                         <DatePicker
                           value={field.value}
                           onValueChange={field.onChange}
-                          error={true}
+                          error={formState.errors.errorDate}
                           errorMessage="Please select a valid date"
                         />
                       )}
                     />
                   </div>
                 </div>
+
+                <h3 className="mt-8 text-lg font-medium">
+                  DatePicker Variants
+                </h3>
+                <FormFields
+                  name="appointmentDate"
+                  label="Date-Time Picker"
+                  control={form.control}
+                  render={({ field }) => (
+                    <DatePicker
+                      value={field.value}
+                      onValueChange={field.onChange}
+                      variant="date-time"
+                      placeholder="Select appointment date and time"
+                    />
+                  )}
+                />
+                <FormFields
+                  name="appointmentDate"
+                  label="Time Picker"
+                  control={form.control}
+                  render={({ field }) => (
+                    <DatePicker
+                      value={field.value}
+                      onValueChange={field.onChange}
+                      variant="time"
+                      placeholder="Select time"
+                    />
+                  )}
+                />
+                <FormFields
+                  name="birthDate"
+                  label="Month Picker"
+                  control={form.control}
+                  render={({ field }) => (
+                    <DatePicker
+                      value={field.value}
+                      onValueChange={field.onChange}
+                      variant="month"
+                      placeholder="Select month"
+                    />
+                  )}
+                />
+                <FormFields
+                  name="birthDate"
+                  label="Year Picker"
+                  control={form.control}
+                  render={({ field }) => (
+                    <DatePicker
+                      onValueChange={field.onChange}
+                      variant="year"
+                      placeholder="Select year"
+                      {...field}
+                    />
+                  )}
+                />
+                <FormFields
+                  name="interval"
+                  label="Date Range Picker"
+                  control={form.control}
+                  render={({ field }) => (
+                    <DatePicker
+                      onValueChange={field.onChange}
+                      variant="range"
+                      placeholder="Select date range"
+                      {...field}
+                    />
+                  )}
+                />
               </div>
             </div>
             <Button type="submit">Submit</Button>

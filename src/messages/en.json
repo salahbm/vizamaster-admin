@@ -32,13 +32,17 @@
     "create": "Create",
     "search": "Search",
     "noData": "There is no data",
+    "date": "Date",
+    "time": "Time",
+
     "placeholder": {
       "date": "Select date",
       "time": "Select time",
       "datetime": "Select date and time",
       "selectItem": "Select item",
       "selectItems": "Select items",
-      "enterValue": "Enter value"
+      "enterValue": "Enter value",
+      "selectEndDate": "Select end date"
     }
   }
 }

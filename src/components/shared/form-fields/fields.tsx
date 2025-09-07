@@ -10,6 +10,7 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
+
 import { cn } from '@/lib/utils';
 
 import { CustomProps } from './types';
@@ -34,13 +35,21 @@ export const FormFields = <T extends FieldValues>(props: CustomProps<T>) => {
       render={({ field, fieldState, formState }) => (
         <FormItem className={cn(className)}>
           {label && (
-            <FormLabel required={required} className={cn(labelClassName, 'font-body-1')}>
+            <FormLabel
+              required={required}
+              className={cn(labelClassName, 'font-body-1')}
+            >
               {label}
             </FormLabel>
           )}
           <FormControl>{render({ field, fieldState, formState })}</FormControl>
           {message && (
-            <FormDescription className={cn('font-caption-2 mt-0.5 text-gray-5', messageClassName)}>
+            <FormDescription
+              className={cn(
+                'font-caption-2 text-gray-5 mt-0.5',
+                messageClassName,
+              )}
+            >
               {message}
             </FormDescription>
           )}

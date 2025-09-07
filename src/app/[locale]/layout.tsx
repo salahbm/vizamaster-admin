@@ -2,18 +2,25 @@ import React, { Suspense } from 'react';
 
 import { notFound } from 'next/navigation';
 
-import { hasLocale } from 'next-intl';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 
-import Loader from '@/components/ui/loader';
-import { manrope } from '@/constants/fonts';
-import { routing } from '@/i18n/routing';
-import { cn } from '@/lib/utils';
-import RootLayout from '@/providers/root';
+import { hasLocale } from 'next-intl';
 
+import Loader from '@/components/ui/loader';
+
+import { cn } from '@/lib/utils';
+
+import { manrope } from '@/constants/fonts';
+
+import { routing } from '@/i18n/routing';
+import RootLayout from '@/providers/root';
 import '@/styles/globals.css';
 
-export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: 'Metadata' });
 

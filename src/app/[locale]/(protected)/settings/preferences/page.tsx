@@ -10,13 +10,13 @@ export default function DashboardPage() {
 
   return (
     <div className="container py-10">
-      <h1 className="text-3xl font-bold mb-6">Preferences</h1>
+      <h1 className="mb-6 text-3xl font-bold">Preferences</h1>
 
       <div className="grid gap-8">
         <section className="space-y-4">
           <h2 className="text-2xl font-semibold">Theme</h2>
 
-          <div className="flex flex-wrap gap-4 mt-6">
+          <div className="mt-6 flex flex-wrap gap-4">
             <Button
               onClick={() => setTheme('light')}
               variant={theme === 'light' ? 'default' : 'outline'}

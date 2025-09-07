@@ -6,14 +6,21 @@ import { Eye, EyeOff } from 'lucide-react';
 
 import { cn } from '@/lib/utils';
 
+import { TFieldValues } from '@/types/global';
+
 import { Input } from './input';
 
-interface PasswordInputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'value'> {
+interface PasswordInputProps
+  extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'value'> {
   showToggle?: boolean;
-  value?: string | number | Date | string[] | undefined;
+  value?: TFieldValues;
 }
 
-export function PasswordInput({ className, showToggle = true, ...props }: PasswordInputProps) {
+export function PasswordInput({
+  className,
+  showToggle = true,
+  ...props
+}: PasswordInputProps) {
   const [showPassword, setShowPassword] = useState(false);
 
   return (
@@ -27,7 +34,7 @@ export function PasswordInput({ className, showToggle = true, ...props }: Passwo
         <button
           type="button"
           onClick={() => setShowPassword(!showPassword)}
-          className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+          className="text-muted-foreground hover:text-foreground absolute top-1/2 right-3 -translate-y-1/2"
           tabIndex={-1}
           aria-label={showPassword ? 'Hide password' : 'Show password'}
         >

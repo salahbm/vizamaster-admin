@@ -7,15 +7,16 @@ import { Slot } from '@radix-ui/react-slot';
 import { Asterisk } from 'lucide-react';
 import {
   Controller,
-  FormProvider,
-  useFormContext,
-  useFormState,
   type ControllerProps,
   type FieldPath,
   type FieldValues,
+  FormProvider,
+  useFormContext,
+  useFormState,
 } from 'react-hook-form';
 
 import { Label } from '@/components/ui/label';
+
 import { cn } from '@/lib/utils';
 
 const Form = FormProvider;
@@ -27,7 +28,9 @@ type FormFieldContextValue<
   name: TName;
 };
 
-const FormFieldContext = React.createContext<FormFieldContextValue>({} as FormFieldContextValue);
+const FormFieldContext = React.createContext<FormFieldContextValue>(
+  {} as FormFieldContextValue,
+);
 
 const FormField = <
   TFieldValues extends FieldValues = FieldValues,
@@ -69,14 +72,20 @@ type FormItemContextValue = {
   id: string;
 };
 
-const FormItemContext = React.createContext<FormItemContextValue>({} as FormItemContextValue);
+const FormItemContext = React.createContext<FormItemContextValue>(
+  {} as FormItemContextValue,
+);
 
 function FormItem({ className, ...props }: React.ComponentProps<'div'>) {
   const id = React.useId();
 
   return (
     <FormItemContext.Provider value={{ id }}>
-      <div data-slot="form-item" className={cn('grid gap-2', className)} {...props} />
+      <div
+        data-slot="form-item"
+        className={cn('grid gap-2', className)}
+        {...props}
+      />
     </FormItemContext.Provider>
   );
 }
@@ -89,31 +98,36 @@ function FormLabel({
   const { error, formItemId } = useFormField();
 
   return (
-    <div className="relative w-fit inline-flex items-center">
+    <div className="relative inline-flex w-fit items-center">
       <Label
         htmlFor={formItemId}
         className={cn(
           'truncate pr-3', // space for the asterisk
           error && 'text-destructive',
-          className
+          className,
         )}
         {...props}
       />
       {required && (
-        <Asterisk className="absolute right-0 top-0 -translate-y-0.5 size-3 text-red-500" />
+        <Asterisk className="absolute top-0 right-0 size-3 -translate-y-0.5 text-red-500" />
       )}
     </div>
   );
 }
 
 function FormControl({ ...props }: React.ComponentProps<typeof Slot>) {
-  const { error, formItemId, formDescriptionId, formMessageId } = useFormField();
+  const { error, formItemId, formDescriptionId, formMessageId } =
+    useFormField();
 
   return (
     <Slot
       data-slot="form-control"
       id={formItemId}
-      aria-describedby={!error ? `${formDescriptionId}` : `${formDescriptionId} ${formMessageId}`}
+      aria-describedby={
+        !error
+          ? `${formDescriptionId}`
+          : `${formDescriptionId} ${formMessageId}`
+      }
       aria-invalid={!!error}
       {...props}
     />

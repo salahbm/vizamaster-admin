@@ -1,123 +1,97 @@
-// optimized .eslintrc.flat.js (minimal changes from your original)
-import js from '@eslint/js';
-import tseslint from 'typescript-eslint';
-import reactPlugin from 'eslint-plugin-react';
-import reactHooksPlugin from 'eslint-plugin-react-hooks';
-import prettierPlugin from 'eslint-plugin-prettier';
-import importPlugin from 'eslint-plugin-import';
-import unusedImportsPlugin from 'eslint-plugin-unused-imports';
+import nextPlugin from '@next/eslint-plugin-next'
+import tsPlugin from '@typescript-eslint/eslint-plugin'
+import tsParser from '@typescript-eslint/parser'
+import importPlugin from 'eslint-plugin-import'
+import jsxA11y from 'eslint-plugin-jsx-a11y'
+import prettierPlugin from 'eslint-plugin-prettier'
+import react from 'eslint-plugin-react'
+import reactHooks from 'eslint-plugin-react-hooks'
+import unusedImports from 'eslint-plugin-unused-imports'
+import globals from 'globals'
 
-export default tseslint.config(
+export default [
   {
     ignores: [
-      'node_modules/**',
-      '.next/**',
-      'build/**',
-      'public/**',
-      '**/*.config.js',
-      '**/*.config.mjs',
-      '.husky/**',
-      '.vscode/**',
-      '*.lock',
-      '*.json',
-      '*.md',
-      '*.css',
-      // NOTE: if lint-staged lints these files, remove them from ignores or run eslint with --no-ignore
+      '**/node_modules',
+      '**/dist',
+      '**/build',
+      '**/.next',
+      '**/public',
+      '**/*.config.{js,ts,mjs}',
+      '**/coverage',
       '.lintstagedrc.js',
-      'commitlint.config.js',
-      'next-env.d.ts',
     ],
   },
-
-  // Base JS/JSX/TS/TSX
   {
     files: ['**/*.{js,jsx,ts,tsx}'],
-    extends: [js.configs.recommended],
-    languageOptions: {
-      ecmaVersion: 2022,
-      sourceType: 'module',
-      parserOptions: { ecmaFeatures: { jsx: true } },
-    },
     plugins: {
+      '@typescript-eslint': tsPlugin,
+      react,
+      'react-hooks': reactHooks,
       import: importPlugin,
-      'unused-imports': unusedImportsPlugin,
+      prettier: prettierPlugin,
+      'unused-imports': unusedImports,
+      '@next/next': nextPlugin,
+      'jsx-a11y': jsxA11y,
+    },
+    languageOptions: {
+      parser: tsParser,
+      parserOptions: {
+        ecmaVersion: 'latest',
+        sourceType: 'module',
+        ecmaFeatures: { jsx: true },
+        project: './tsconfig.json', // ❌ remove if linting is too slow
+      },
+      globals: {
+        ...globals.browser,
+        ...globals.node,
+      },
     },
     settings: {
-      'import/resolver': {
-        typescript: { alwaysTryTypes: true, project: './tsconfig.json' },
-        node: true,
-      },
       react: { version: 'detect' },
+      next: { rootDir: './' },
     },
     rules: {
-      // keep eslint core off for TS, let @typescript-eslint handle it in TS block
-      'no-unused-vars': 'off',
+      // Prettier
+      'prettier/prettier': 'warn',
 
-      // import rules (unchanged)
-      'import/order': [
-        'error',
-        {
-          groups: [
-            'builtin',
-            'external',
-            'internal',
-            ['parent', 'sibling'],
-            'index',
-            'object',
-            'type',
-          ],
-          'newlines-between': 'always',
-          alphabetize: { order: 'asc', caseInsensitive: true },
-          pathGroups: [
-            { pattern: 'react', group: 'builtin', position: 'before' },
-            { pattern: 'next/**', group: 'builtin', position: 'after' },
-            { pattern: '@/**', group: 'internal', position: 'after' },
-          ],
-          pathGroupsExcludedImportTypes: ['react', 'next'],
-        },
-      ],
-      'import/first': 'error',
-      'import/newline-after-import': 'error',
-      'import/no-duplicates': 'error',
+      // TypeScript
+      '@typescript-eslint/no-explicit-any': 'warn',
 
-      // UNUSED IMPORTS: enable autofixable rule
+      // Imports
+      'import/order': 'off', // handled by prettier-plugin-sort-imports
       'unused-imports/no-unused-imports': 'error',
       'unused-imports/no-unused-vars': [
         'warn',
-        { vars: 'all', varsIgnorePattern: '^_', args: 'after-used', argsIgnorePattern: '^_' },
+        {
+          vars: 'all',
+          args: 'after-used',
+          ignoreRestSiblings: true,
+          argsIgnorePattern: '^_',
+          varsIgnorePattern: '^_',
+        },
       ],
-    },
-  },
 
-  // TypeScript specific overrides
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [...tseslint.configs.recommended],
-    rules: {
-      // <<< IMPORTANT >>> turn this OFF so unused-imports plugin can remove imports
-      '@typescript-eslint/no-unused-vars': 'off',
-
-      // keep helpful TS rules
-      '@typescript-eslint/no-explicit-any': 'warn',
-      '@typescript-eslint/explicit-module-boundary-types': 'off',
-    },
-  },
-
-  // React / Hooks / Prettier
-  {
-    files: ['**/*.{js,jsx,ts,tsx}'],
-    plugins: {
-      react: reactPlugin,
-      'react-hooks': reactHooksPlugin,
-      prettier: prettierPlugin,
-    },
-    rules: {
+      // React & Hooks
       'react/react-in-jsx-scope': 'off',
       'react/prop-types': 'off',
+      'react/jsx-key': 'error',
       'react/self-closing-comp': 'error',
       'react-hooks/rules-of-hooks': 'error',
       'react-hooks/exhaustive-deps': 'warn',
-      'prettier/prettier': 'warn',
+
+      // Code Quality
+      'no-unused-vars': 'off', // handled by unused-imports
+      'no-duplicate-imports': 'error',
+      'no-console': ['warn', { allow: ['warn', 'error', 'info', 'debug'] }],
+
+      // Next.js
+      '@next/next/no-html-link-for-pages': 'off',
+      '@next/next/no-img-element': 'warn',
+
+      // Accessibility
+      'jsx-a11y/alt-text': 'warn',
+      'jsx-a11y/anchor-is-valid': 'warn',
     },
-  }
-);
+  },
+]

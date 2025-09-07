@@ -14,12 +14,21 @@ import {
   CommandItem,
   CommandList,
 } from '@/components/ui/command';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover';
+
 import { cn } from '@/lib/utils';
+
 import { TFieldValues } from '@/types/global';
 
 interface ComboboxProps
-  extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, 'value' | 'onValueChange'> {
+  extends Omit<
+    React.ButtonHTMLAttributes<HTMLButtonElement>,
+    'value' | 'onValueChange'
+  > {
   options?: Array<{
     value: string;
     label: string;
@@ -27,6 +36,7 @@ interface ComboboxProps
     className?: string;
     id?: string;
   }>;
+  label?: string | React.ReactNode;
   onValueChange: (value: string | string[]) => void;
   value: TFieldValues;
   placeholder?: string;
@@ -41,6 +51,7 @@ export const Combobox = React.forwardRef<HTMLButtonElement, ComboboxProps>(
   (
     {
       options = [],
+      label,
       onValueChange,
       value,
       placeholder = 'Select',
@@ -52,7 +63,7 @@ export const Combobox = React.forwardRef<HTMLButtonElement, ComboboxProps>(
       disabled,
       ...props
     },
-    ref
+    ref,
   ) => {
     const t = useTranslations();
     const [open, setOpen] = React.useState(false);
@@ -64,7 +75,7 @@ export const Combobox = React.forwardRef<HTMLButtonElement, ComboboxProps>(
 
         if (valueExists) {
           // Remove the value if it already exists
-          onValueChange(currentValues.filter(v => v !== val));
+          onValueChange(currentValues.filter((v) => v !== val));
         } else {
           // Add the value if it doesn't exist
           onValueChange([...currentValues, val]);
@@ -85,11 +96,11 @@ export const Combobox = React.forwardRef<HTMLButtonElement, ComboboxProps>(
     // Get labels for all selected values
     const selectedLabels = React.useMemo(
       () =>
-        selectedValues.map(val => {
-          const match = options?.find(opt => opt.value === val);
+        selectedValues.map((val) => {
+          const match = options?.find((opt) => opt.value === val);
           return match?.label ?? val;
         }),
-      [selectedValues, options]
+      [selectedValues, options],
     );
 
     const handleClear = (event: React.MouseEvent<HTMLElement>) => {
@@ -98,16 +109,20 @@ export const Combobox = React.forwardRef<HTMLButtonElement, ComboboxProps>(
     };
 
     // Display text for the trigger button
-    const displayValue = React.useMemo(() => {
+    const localLabel = React.useMemo(() => {
       if (selectedValues.length === 0) {
         return (
-          <span className="text-muted-foreground font-caption-1 md:font-body-2">{placeholder}</span>
+          <span className="text-muted-foreground font-caption-1 md:font-body-2">
+            {placeholder}
+          </span>
         );
       }
 
       if (!multiple) {
         // Single select mode - show the selected label
-        const selectedOption = options.find(option => option.value === selectedValues[0]);
+        const selectedOption = options.find(
+          (option) => option.value === selectedValues[0],
+        );
         return selectedOption?.label || selectedValues[0];
       } else {
         return selectedLabels.join(', ');
@@ -119,22 +134,23 @@ export const Combobox = React.forwardRef<HTMLButtonElement, ComboboxProps>(
         <PopoverTrigger
           ref={ref}
           className={cn(
-            'selection:bg-primary selection:text-primary-foreground dark:bg-input/30 hover:border-muted-foreground border-input flex h-11 w-full min-w-0 rounded-md border bg-transparent px-4 py-3 font-caption-1 shadow-xs transition-[color,box-shadow] outline-none disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:font-body-1 justify-between',
+            'selection:bg-primary selection:text-primary-foreground dark:bg-input/30 hover:border-muted-foreground border-input font-caption-1 md:font-body-1 flex h-11 w-full min-w-0 justify-between rounded-md border bg-transparent px-4 py-3 shadow-xs transition-[color,box-shadow] outline-none disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50',
             'focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]',
             'aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive',
+            'cursor-pointer',
             error && 'border-red',
-            className
+            className,
           )}
           {...props}
         >
-          <div className="flex-1 truncate text-ellipsis overflow-hidden text-left">
-            {displayValue as string}
-          </div>
+          <p className="flex-1 truncate overflow-hidden text-left text-ellipsis">
+            {label ?? (localLabel as string)}
+          </p>
           <div className="flex items-center gap-1">
-            {selectedValues.length > 0 && (
+            {selectedValues.length > 2 && (
               <div
                 onClick={handleClear}
-                className="rounded-full p-1 hover:bg-accent"
+                className="hover:bg-accent rounded-full p-1"
                 aria-label="Clear selection"
               >
                 <XIcon className="size-3" />
@@ -142,20 +158,25 @@ export const Combobox = React.forwardRef<HTMLButtonElement, ComboboxProps>(
             )}
             <ChevronDown
               className={cn(
-                'size-5 shrink-0 transition-transform duration-200 group-disabled:text-accent group-data-[state=open]:rotate-180 text-neutral-500'
+                'group-disabled:text-accent size-5 shrink-0 text-neutral-500 transition-transform duration-200 group-data-[state=open]:rotate-180',
               )}
             />
           </div>
         </PopoverTrigger>
-        <PopoverContent align="start" className="w-full min-w-[var(--radix-popover-trigger-width)]">
+        <PopoverContent
+          align="start"
+          className="w-full min-w-[var(--radix-popover-trigger-width)]"
+        >
           <Command>
             {searchable && <CommandInput placeholder={t('Common.search')} />}
-            <CommandList className="max-h-80">
+            <CommandList className="no-scrollbar max-h-80">
               <CommandEmpty>
-                <p className="font-body-2 text-muted-foreground">{t('Common.noData')}</p>
+                <p className="font-body-2 text-muted-foreground">
+                  {t('Common.noData')}
+                </p>
               </CommandEmpty>
               <CommandGroup>
-                {options.map(option => {
+                {options.map((option) => {
                   const isSelected = selectedValues.includes(option.value);
                   return (
                     <CommandItem
@@ -166,11 +187,11 @@ export const Combobox = React.forwardRef<HTMLButtonElement, ComboboxProps>(
                       className={cn(
                         'flex items-center justify-between',
                         isSelected && 'bg-accent/50',
-                        option.className
+                        option.className,
                       )}
                     >
                       <span>{option.label}</span>
-                      {isSelected && <Check className="size-4 text-primary" />}
+                      {isSelected && <Check className="text-primary size-4" />}
                     </CommandItem>
                   );
                 })}
@@ -180,7 +201,7 @@ export const Combobox = React.forwardRef<HTMLButtonElement, ComboboxProps>(
         </PopoverContent>
       </Popover>
     );
-  }
+  },
 );
 
 Combobox.displayName = 'Combobox';

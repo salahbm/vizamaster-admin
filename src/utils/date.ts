@@ -1,4 +1,4 @@
-import { format, formatDistance, formatRelative, Locale } from 'date-fns';
+import { Locale, format, formatDistance, formatRelative } from 'date-fns';
 import { enUS, ru } from 'date-fns/locale';
 
 type SupportedLocale = 'en' | 'ru';
@@ -19,7 +19,7 @@ const dateLocales: Record<SupportedLocale, Locale> = {
 export function formatDate(
   date: Date | number,
   formatStr: string,
-  locale: SupportedLocale
+  locale: SupportedLocale,
 ): string {
   return format(date, formatStr, { locale: dateLocales[locale] });
 }
@@ -34,7 +34,7 @@ export function formatDate(
 export function formatDateDistance(
   date: Date | number,
   baseDate: Date | number,
-  locale: SupportedLocale
+  locale: SupportedLocale,
 ): string {
   return formatDistance(date, baseDate, { locale: dateLocales[locale] });
 }
@@ -49,7 +49,7 @@ export function formatDateDistance(
 export function formatDateRelative(
   date: Date | number,
   baseDate: Date | number,
-  locale: SupportedLocale
+  locale: SupportedLocale,
 ): string {
   return formatRelative(date, baseDate, { locale: dateLocales[locale] });
 }

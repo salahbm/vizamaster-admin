@@ -10,6 +10,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+
 import useTranslation from '@/hooks/common/use-translation';
 
 export function LanguageToggle() {
@@ -26,10 +27,16 @@ export function LanguageToggle() {
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         <DropdownMenuItem onClick={() => handleLocale('en')}>
-          {currentLocale === 'en' && <Check className="h-4 w-4 text-primary mr-2" />} English
+          {currentLocale === 'en' && (
+            <Check className="text-primary mr-2 h-4 w-4" />
+          )}{' '}
+          English
         </DropdownMenuItem>
         <DropdownMenuItem onClick={() => handleLocale('ru')}>
-          {currentLocale === 'ru' && <Check className="h-4 w-4 text-primary mr-2" />} Русский
+          {currentLocale === 'ru' && (
+            <Check className="text-primary mr-2 h-4 w-4" />
+          )}{' '}
+          Русский
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
