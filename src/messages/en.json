@@ -30,11 +30,11 @@
     "delete": "Delete",
     "edit": "Edit",
     "create": "Create",
+    "view": "View",
     "search": "Search",
     "noData": "There is no data",
     "date": "Date",
     "time": "Time",
-
     "placeholder": {
       "date": "Select date",
       "time": "Select time",

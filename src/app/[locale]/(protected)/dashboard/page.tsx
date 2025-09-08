@@ -268,58 +268,9 @@ export default function DashboardPage() {
               name="birthday"
               label="Birthday"
               control={form.control}
-              render={({ field }) => (
-                <DatePicker
-                  placeholder="Select birthday"
-                  value={field.value}
-                  onValueChange={field.onChange}
-                />
-              )}
+              render={({ field }) => <DatePicker {...field} />}
             />
-            <FormFields
-              name="country"
-              label="Country"
-              control={form.control}
-              render={({ field }) => (
-                <Input placeholder="Enter country" {...field} />
-              )}
-            />
-            <FormFields
-              name="address"
-              label="Address"
-              control={form.control}
-              render={({ field }) => (
-                <Input placeholder="Enter address" {...field} />
-              )}
-            />
-            <FormFields
-              name="postalCode"
-              label="Postal Code"
-              control={form.control}
-              render={({ field }) => (
-                <Input
-                  type="number"
-                  placeholder="Enter postal code"
-                  {...field}
-                />
-              )}
-            />
-            <FormFields
-              name="city"
-              label="City"
-              control={form.control}
-              render={({ field }) => (
-                <Input placeholder="Enter city" {...field} />
-              )}
-            />
-            <FormFields
-              name="province"
-              label="Province"
-              control={form.control}
-              render={({ field }) => (
-                <Input placeholder="Enter province" {...field} />
-              )}
-            />
+
             <FormFields
               name="photo"
               label="Photo"
@@ -341,12 +292,7 @@ export default function DashboardPage() {
                       name="birthday"
                       label="Birthday"
                       control={form.control}
-                      render={({ field }) => (
-                        <DatePicker
-                          value={field.value}
-                          onValueChange={field.onChange}
-                        />
-                      )}
+                      render={({ field }) => <DatePicker {...field} />}
                     />
                   </div>
                   <div>
@@ -357,11 +303,7 @@ export default function DashboardPage() {
                       name="customFormatDate"
                       control={form.control}
                       render={({ field }) => (
-                        <DatePicker
-                          value={field.value}
-                          onValueChange={field.onChange}
-                          dateFormat="yyyy-MM-dd"
-                        />
+                        <DatePicker {...field} dateFormat="yyyy-MM-dd" />
                       )}
                     />
                   </div>
@@ -374,8 +316,7 @@ export default function DashboardPage() {
                       control={form.control}
                       render={({ field }) => (
                         <DatePicker
-                          value={field.value}
-                          onValueChange={field.onChange}
+                          {...field}
                           minDate={new Date(2023, 0, 1)}
                           maxDate={new Date(2025, 11, 31)}
                         />
@@ -390,12 +331,7 @@ export default function DashboardPage() {
                       name="errorDate"
                       control={form.control}
                       render={({ field, formState }) => (
-                        <DatePicker
-                          value={field.value}
-                          onValueChange={field.onChange}
-                          error={formState.errors.errorDate}
-                          errorMessage="Please select a valid date"
-                        />
+                        <DatePicker {...field} />
                       )}
                     />
                   </div>
@@ -409,12 +345,7 @@ export default function DashboardPage() {
                   label="Date-Time Picker"
                   control={form.control}
                   render={({ field }) => (
-                    <DatePicker
-                      value={field.value}
-                      onValueChange={field.onChange}
-                      variant="date-time"
-                      placeholder="Select appointment date and time"
-                    />
+                    <DatePicker {...field} variant="date-time" />
                   )}
                 />
                 <FormFields
@@ -422,12 +353,7 @@ export default function DashboardPage() {
                   label="Time Picker"
                   control={form.control}
                   render={({ field }) => (
-                    <DatePicker
-                      value={field.value}
-                      onValueChange={field.onChange}
-                      variant="time"
-                      placeholder="Select time"
-                    />
+                    <DatePicker {...field} variant="time" />
                   )}
                 />
                 <FormFields
@@ -435,12 +361,7 @@ export default function DashboardPage() {
                   label="Month Picker"
                   control={form.control}
                   render={({ field }) => (
-                    <DatePicker
-                      value={field.value}
-                      onValueChange={field.onChange}
-                      variant="month"
-                      placeholder="Select month"
-                    />
+                    <DatePicker {...field} variant="month" />
                   )}
                 />
                 <FormFields
@@ -448,12 +369,7 @@ export default function DashboardPage() {
                   label="Year Picker"
                   control={form.control}
                   render={({ field }) => (
-                    <DatePicker
-                      onValueChange={field.onChange}
-                      variant="year"
-                      placeholder="Select year"
-                      {...field}
-                    />
+                    <DatePicker {...field} variant="year" />
                   )}
                 />
                 <FormFields
@@ -461,12 +377,7 @@ export default function DashboardPage() {
                   label="Date Range Picker"
                   control={form.control}
                   render={({ field }) => (
-                    <DatePicker
-                      onValueChange={field.onChange}
-                      variant="range"
-                      placeholder="Select date range"
-                      {...field}
-                    />
+                    <DatePicker {...field} variant="range" />
                   )}
                 />
               </div>

@@ -122,21 +122,25 @@
     @apply flex items-center justify-between;
   }
   .linear-gradient {
-    background: linear-gradient(90deg, var(--primary) 58.94%, var(--secondary) 100%);
+    background: linear-gradient(
+      90deg,
+      var(--primary) 58.94%,
+      var(--secondary) 100%
+    );
     background-clip: text;
     color: transparent;
   }
 
   .card {
-    @apply rounded border bg-card p-4 text-card-foreground shadow-sm;
+    @apply bg-card text-card-foreground rounded border p-4 shadow-sm;
   }
 
   .card-md {
-    @apply rounded-md border bg-card p-4 text-card-foreground shadow-md;
+    @apply bg-card text-card-foreground rounded-md border p-4 shadow-md;
   }
 
   .card-lg {
-    @apply rounded-lg border bg-card p-4 text-card-foreground shadow-lg;
+    @apply bg-card text-card-foreground rounded-lg border p-4 shadow-lg;
   }
 }
 

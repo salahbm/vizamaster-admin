@@ -41,6 +41,7 @@ declare module '@tanstack/react-table' {
   interface ColumnMeta<TData> {
     tooltip?: boolean | TData;
     form?: UseFormReturn<TData, unknown, undefined>;
+    label?: string;
   }
 }
 

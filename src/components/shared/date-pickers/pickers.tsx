@@ -33,7 +33,7 @@ export interface DatePickerProps {
   /** The currently selected date */
   value?: TFieldValues;
   /** Callback function when date is selected */
-  onValueChange?: (
+  onChange?: (
     date: Date | undefined | string | string[] | { from: Date; to?: Date },
   ) => void;
   /** Placeholder text when no date is selected */
@@ -60,7 +60,7 @@ export interface DatePickerProps {
 
 export const DatePicker: React.FC<DatePickerProps> = ({
   value,
-  onValueChange,
+  onChange,
   placeholder = 'placeholder.date',
   disabled = false,
   className,
@@ -76,7 +76,7 @@ export const DatePicker: React.FC<DatePickerProps> = ({
 
   // Handle combined date and time changes
   const handleDateChange = (newDate: Date | undefined) => {
-    handleDateTimeChange(newDate, selectedTime, variant, onValueChange);
+    handleDateTimeChange(newDate, selectedTime, variant, onChange);
   };
 
   // Update time when time input changes
@@ -88,7 +88,7 @@ export const DatePicker: React.FC<DatePickerProps> = ({
     // This prevents infinite loops when value changes due to onValueChange
     if (
       value &&
-      onValueChange &&
+      onChange &&
       selectedTime &&
       selectedTime !== prevSelectedTimeRef.current &&
       value === prevValueRef.current
@@ -96,13 +96,13 @@ export const DatePicker: React.FC<DatePickerProps> = ({
       const newDate = new Date(value as Date);
       const [hours, minutes] = selectedTime.split(':').map(Number);
       newDate.setHours(hours || 0, minutes || 0);
-      onValueChange(newDate);
+      onChange(newDate);
     }
 
     // Update refs
     prevSelectedTimeRef.current = selectedTime;
     prevValueRef.current = value;
-  }, [selectedTime, value, onValueChange]);
+  }, [selectedTime, value, onChange]);
 
   // Get locale for date formatting
   const dateLocale = useDateLocale();
@@ -183,7 +183,7 @@ export const DatePicker: React.FC<DatePickerProps> = ({
         return (
           <MonthPicker
             value={value as Date}
-            onValueChange={onValueChange}
+            onValueChange={onChange}
             minDate={minDate}
             maxDate={maxDate}
           />
@@ -192,7 +192,7 @@ export const DatePicker: React.FC<DatePickerProps> = ({
         return (
           <YearPicker
             value={value as Date}
-            onValueChange={onValueChange}
+            onValueChange={onChange}
             minDate={minDate}
             maxDate={maxDate}
           />
@@ -202,7 +202,7 @@ export const DatePicker: React.FC<DatePickerProps> = ({
           <Calendar
             mode="range"
             selected={getSelectedRange(value)}
-            onSelect={(range) => handleRangeSelection(range, onValueChange)}
+            onSelect={(range) => handleRangeSelection(range, onChange)}
             disabled={(date) =>
               date > (maxDate || new Date()) ||
               date < (minDate || new Date('1900-01-01'))
@@ -216,7 +216,7 @@ export const DatePicker: React.FC<DatePickerProps> = ({
           <Calendar
             mode="single"
             selected={value as Date}
-            onSelect={onValueChange}
+            onSelect={onChange}
             disabled={(date) =>
               date > (maxDate || new Date()) ||
               date < (minDate || new Date('1900-01-01'))
@@ -250,7 +250,7 @@ export const DatePicker: React.FC<DatePickerProps> = ({
         )}
         disabled={disabled}
       >
-        <p className="capitalize"> {getDisplayValue()}</p>
+        {getDisplayValue()}
         {getIcon()}
       </PopoverTrigger>
       <PopoverContent className="w-auto p-0" align="start" sideOffset={5}>

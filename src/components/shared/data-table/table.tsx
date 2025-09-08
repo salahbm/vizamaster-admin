@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useState } from 'react';
+import { useState } from 'react';
 
 import {
   RowSelectionState,
@@ -8,7 +8,6 @@ import {
   getCoreRowModel,
   useReactTable,
 } from '@tanstack/react-table';
-import { ArrowDownAZ, MoveDown, MoveUp } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
 import {
@@ -22,6 +21,7 @@ import {
 
 import { cn } from '@/lib/utils';
 
+import { DataTablePagination } from './pagination';
 import { DataTableProps } from './types';
 
 export function DataTable<TData, TValue>({
@@ -53,10 +53,6 @@ export function DataTable<TData, TValue>({
     columns,
 
     // meta: { t, form },
-
-    manualFiltering: true,
-    manualSorting: true,
-    manualPagination: true,
 
     state: {
       // sorting,
@@ -98,80 +94,70 @@ export function DataTable<TData, TValue>({
     onRowSelectionChange: setRowSelection,
   });
 
-  const renderSortingIcon = useCallback(
-    (sortState: string | false) =>
-      sortState === 'asc' ? (
-        <MoveUp className="size-4.5 min-w-5 shrink-0 text-neutral-500" />
-      ) : sortState === 'desc' ? (
-        <MoveDown className="size-4.5 min-w-5 shrink-0 text-neutral-500" />
-      ) : (
-        <ArrowDownAZ className="size-5 shrink-0 text-neutral-400" />
-      ),
-    [],
-  );
-
   return (
-    <div className={cn('overflow-hidden rounded-md border', className)}>
-      <Table className={tableClassName}>
-        <TableHeader>
-          {config.getHeaderGroups().map((headerGroup) => (
-            <TableRow key={headerGroup.id} className={trHeaderClassName}>
-              {headerGroup.headers.map((header) => {
-                return (
-                  <TableHead
-                    key={header.id}
-                    className={cn(
-                      theadClassName,
-                      header.column.getCanSort() && 'cursor-pointer',
-                    )}
-                    onClick={
-                      header.column.getCanSort()
-                        ? header.column.getToggleSortingHandler()
-                        : undefined
-                    }
-                  >
-                    {!header.isPlaceholder && (
-                      <div className="flex-center group flex gap-x-2">
-                        {/* HEADER */}
-                        {flexRender(
+    <div>
+      <div className={cn('overflow-hidden rounded-md border', className)}>
+        <Table className={tableClassName}>
+          <TableHeader>
+            {config.getHeaderGroups().map((headerGroup) => (
+              <TableRow key={headerGroup.id} className={trHeaderClassName}>
+                {headerGroup.headers.map((header) => {
+                  return (
+                    <TableHead
+                      key={header.id}
+                      className={cn(
+                        theadClassName,
+                        header.column.getCanSort() && 'cursor-pointer',
+                      )}
+                      onClick={
+                        header.column.getCanSort()
+                          ? header.column.getToggleSortingHandler()
+                          : undefined
+                      }
+                    >
+                      {!header.isPlaceholder &&
+                        flexRender(
                           header.column.columnDef.header,
                           header.getContext(),
                         )}
-                        {/* SORTING ICON */}
-                        {header.column.getCanSort() &&
-                          renderSortingIcon(header.column.getIsSorted())}
-                      </div>
-                    )}
-                  </TableHead>
-                );
-              })}
-            </TableRow>
-          ))}
-        </TableHeader>
-        <TableBody className={tbodyClassName}>
-          {config.getRowModel().rows?.length ? (
-            config.getRowModel().rows.map((row) => (
-              <TableRow
-                key={row.id}
-                data-state={row.getIsSelected() && 'selected'}
-                className={trClassName}
-              >
-                {row.getVisibleCells().map((cell) => (
-                  <TableCell key={cell.id} className={tdClassName}>
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </TableCell>
-                ))}
+                    </TableHead>
+                  );
+                })}
               </TableRow>
-            ))
-          ) : (
-            <TableRow className={trClassName}>
-              <TableCell colSpan={columns.length} className="h-24 text-center">
-                {t('Common.noData')}
-              </TableCell>
-            </TableRow>
-          )}
-        </TableBody>
-      </Table>
+            ))}
+          </TableHeader>
+          <TableBody className={tbodyClassName}>
+            {config.getRowModel().rows?.length ? (
+              config.getRowModel().rows.map((row) => (
+                <TableRow
+                  key={row.id}
+                  data-state={row.getIsSelected() && 'selected'}
+                  className={trClassName}
+                >
+                  {row.getVisibleCells().map((cell) => (
+                    <TableCell key={cell.id} className={tdClassName}>
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext(),
+                      )}
+                    </TableCell>
+                  ))}
+                </TableRow>
+              ))
+            ) : (
+              <TableRow className={trClassName}>
+                <TableCell
+                  colSpan={columns.length}
+                  className="h-24 text-center"
+                >
+                  {t('Common.noData')}
+                </TableCell>
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
+      </div>
+      <DataTablePagination table={config} className={paginationClassName} />
     </div>
   );
 }
