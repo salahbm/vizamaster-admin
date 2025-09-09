@@ -16,14 +16,10 @@
     "settings": "Settings",
     "admins": "Admins",
     "profile": "Profile",
-    "preferences": "Preferences"
+    "preferences": "Preferences",
+    "table": "Table"
   },
-  "Navigation": {
-    "home": "Home",
-    "dashboard": "Dashboard",
-    "settings": "Settings",
-    "logout": "Logout"
-  },
+
   "Common": {
     "save": "Save",
     "cancel": "Cancel",

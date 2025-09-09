@@ -50,7 +50,7 @@ const TimeInput = React.forwardRef<HTMLInputElement, TimeInputProps>(
           onChange={handleChange}
           step={60} // seconds step: 60 = 1 minute increments
           className={cn(
-            'border-input placeholder:text-muted-foreground focus-visible:ring-ring w-full rounded-md border bg-transparent px-3 py-2 text-sm shadow-sm transition-colors focus-visible:ring-1 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50',
+            'border-input placeholder:text-muted-foreground focus-visible:ring-ring w-full rounded border bg-transparent px-3 py-2 text-sm shadow-sm transition-colors focus-visible:ring-1 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50',
             className,
           )}
           ref={ref}
@@ -73,7 +73,7 @@ const TimeInput = React.forwardRef<HTMLInputElement, TimeInputProps>(
               type="button"
               onClick={() => handleTimeButtonClick(time)}
               className={cn(
-                'cursor-pointer rounded-md p-2 text-sm font-medium',
+                'cursor-pointer rounded p-2 text-sm font-medium',
                 value === time
                   ? 'bg-primary text-primary-foreground'
                   : 'hover:bg-accent hover:text-accent-foreground',

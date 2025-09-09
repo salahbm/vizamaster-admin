@@ -79,7 +79,7 @@ export function MonthPicker({
               onClick={handlePrevYear}
               disabled={year <= minDate.getFullYear()}
               className={cn(
-                'rounded-md p-2',
+                'rounded p-2',
                 year <= minDate.getFullYear()
                   ? 'cursor-not-allowed opacity-50'
                   : 'hover:bg-accent hover:text-accent-foreground',
@@ -96,7 +96,7 @@ export function MonthPicker({
               onClick={handleNextYear}
               disabled={year >= maxDate.getFullYear()}
               className={cn(
-                'rounded-md p-2',
+                'rounded p-2',
                 year >= maxDate.getFullYear()
                   ? 'cursor-not-allowed opacity-50'
                   : 'hover:bg-accent hover:text-accent-foreground',

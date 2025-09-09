@@ -96,30 +96,45 @@ const columns: ColumnDef<User>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="ID" />
     ),
+    meta: {
+      label: 'ID',
+    },
   },
   {
     accessorKey: 'username',
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Username" />
     ),
+    meta: {
+      label: 'Username',
+    },
   },
   {
     accessorKey: 'fullName',
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Full Name" />
     ),
+    meta: {
+      label: 'Full Name',
+    },
   },
   {
     accessorKey: 'email',
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Email" />
     ),
+    meta: {
+      label: 'Email',
+    },
   },
   {
     accessorKey: 'role',
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Role" />
     ),
+    meta: {
+      label: 'Role',
+    },
   },
   {
     accessorKey: 'status',
@@ -133,10 +148,16 @@ const columns: ColumnDef<User>[] = [
       );
 
       return (
-        <Badge className={`${statusOption?.color} text-white`}>
+        <Badge
+          variant="outline"
+          className={`${statusOption?.color} border-0 text-white`}
+        >
           {statusOption?.label || status}
         </Badge>
       );
+    },
+    meta: {
+      label: 'Status',
     },
   },
   {
@@ -148,6 +169,9 @@ const columns: ColumnDef<User>[] = [
       const date = row.getValue('createdAt') as Date;
       return <div>{format(date, 'PPP')}</div>;
     },
+    meta: {
+      label: 'Created At',
+    },
   },
   {
     accessorKey: 'lastLogin',
@@ -158,12 +182,18 @@ const columns: ColumnDef<User>[] = [
       const date = row.getValue('lastLogin') as Date;
       return <div>{format(date, 'PPP')}</div>;
     },
+    meta: {
+      label: 'Last Login',
+    },
   },
   {
     accessorKey: 'loginCount',
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Login Count" />
     ),
+    meta: {
+      label: 'Login Count',
+    },
   },
   {
     accessorKey: 'isVerified',
@@ -173,22 +203,25 @@ const columns: ColumnDef<User>[] = [
     cell: ({ row }) => {
       const isVerified = row.getValue('isVerified') as boolean;
       return (
-        <div className="flex justify-center">
+        <p className="text-start">
           {isVerified ? (
             <span className="h-2 w-2 rounded-full bg-green-500" />
           ) : (
             <span className="h-2 w-2 rounded-full bg-red-500" />
           )}
-        </div>
+        </p>
       );
+    },
+    meta: {
+      label: 'Verified',
     },
   },
 ];
 
 export function TasksTable() {
   return (
-    <>
+    <div className="space-y-4">
       <DataTable data={data} columns={columns} />
-    </>
+    </div>
   );
 }

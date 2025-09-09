@@ -112,7 +112,7 @@ export const Combobox = React.forwardRef<HTMLButtonElement, ComboboxProps>(
     const localLabel = React.useMemo(() => {
       if (selectedValues.length === 0) {
         return (
-          <span className="text-muted-foreground font-caption-1 md:font-body-2">
+          <span className="text-muted-foreground font-caption-1:font-body-2">
             {placeholder}
           </span>
         );
@@ -134,7 +134,7 @@ export const Combobox = React.forwardRef<HTMLButtonElement, ComboboxProps>(
         <PopoverTrigger
           ref={ref}
           className={cn(
-            'selection:bg-primary selection:text-primary-foreground dark:bg-input/30 hover:border-muted-foreground border-input font-caption-1 md:font-body-1 flex h-11 w-full min-w-0 justify-between rounded-md border bg-transparent px-4 py-3 shadow-xs transition-[color,box-shadow] outline-none disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50',
+            'selection:bg-primary selection:text-primary-foreground dark:bg-input/30 hover:border-muted-foreground border-input font-caption-1 md:font-body-1 group flex h-11 w-full min-w-0 items-center justify-between rounded border bg-transparent px-4 py-3 transition-[color,box-shadow] outline-none disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50',
             'focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]',
             'aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive',
             'cursor-pointer',

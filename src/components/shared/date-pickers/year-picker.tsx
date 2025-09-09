@@ -91,7 +91,7 @@ export function YearPicker({
               onClick={handlePrevYearRange}
               disabled={isPrevDisabled}
               className={cn(
-                'rounded-md p-2',
+                'rounded p-2',
                 isPrevDisabled
                   ? 'cursor-not-allowed opacity-50'
                   : 'hover:bg-accent hover:text-accent-foreground',
@@ -108,7 +108,7 @@ export function YearPicker({
               onClick={handleNextYearRange}
               disabled={isNextDisabled}
               className={cn(
-                'rounded-md p-2',
+                'rounded p-2',
                 isNextDisabled
                   ? 'cursor-not-allowed opacity-50'
                   : 'hover:bg-accent hover:text-accent-foreground',

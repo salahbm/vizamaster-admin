@@ -1,4 +1,8 @@
-import type { Table } from '@tanstack/react-table';
+'use client';
+
+import { useCallback, useMemo } from 'react';
+
+import { Table } from '@tanstack/react-table';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
@@ -6,102 +10,138 @@ import { Combobox } from '@/components/ui/combobox';
 
 import { cn } from '@/lib/utils';
 
-interface DataTablePaginationProps<TData> extends React.ComponentProps<'div'> {
-  table: Table<TData>;
-  pageSizeOptions?: number[];
-}
-
-export function DataTablePagination<TData>({
+export default function Pagination<TData>({
   table,
-  pageSizeOptions = [10, 20, 30, 40, 50],
   className,
-  ...props
-}: DataTablePaginationProps<TData>) {
-  const pageIndex = table.getState().pagination.pageIndex;
-  const pageCount = table.getPageCount();
+  sizeOptions = [10, 20, 50, 100],
+}: {
+  table: Table<TData>;
+  className?: string;
+  sizeOptions?: number[];
+}) {
+  const sizesArray = useMemo(() => {
+    const set = new Set([...sizeOptions, table.getState().pagination.pageSize]);
+    return Array.from(set).sort((a, b) => a - b);
+  }, [table, sizeOptions]);
 
-  const getPages = () => {
-    const pages: (number | string)[] = [];
+  const currentPage = table.getState().pagination.pageIndex;
+  const pageCount = table.getPageCount();
+  const currentPageSize = table.getState().pagination.pageSize;
+
+  const handlePageChange = useCallback(
+    (newPage: number) => {
+      // Ensure we're using the same indexing convention throughout the app
+      // The table uses 0-based indexing internally
+      table.setPageIndex(newPage); // stays 0-based
+    },
+    [table],
+  );
+
+  const handlePageSizeChange = useCallback(
+    (size: number) => {
+      table.setPageSize(size);
+    },
+    [table],
+  );
+
+  const renderButton = useCallback(
+    (i: number) => (
+      <Button
+        key={i}
+        type="button"
+        onClick={() => handlePageChange(i)}
+        variant={currentPage === i ? 'default' : 'ghost'}
+        className="font-body-2 size-6 rounded"
+        size="icon"
+      >
+        {i + 1} {/* display as 1-based in UI only */}
+      </Button>
+    ),
+    [handlePageChange, currentPage],
+  );
+
+  const renderPagination = useMemo(() => {
+    const pages: React.ReactNode[] = [];
+
+    // Case 1: total pages <= 5 → show all pages directly
     if (pageCount <= 5) {
-      for (let i = 0; i < pageCount; i++) pages.push(i);
-    } else {
-      if (pageIndex > 2) {
-        pages.push(0, 1, '...');
+      for (let i = 0; i < pageCount; i++) pages.push(renderButton(i));
+    }
+
+    // Case 2: user is at the very beginning (page 0,1,2)
+    // → show first 5 pages, then dots, then last page
+    else if (currentPage <= 2) {
+      for (let i = 0; i < 5; i++) pages.push(renderButton(i));
+      pages.push(<span key="dots">...</span>);
+      pages.push(renderButton(pageCount - 1));
+    }
+
+    // Case 3: user is in the middle (not near start/end)
+    // → show first page, dots, currentPage-1 .. currentPage+1, dots, last page
+    else if (currentPage < pageCount - 3) {
+      pages.push(renderButton(0));
+      pages.push(<span key="dots-left">...</span>);
+      for (let i = currentPage - 1; i <= currentPage + 1; i++) {
+        pages.push(renderButton(i));
       }
-      const start = Math.max(2, pageIndex - 1);
-      const end = Math.min(pageCount - 3, pageIndex + 1);
-      for (let i = start; i <= end; i++) pages.push(i);
-      if (pageIndex < pageCount - 3) {
-        pages.push('...', pageCount - 2, pageCount - 1);
+      pages.push(<span key="dots-right">...</span>);
+      pages.push(renderButton(pageCount - 1));
+    }
+
+    // Case 4: user is near the end (last 3 pages)
+    // → show first page, dots, last 5 pages
+    else {
+      pages.push(renderButton(0));
+      pages.push(<span key="dots">...</span>);
+      for (let i = pageCount - 5; i < pageCount; i++) {
+        pages.push(renderButton(i));
       }
     }
+
     return pages;
-  };
+  }, [currentPage, pageCount, renderButton]);
 
   return (
     <div
       className={cn(
-        'mt-5 flex w-full items-center justify-between gap-4 overflow-auto',
+        'flex w-full items-center justify-between pt-5 pb-6',
         className,
       )}
-      {...props}
     >
-      {/* Page size */}
-
       <Combobox
-        value={`${table.getState().pagination.pageSize}`}
-        onValueChange={(value) => table.setPageSize(Number(value))}
-        options={pageSizeOptions.map((option) => ({
-          value: option.toString(),
-          label: option.toString(),
+        value={currentPageSize.toString()}
+        onValueChange={(val) => handlePageSizeChange(Number(val))}
+        className="font-caption-1 h-8 w-fit gap-2 rounded py-0 pr-1 pl-2"
+        options={sizesArray.map((size) => ({
+          label: size.toString(),
+          value: size.toString(),
         }))}
-        placeholder={table.getState().pagination.pageSize?.toString()}
-        className="flex-center w-fit gap-2 px-2 py-1"
       />
 
-      {/* <div className="text-muted-foreground text-sm whitespace-nowrap">
-        {table.getFilteredSelectedRowModel().rows.length} of{' '}
-        {table.getFilteredRowModel().rows.length} row(s) selected.
-      </div> */}
-
-      <div className="flex items-center gap-4">
-        {/* Pagination Numbers */}
-        <div className="flex items-center space-x-1">
-          <Button
-            variant="outline"
-            size="icon"
-            className="size-8"
-            onClick={() => table.previousPage()}
-            disabled={!table.getCanPreviousPage()}
-          >
-            <ChevronLeft />
-          </Button>
-          {getPages().map((p, i) =>
-            p === '...' ? (
-              <span key={i} className="px-2">
-                ...
-              </span>
-            ) : (
-              <Button
-                key={p}
-                variant={pageIndex === p ? 'default' : 'outline'}
-                size="sm"
-                onClick={() => table.setPageIndex(p as number)}
-              >
-                {(p as number) + 1}
-              </Button>
-            ),
-          )}
-          <Button
-            variant="outline"
-            size="icon"
-            className="size-8"
-            onClick={() => table.nextPage()}
-            disabled={!table.getCanNextPage()}
-          >
-            <ChevronRight />
-          </Button>
-        </div>
+      <div className="flex items-center justify-end gap-2">
+        <Button
+          type="button"
+          variant="ghost"
+          size="icon"
+          className="size-6 rounded"
+          onClick={() => handlePageChange(currentPage - 1)}
+          disabled={currentPage === 0}
+          title="Previous page"
+        >
+          <ChevronLeft className="size-5" />
+        </Button>
+        {renderPagination}
+        <Button
+          type="button"
+          variant="ghost"
+          size="icon"
+          className="size-6 rounded"
+          onClick={() => handlePageChange(currentPage + 1)}
+          disabled={currentPage >= pageCount - 1}
+          title="Next page"
+        >
+          <ChevronRight className="size-5" />
+        </Button>
       </div>
     </div>
   );

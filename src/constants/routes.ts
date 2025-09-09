@@ -10,6 +10,7 @@ export const routes = {
   profile: '/settings/profile',
   admins: '/settings/admins',
   preferences: '/settings/preferences',
+  table: '/table',
 };
 
 export interface SideNavItem {
@@ -34,6 +35,11 @@ export const SIDENAV: SideNavItem[] = [
   {
     href: routes.documents,
     label: 'documents',
+    icon: 'FileText',
+  },
+  {
+    href: routes.table,
+    label: 'table',
     icon: 'FileText',
   },
   {

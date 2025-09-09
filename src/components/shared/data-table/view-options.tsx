@@ -3,7 +3,7 @@
 import * as React from 'react';
 
 import type { Table } from '@tanstack/react-table';
-import { Check, ChevronsUpDown, Settings2 } from 'lucide-react';
+import { Check, Dot, Settings2 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
 import { Button } from '@/components/ui/button';
@@ -42,6 +42,8 @@ export function DataTableViewOptions<TData>({
     [table],
   );
 
+  const isAnyColumnHidden = columns.some((column) => !column.getIsVisible());
+
   return (
     <Popover>
       <PopoverTrigger asChild>
@@ -50,11 +52,13 @@ export function DataTableViewOptions<TData>({
           role="combobox"
           variant="outline"
           size="sm"
-          className="ml-auto hidden h-8 lg:flex"
+          className="relative ml-auto h-8 border-none shadow-none"
         >
           <Settings2 />
+          {isAnyColumnHidden && (
+            <Dot className="absolute top-0 -right-1 size-6 -translate-y-1 animate-pulse text-red-500" />
+          )}
           {t('Common.view')}
-          <ChevronsUpDown className="ml-auto opacity-50" />
         </Button>
       </PopoverTrigger>
       <PopoverContent align="end" className="w-44 p-0">

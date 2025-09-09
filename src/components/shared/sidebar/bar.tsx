@@ -77,14 +77,14 @@ const SidebarNav: FC = () => {
     if (activeParent?.label && !expanded.includes(activeParent.label)) {
       setExpanded((prev) => [...prev, activeParent.label]);
     }
-  }, [activeParent?.label]);
+  }, [activeParent?.label, expanded]);
 
   const onAccordionChange = (value: string | string[]) =>
     setExpanded(value ? (Array.isArray(value) ? value : [value]) : []);
 
   const navItemClasses = (isActive: boolean) =>
     cn(
-      'flex items-center gap-2 rounded-md px-4 py-3 w-full duration-300 cursor-pointer transition-colors truncate hover:bg-accent hover:text-sidebar-accent-foreground',
+      'flex items-center gap-2 rounded px-4 py-3 w-full duration-300 cursor-pointer transition-colors truncate hover:bg-accent hover:text-sidebar-accent-foreground',
       isActive
         ? 'bg-sidebar-primary/10 text-sidebar-primary font-medium hover:bg-sidebar-primary/20'
         : 'text-sidebar-foreground',
