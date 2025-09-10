@@ -21,9 +21,9 @@ import {
 } from '@tanstack/react-table';
 import { type UseQueryStateOptions, parseAsInteger, useQueryState } from 'nuqs';
 
-import { getSortingStateParser } from '@/lib/parser';
+import { getSortingStateParser } from '@/lib/data-table-func';
 
-import type { ExtendedColumnSort } from '@/types/data-table';
+import { ExtendedColumnSort } from '@/types/data-table';
 
 const PAGE_KEY = 'page';
 const SIZE_KEY = 'size';
@@ -101,6 +101,7 @@ export function useDataTable<TData>(props: UseDataTableProps<TData>) {
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>(initialState?.columnVisibility ?? {});
 
+  // PAGINATION
   const [page, setPage] = useQueryState(
     PAGE_KEY,
     parseAsInteger.withOptions(queryStateOptions).withDefault(1),
@@ -133,6 +134,7 @@ export function useDataTable<TData>(props: UseDataTableProps<TData>) {
     [pagination, setPage, setPerPage],
   );
 
+  // SORTING
   const columnIds = React.useMemo(() => {
     return new Set(
       columns.map((column) => column.id).filter(Boolean) as string[],
@@ -141,7 +143,7 @@ export function useDataTable<TData>(props: UseDataTableProps<TData>) {
 
   const [sorting, setSorting] = useQueryState(
     SORT_KEY,
-    getSortingStateParser<TData>(columnIds)
+    getSortingStateParser(columnIds)
       .withOptions(queryStateOptions)
       .withDefault(initialState?.sorting ?? []),
   );
@@ -158,6 +160,7 @@ export function useDataTable<TData>(props: UseDataTableProps<TData>) {
     [sorting, setSorting],
   );
 
+  // TABLE
   const table = useReactTable({
     ...tableProps,
     data,
@@ -176,6 +179,7 @@ export function useDataTable<TData>(props: UseDataTableProps<TData>) {
     },
 
     enableRowSelection: true,
+    enableColumnPinning: true,
     manualPagination: true,
     manualSorting: true,
     manualFiltering: true,

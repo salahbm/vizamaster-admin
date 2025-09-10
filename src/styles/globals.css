@@ -5,6 +5,7 @@
 @import './common.css';
 @import './fonts.css';
 @import './inputs.css';
+@import './animations.css';
 
 @custom-variant dark (&:is(.dark *));
 
@@ -144,13 +145,6 @@
 
   .card-lg {
     @apply bg-card text-card-foreground rounded-lg border p-4 shadow-lg;
-  }
-
-  .animate-spin-once {
-    @apply animate-spin;
-    animation-duration: 1s;
-    animation-fill-mode: forwards;
-    animation-iteration-count: 1;
   }
 }
 

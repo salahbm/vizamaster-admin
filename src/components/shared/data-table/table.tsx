@@ -12,11 +12,13 @@ import {
   TableRow,
 } from '@/components/ui/table';
 
+import { getCommonPinningStyles } from '@/lib/data-table-func';
 import { cn } from '@/lib/utils';
+
+import { DataTableProps } from '@/types/data-table';
 
 import Pagination from './pagination';
 import { DataTableResetSortings } from './reset-sortings';
-import { DataTableProps } from './types';
 import { DataTableViewOptions } from './view-options';
 
 export function DataTable<TData>({
@@ -30,12 +32,7 @@ export function DataTable<TData>({
   trClassName,
   paginationClassName,
 }: DataTableProps<TData>) {
-  // Translations
   const t = useTranslations();
-
-  /* *****************************************************************
-   * TABLE tableURATION
-   * ***************************************************************** */
 
   return (
     <div>
@@ -59,11 +56,9 @@ export function DataTable<TData>({
                         theadClassName,
                         header.column.getCanSort() && 'cursor-pointer',
                       )}
-                      onClick={
-                        header.column.getCanSort()
-                          ? header.column.getToggleSortingHandler()
-                          : undefined
-                      }
+                      style={{
+                        ...getCommonPinningStyles({ column: header.column }),
+                      }}
                     >
                       {!header.isPlaceholder &&
                         flexRender(
@@ -85,7 +80,13 @@ export function DataTable<TData>({
                   className={trClassName}
                 >
                   {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id} className={tdClassName}>
+                    <TableCell
+                      key={cell.id}
+                      className={tdClassName}
+                      style={{
+                        ...getCommonPinningStyles({ column: cell.column }),
+                      }}
+                    >
                       {flexRender(
                         cell.column.columnDef.cell,
                         cell.getContext(),
@@ -98,7 +99,7 @@ export function DataTable<TData>({
               <TableRow className={trClassName}>
                 <TableCell
                   colSpan={table.getAllColumns().length}
-                  className="h-24 text-center"
+                  className="h-48 text-center"
                 >
                   {t('Common.noData')}
                 </TableCell>

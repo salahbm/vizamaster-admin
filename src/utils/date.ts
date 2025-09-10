@@ -55,10 +55,61 @@ export function formatDateRelative(
 }
 
 /**
- * Get the full locale code for a given locale
- * @param locale The locale code (e.g., 'en', 'ru')
- * @returns The full locale code (e.g., 'en-US', 'ru-RU')
+ * Convert a date to an ISO string
+ * @param date The date to convert
+ * @returns The ISO string representation of the date
  */
-export function getFullLocale(locale: SupportedLocale): string {
-  return locale;
+export function dateToISOString(date: Date): string {
+  if (!date) return '';
+  return date.toISOString();
 }
+
+/**
+ * Convert an ISO string to a date
+ * @param isoString The ISO string to convert
+ * @returns The date representation of the ISO string
+ */
+export const isoStringToDate = (isoString: string): Date => {
+  if (!isoString) return new Date();
+  return new Date(isoString);
+};
+
+/**
+ * Get the year from a date
+ * @param date The date to get the year from
+ * @returns The year of the date
+ */
+export const dateToYear = (date: Date): number => {
+  if (!date) return 0;
+  return date.getFullYear();
+};
+
+/**
+ * Get the year from a date
+ * @param year The year to get the date from
+ * @returns The date of the year
+ */
+export const yearToDate = (year: number): Date => {
+  if (!year) return new Date();
+  return new Date(year, 0, 1);
+};
+
+/**
+ * Get the month from a date
+ * @param date The date to get the month from
+ * @returns The month of the date
+ */
+export const dateToMonth = (date: Date): number => {
+  if (!date) return 0;
+  return date.getMonth();
+};
+
+/**
+ * Get the month from a date
+ * @param month The month to get the date from
+ * @returns The date of the month
+ */
+export const monthToDate = (month: number): Date => {
+  if (!month) return new Date();
+  return new Date(month, 0, 1);
+};

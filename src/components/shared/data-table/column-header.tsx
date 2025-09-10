@@ -8,10 +8,10 @@ import {
   EyeOff,
   X,
 } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 import {
   DropdownMenu,
-  DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
@@ -31,6 +31,8 @@ export function DataTableColumnHeader<TData, TValue>({
   className,
   ...props
 }: DataTableColumnHeaderProps<TData, TValue>) {
+  const t = useTranslations();
+
   if (!column.getCanSort() && !column.getCanHide()) {
     return <div className={cn(className)}>{title}</div>;
   }
@@ -57,42 +59,44 @@ export function DataTableColumnHeader<TData, TValue>({
       <DropdownMenuContent align="start" className="w-28">
         {column.getCanSort() && (
           <>
-            <DropdownMenuCheckboxItem
-              className="[&_svg]:text-muted-foreground relative pr-8 pl-2 [&>span:first-child]:right-2 [&>span:first-child]:left-auto"
-              checked={column.getIsSorted() === 'asc'}
+            <DropdownMenuItem
+              className="text-accent-foreground gap-1.5"
+              disabled={column.getIsSorted() === 'asc'}
               onClick={() => column.toggleSorting(false)}
             >
-              <ChevronUp />
+              <ChevronUp className="size-5" />
               Asc
-            </DropdownMenuCheckboxItem>
-            <DropdownMenuCheckboxItem
-              className="[&_svg]:text-muted-foreground relative pr-8 pl-2 [&>span:first-child]:right-2 [&>span:first-child]:left-auto"
-              checked={column.getIsSorted() === 'desc'}
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              className="text-accent-foreground gap-1.5"
+              disabled={column.getIsSorted() === 'desc'}
               onClick={() => column.toggleSorting(true)}
             >
-              <ChevronDown />
+              <ChevronDown className="size-5" />
               Desc
-            </DropdownMenuCheckboxItem>
+            </DropdownMenuItem>
             {column.getIsSorted() && (
               <DropdownMenuItem
-                className="[&_svg]:text-muted-foreground pl-2"
+                className="text-accent-foreground gap-1.5"
                 onClick={() => column.clearSorting()}
               >
-                <X />
-                Reset
+                <X className="size-5" />
+                {t('Common.reset')}
               </DropdownMenuItem>
             )}
           </>
         )}
         {column.getCanHide() && (
-          <DropdownMenuCheckboxItem
-            className="[&_svg]:text-muted-foreground relative pr-8 pl-2 [&>span:first-child]:right-2 [&>span:first-child]:left-auto"
-            checked={!column.getIsVisible()}
+          <DropdownMenuItem
+            className="text-accent-foreground gap-1.5"
+            disabled={!column.getIsVisible()}
             onClick={() => column.toggleVisibility(false)}
           >
-            <EyeOff />
-            Hide
-          </DropdownMenuCheckboxItem>
+            <span className="p-0.5">
+              <EyeOff className="size-4.5" />
+            </span>
+            {t('Common.hide')}
+          </DropdownMenuItem>
         )}
       </DropdownMenuContent>
     </DropdownMenu>

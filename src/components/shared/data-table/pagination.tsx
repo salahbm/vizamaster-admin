@@ -120,7 +120,7 @@ export default function Pagination<TData>({
           disabled={currentPage === 0}
           title="Previous page"
         >
-          <ChevronLeft className="size-5" />
+          <ChevronLeft className="text-muted-foreground size-5" />
         </Button>
         {renderPagination}
         <Button
@@ -132,7 +132,7 @@ export default function Pagination<TData>({
           disabled={currentPage >= pageCount - 1}
           title="Next page"
         >
-          <ChevronRight className="size-5" />
+          <ChevronRight className="text-muted-foreground size-5" />
         </Button>
       </div>
     </div>

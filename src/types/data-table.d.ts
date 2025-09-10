@@ -1,42 +1,46 @@
-import type { ColumnSort, Row, RowData } from '@tanstack/react-table';
+import { RowData, type Table as TanstackTable } from '@tanstack/react-table';
+import { UseFormReturn } from 'react-hook-form';
 
-import type { FilterItemSchema } from '@/lib/parsers';
+export interface DataTableProps<TData> {
+  table: TanstackTable<TData>;
 
-import type { DataTableConfig } from '@/config/data-table';
+  // classNames
+  className?: string;
+  tbodyClassName?: string;
+  tableClassName?: string;
+  theadClassName?: string;
+  trHeaderClassName?: string;
+  tdClassName?: string;
+  trClassName?: string;
+  paginationClassName?: string;
 
-declare module '@tanstack/react-table' {
-  // biome-ignore lint/correctness/noUnusedVariables: TValue is used in the ColumnMeta interface
-  interface ColumnMeta<TData extends RowData, TValue> {
-    label?: string;
-    placeholder?: string;
-    variant?: FilterVariant;
-    options?: Option[];
-    range?: [number, number];
-    unit?: string;
-    icon?: React.FC<React.SVGProps<SVGSVGElement>>;
+  // form control
+  form?: UseFormReturn<TData>;
+}
+
+// Header Intl Cell
+// Extend TableMeta to support `t` property
+declare module '@tanstack/table-core' {
+  interface TableMeta<TData extends RowData> {
+    t?: (_key: string, _data?: TData) => string; // Now TData is being used
+    form?: UseFormReturn<TData, unknown, undefined>;
+    includePaginationReset?: boolean;
   }
 }
 
-export interface Option {
-  label: string;
-  value: string;
-  count?: number;
-  icon?: React.FC<React.SVGProps<SVGSVGElement>>;
+// Tooltip
+// Extend ColumnDef to support `tooltip` property
+declare module '@tanstack/react-table' {
+  interface ColumnMeta<TData> {
+    tooltip?: boolean | TData;
+    form?: UseFormReturn<TData, unknown, undefined>;
+    label?: string;
+  }
 }
 
-export type FilterOperator = DataTableConfig['operators'][number];
-export type FilterVariant = DataTableConfig['filterVariants'][number];
-export type JoinOperator = DataTableConfig['joinOperators'][number];
+// ****************************************************************
 
-export interface ExtendedColumnSort<TData> extends Omit<ColumnSort, 'id'> {
+export interface ExtendedColumnSort<TData> {
   id: Extract<keyof TData, string>;
-}
-
-export interface ExtendedColumnFilter<TData> extends FilterItemSchema {
-  id: Extract<keyof TData, string>;
-}
-
-export interface DataTableRowAction<TData> {
-  row: Row<TData>;
-  variant: 'update' | 'delete';
+  desc: boolean;
 }

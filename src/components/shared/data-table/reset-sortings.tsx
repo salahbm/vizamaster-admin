@@ -66,7 +66,7 @@ export function DataTableResetSortings<TData>({
       className="group relative"
       onClick={resetSortings}
     >
-      <RotateCcw className="group-focus:animate-spin-once" />
+      <RotateCcw className="group-focus-within:animate-spin-once" />
       {isColumnSorted && (
         <Dot className="absolute top-0 -right-1 size-6 -translate-y-1 animate-pulse text-red-500" />
       )}
