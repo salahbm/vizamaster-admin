@@ -48,7 +48,7 @@ export default async function IndexLayout({
 
   return (
     <html lang={locale} suppressHydrationWarning>
-      <body className={cn('overflow-hidden', manrope.className)}>
+      <body className={cn('overflow-hidden font-sans', manrope.className)}>
         <Suspense fallback={<Loader />}>
           <RootLayout>{children}</RootLayout>
         </Suspense>

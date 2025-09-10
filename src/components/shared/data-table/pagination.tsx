@@ -109,8 +109,8 @@ export default function Pagination<TData>({
       )}
     >
       <Combobox
-        value={currentPageSize.toString()}
-        onValueChange={(val) => handlePageSizeChange(Number(val))}
+        value={`${table.getState().pagination.pageSize}`}
+        onValueChange={(val) => table.setPageSize(Number(val))}
         className="font-caption-1 h-8 w-fit gap-2 rounded py-0 pr-1 pl-2"
         options={sizesArray.map((size) => ({
           label: size.toString(),

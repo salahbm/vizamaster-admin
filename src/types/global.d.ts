@@ -1,6 +1,8 @@
 export type TFieldValues =
   | string
   | number
+  | boolean
+  | 'intermediate'
   | Date
   | string[]
   | undefined

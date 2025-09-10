@@ -1,5 +1,7 @@
 import { PropsWithChildren } from 'react';
 
+import { NuqsAdapter } from 'nuqs/adapters/next/app';
+
 import Internationalization from './intl';
 import IntlErrorHandlingProvider from './intl-error';
 import ThemeProvider from './theme';
@@ -10,7 +12,7 @@ export default async function RootLayout({ children }: PropsWithChildren) {
     <ThemeProvider>
       <Internationalization>
         <IntlErrorHandlingProvider>
-          {children}
+          <NuqsAdapter>{children}</NuqsAdapter>
           <ZodInitProvider />
         </IntlErrorHandlingProvider>
       </Internationalization>

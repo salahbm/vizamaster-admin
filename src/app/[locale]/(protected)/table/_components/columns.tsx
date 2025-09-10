@@ -3,17 +3,9 @@
 import { ColumnDef } from '@tanstack/react-table';
 import { format } from 'date-fns';
 
-import { DataTable } from '@/components/shared/data-table';
 import { DataTableColumnHeader } from '@/components/shared/data-table/column-header';
 import { Badge } from '@/components/ui/badge';
 import { Checkbox } from '@/components/ui/checkbox';
-
-import { useDataTable } from '@/hooks/common/use-data-table';
-
-import { statusOptions } from './columns';
-import { getPaginatedData } from './data';
-
-// Generate all data (this would typically come from an API)
 
 type User = {
   id: string;
@@ -26,6 +18,17 @@ type User = {
   lastLogin: Date;
   loginCount: number;
 };
+
+// Define possible status values and their colors
+const statusOptions = [
+  { value: 'active', label: 'Active', color: 'bg-green-500' },
+  { value: 'pending', label: 'Pending', color: 'bg-yellow-500' },
+  { value: 'inactive', label: 'Inactive', color: 'bg-gray-500' },
+  { value: 'blocked', label: 'Blocked', color: 'bg-red-500' },
+];
+
+// Define possible roles
+const roles = ['Admin', 'User', 'Editor', 'Viewer', 'Moderator'];
 
 const columns: ColumnDef<User>[] = [
   {
@@ -156,24 +159,4 @@ const columns: ColumnDef<User>[] = [
   },
 ];
 
-export function TasksTable() {
-  const { data, paging } = getPaginatedData({
-    page: 1,
-    size: 10,
-    sorting: [{ id: 'id', desc: false }],
-  });
-  const { table } = useDataTable({
-    data,
-    columns,
-    pageCount: paging.totalPages,
-    initialState: {
-      sorting: [{ id: 'id', desc: true }],
-      columnPinning: { left: ['select'] },
-    },
-    getRowId: (originalRow) => originalRow.id,
-    shallow: false,
-    clearOnDefault: true,
-  });
-
-  return <DataTable table={table} />;
-}
+export { columns, roles, statusOptions, type User };

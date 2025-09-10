@@ -1,11 +1,8 @@
-import { ColumnDef, RowData } from '@tanstack/react-table';
+import { RowData, type Table as TanstackTable } from '@tanstack/react-table';
 import { UseFormReturn } from 'react-hook-form';
 
-export interface DataTableProps<TData, TValue> {
-  columns:
-    | ColumnDef<TData, TValue>[]
-    | Array<{ accessorKey: string; header: string; tooltip?: boolean }>;
-  data: TData[];
+export interface DataTableProps<TData> {
+  table: TanstackTable<TData>;
 
   // classNames
   className?: string;
@@ -16,11 +13,6 @@ export interface DataTableProps<TData, TValue> {
   tdClassName?: string;
   trClassName?: string;
   paginationClassName?: string;
-
-  // events
-  selectable?: boolean;
-  enableMultiRowSelection?: boolean;
-  onClick?: (_data: TData) => void;
 
   // form control
   form?: UseFormReturn<TData>;

@@ -1,17 +1,6 @@
 'use client';
 
-import { useState } from 'react';
-
-import {
-  PaginationState,
-  RowSelectionState,
-  SortingState,
-  flexRender,
-  getCoreRowModel,
-  getPaginationRowModel,
-  getSortedRowModel,
-  useReactTable,
-} from '@tanstack/react-table';
+import { flexRender } from '@tanstack/react-table';
 import { useTranslations } from 'next-intl';
 
 import {
@@ -29,9 +18,8 @@ import Pagination from './pagination';
 import { DataTableProps } from './types';
 import { DataTableViewOptions } from './view-options';
 
-export function DataTable<TData, TValue>({
-  columns,
-  data,
+export function DataTable<TData>({
+  table,
   className,
   tbodyClassName,
   tableClassName,
@@ -40,69 +28,23 @@ export function DataTable<TData, TValue>({
   tdClassName,
   trClassName,
   paginationClassName,
-  selectable,
-  enableMultiRowSelection,
-  onClick,
-  form,
-}: DataTableProps<TData, TValue>) {
-  const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
-  const [sorting, setSorting] = useState<SortingState>([]);
-  const [pagination, setPagination] = useState<PaginationState>({
-    pageIndex: 0,
-    pageSize: 10,
-  });
-
+}: DataTableProps<TData>) {
   // Translations
   const t = useTranslations();
 
   /* *****************************************************************
-   * TABLE CONFIGURATION
+   * TABLE tableURATION
    * ***************************************************************** */
-  const config = useReactTable({
-    data,
-    columns,
-
-    // meta: { t, form },
-
-    state: {
-      sorting,
-      pagination,
-      rowSelection,
-    },
-
-    defaultColumn: {
-      minSize: 75,
-      maxSize: Number.MAX_SAFE_INTEGER,
-      size: 200,
-    },
-    columnResizeMode: 'onChange',
-    columnResizeDirection: 'rtl',
-
-    enableSorting: true,
-    enableMultiSort: false,
-    renderFallbackValue: '-',
-
-    onPaginationChange: setPagination,
-    onSortingChange: setSorting,
-    getCoreRowModel: getCoreRowModel(),
-    getSortedRowModel: getSortedRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-
-    enableRowSelection: selectable,
-    enableMultiRowSelection,
-    // getRowId: (row) => row.uuid,
-    onRowSelectionChange: setRowSelection,
-  });
 
   return (
     <div>
       <div className="mb-4 flex items-center justify-end">
-        <DataTableViewOptions table={config} />
+        <DataTableViewOptions table={table} />
       </div>
       <div className={cn('overflow-hidden rounded-md border', className)}>
         <Table className={tableClassName}>
           <TableHeader>
-            {config.getHeaderGroups().map((headerGroup) => (
+            {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id} className={trHeaderClassName}>
                 {headerGroup.headers.map((header) => {
                   return (
@@ -130,8 +72,8 @@ export function DataTable<TData, TValue>({
             ))}
           </TableHeader>
           <TableBody className={tbodyClassName}>
-            {config.getRowModel().rows?.length ? (
-              config.getRowModel().rows.map((row) => (
+            {table.getRowModel().rows?.length ? (
+              table.getRowModel().rows.map((row) => (
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && 'selected'}
@@ -150,7 +92,7 @@ export function DataTable<TData, TValue>({
             ) : (
               <TableRow className={trClassName}>
                 <TableCell
-                  colSpan={columns.length}
+                  colSpan={table.getAllColumns().length}
                   className="h-24 text-center"
                 >
                   {t('Common.noData')}
@@ -160,7 +102,7 @@ export function DataTable<TData, TValue>({
           </TableBody>
         </Table>
       </div>
-      <Pagination table={config} className={paginationClassName} />
+      <Pagination table={table} className={paginationClassName} />
     </div>
   );
 }
