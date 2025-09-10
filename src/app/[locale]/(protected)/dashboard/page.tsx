@@ -5,7 +5,6 @@ import { useTranslations } from 'next-intl';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
-import { DataTable } from '@/components/shared/data-table';
 import { DatePicker } from '@/components/shared/date-pickers';
 import { FormFields } from '@/components/shared/form-fields';
 import { Button } from '@/components/ui/button';
@@ -13,34 +12,6 @@ import { Combobox } from '@/components/ui/combobox';
 import { Form } from '@/components/ui/form';
 import { Input, PasswordInput, TelephoneInput } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-
-const columns = [
-  {
-    accessorKey: 'username',
-    header: 'Username',
-  },
-  {
-    accessorKey: 'email',
-    header: 'Email',
-  },
-  {
-    accessorKey: 'password',
-    header: 'Password',
-  },
-];
-
-const data = [
-  {
-    username: 'John Doe',
-    email: 'john.doe@example.com',
-    password: 'password',
-  },
-  {
-    username: 'Jane Doe',
-    email: 'jane.doe@example.com',
-    password: 'password',
-  },
-];
 
 const schema = z.object({
   username: z.string().refine((value) => value.trim() !== '', {
@@ -112,8 +83,6 @@ export default function DashboardPage() {
     console.log(data);
   };
 
-  console.log(form.getValues());
-
   return (
     <div className="">
       <h1 className="mb-6 text-3xl font-bold">Theme Demo</h1>
@@ -134,6 +103,24 @@ export default function DashboardPage() {
                 <Button variant="ghost">Ghost</Button>
                 <Button variant="destructive">Destructive</Button>
                 <Button variant="link">Link</Button>
+                <Button variant="default" size="dynamic">
+                  Default
+                </Button>
+                <Button variant="secondary" size="dynamic">
+                  Secondary
+                </Button>
+                <Button variant="outline" size="dynamic">
+                  Outline
+                </Button>
+                <Button variant="ghost" size="dynamic">
+                  Ghost
+                </Button>
+                <Button variant="destructive" size="dynamic">
+                  Destructive
+                </Button>
+                <Button variant="link" size="dynamic">
+                  Link
+                </Button>
               </div>
             </div>
 
@@ -276,7 +263,7 @@ export default function DashboardPage() {
               label="Photo"
               control={form.control}
               render={({ field }) => (
-                <Input placeholder="Enter photo" {...field} />
+                <Input placeholder="Enter photo" type="search" {...field} />
               )}
             />
 
@@ -385,8 +372,6 @@ export default function DashboardPage() {
             <Button type="submit">Submit</Button>
           </form>
         </Form>
-
-        <DataTable columns={columns} data={data} />
       </div>
     </div>
   );

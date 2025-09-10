@@ -143,9 +143,8 @@ export const Combobox = React.forwardRef<HTMLButtonElement, ComboboxProps>(
           )}
           {...props}
         >
-          <p className="flex-1 truncate overflow-hidden text-left text-ellipsis">
-            {label ?? (localLabel as string)}
-          </p>
+          {label ?? (localLabel as string)}
+
           <div className="flex items-center gap-1">
             {selectedValues.length > 2 && (
               <div

@@ -1,7 +1,10 @@
 @import 'tailwindcss';
 @import 'tw-animate-css';
+
+/* CUSTOM CSS IMPORTS */
 @import './common.css';
 @import './fonts.css';
+@import './inputs.css';
 
 @custom-variant dark (&:is(.dark *));
 
