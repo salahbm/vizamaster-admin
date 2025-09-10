@@ -24,6 +24,7 @@ declare module '@tanstack/table-core' {
   interface TableMeta<TData extends RowData> {
     t?: (_key: string, _data?: TData) => string; // Now TData is being used
     form?: UseFormReturn<TData, unknown, undefined>;
+    includePaginationReset?: boolean;
   }
 }
 

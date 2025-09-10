@@ -1,5 +1,7 @@
 'use client';
 
+import { useSearchParams } from 'next/navigation';
+
 import { ColumnDef } from '@tanstack/react-table';
 import { format } from 'date-fns';
 
@@ -7,11 +9,12 @@ import { DataTable } from '@/components/shared/data-table';
 import { DataTableColumnHeader } from '@/components/shared/data-table/column-header';
 import { Badge } from '@/components/ui/badge';
 import { Checkbox } from '@/components/ui/checkbox';
+import Loader from '@/components/ui/loader';
 
 import { useDataTable } from '@/hooks/common/use-data-table';
+import { useGetData } from '@/hooks/table';
 
 import { statusOptions } from './columns';
-import { getPaginatedData } from './data';
 
 // Generate all data (this would typically come from an API)
 
@@ -157,15 +160,20 @@ const columns: ColumnDef<User>[] = [
 ];
 
 export function TasksTable() {
-  const { data, paging } = getPaginatedData({
-    page: 1,
-    size: 10,
-    sorting: [{ id: 'id', desc: false }],
-  });
+  const params = useSearchParams();
+
+  // Get pagination and sorting parameters from URL
+  const page = parseInt(params.get('page') || '0');
+  const size = parseInt(params.get('size') || '10');
+  const sortParam = params.get('sort') || 'id,desc';
+
+  // Use the data fetching hook
+  const { data, isLoading } = useGetData(page, size, sortParam);
+
   const { table } = useDataTable({
-    data,
+    data: data?.data,
     columns,
-    pageCount: paging.totalPages,
+    pageCount: data?.paging.totalPages,
     initialState: {
       sorting: [{ id: 'id', desc: true }],
       columnPinning: { left: ['select'] },
@@ -173,7 +181,11 @@ export function TasksTable() {
     getRowId: (originalRow) => originalRow.id,
     shallow: false,
     clearOnDefault: true,
+    meta: {
+      includePaginationReset: false,
+    },
   });
+  if (isLoading) return <Loader />;
 
   return <DataTable table={table} />;
 }

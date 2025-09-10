@@ -26,20 +26,12 @@ export default function Pagination<TData>({
 
   const currentPage = table.getState().pagination.pageIndex;
   const pageCount = table.getPageCount();
-  const currentPageSize = table.getState().pagination.pageSize;
 
   const handlePageChange = useCallback(
     (newPage: number) => {
       // Ensure we're using the same indexing convention throughout the app
       // The table uses 0-based indexing internally
       table.setPageIndex(newPage); // stays 0-based
-    },
-    [table],
-  );
-
-  const handlePageSizeChange = useCallback(
-    (size: number) => {
-      table.setPageSize(size);
     },
     [table],
   );
@@ -111,7 +103,7 @@ export default function Pagination<TData>({
       <Combobox
         value={`${table.getState().pagination.pageSize}`}
         onValueChange={(val) => table.setPageSize(Number(val))}
-        className="font-caption-1 h-8 w-fit gap-2 rounded py-0 pr-1 pl-2"
+        className="font-body-2 h-8 w-fit gap-2 rounded py-0 pr-1 pl-2 [&>div>svg]:size-4.5"
         options={sizesArray.map((size) => ({
           label: size.toString(),
           value: size.toString(),

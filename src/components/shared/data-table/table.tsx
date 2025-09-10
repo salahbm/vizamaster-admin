@@ -15,6 +15,7 @@ import {
 import { cn } from '@/lib/utils';
 
 import Pagination from './pagination';
+import { DataTableResetSortings } from './reset-sortings';
 import { DataTableProps } from './types';
 import { DataTableViewOptions } from './view-options';
 
@@ -38,8 +39,12 @@ export function DataTable<TData>({
 
   return (
     <div>
-      <div className="mb-4 flex items-center justify-end">
+      <div className="mb-4 flex items-center justify-end gap-2">
         <DataTableViewOptions table={table} />
+        <DataTableResetSortings
+          table={table}
+          includePagination={table.options.meta?.includePaginationReset}
+        />
       </div>
       <div className={cn('overflow-hidden rounded-md border', className)}>
         <Table className={tableClassName}>

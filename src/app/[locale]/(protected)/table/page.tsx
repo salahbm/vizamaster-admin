@@ -4,12 +4,6 @@ import { TasksTable } from './_components/example-table';
 
 interface ITableProps {}
 
-const Table: NextPage<ITableProps> = (props) => {
-  return (
-    <div>
-      <TasksTable />
-    </div>
-  );
-};
+const Table: NextPage<ITableProps> = () => <TasksTable />;
 
 export default Table;
