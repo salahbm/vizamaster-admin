@@ -6,4 +6,5 @@ export type TFieldValues =
   | Date
   | string[]
   | undefined
+  | null
   | { from?: Date | undefined; to?: Date | undefined };

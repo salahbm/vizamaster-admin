@@ -29,8 +29,9 @@ async function getData(
   page: number,
   size: number,
   sort: ColumnSort[] | ColumnSort,
+  search: string,
 ): Promise<PaginatedResponse> {
-  const query = objectToSearchParams({ page, size, sort });
+  const query = objectToSearchParams({ page, size, sort, search });
   const response = await fetch(`/api/table?${query}`);
   const data = await response.json();
   return (
@@ -45,9 +46,10 @@ export const useGetData = (
   page: number,
   size: number,
   sort: ColumnSort[] | ColumnSort,
+  search: string,
 ) =>
   useQuery({
-    queryKey: ['table-data', { page, size, sort }],
-    queryFn: () => getData(page, size, sort),
+    queryKey: ['table-data', { page, size, sort, search }],
+    queryFn: () => getData(page, size, sort, search),
     placeholderData: keepPreviousData,
   });

@@ -12,7 +12,7 @@ const statusOptions = [
 const roles = ['Admin', 'User', 'Editor', 'Viewer', 'Moderator'];
 
 // Generate all data (this would typically come from a database)
-const allData = Array.from({ length: 100 }, (_, i) => {
+const allData = Array.from({ length: 11 }, (_, i) => {
   // Generate random date within the last 2 years
   const randomDaysAgo = Math.floor(Math.random() * 730); // 2 years in days
   const createdAt = new Date();
@@ -46,9 +46,11 @@ const allData = Array.from({ length: 100 }, (_, i) => {
 export async function GET(request: NextRequest) {
   // Get query parameters
   const searchParams = request.nextUrl.searchParams;
-  const page = parseInt(searchParams.get('page') || '0');
+  // Convert from 1-based (client) to 0-based (internal)
+  const page = Math.max(0, parseInt(searchParams.get('page') || '1') - 1);
   const size = parseInt(searchParams.get('size') || '10');
   const sortParam = searchParams.get('sort');
+  const search = searchParams.get('search') || '';
 
   // Apply sorting
   let sortedData = [...allData];
@@ -62,7 +64,8 @@ export async function GET(request: NextRequest) {
       try {
         // First attempt: direct JSON parsing
         sortOptions = JSON.parse(sortParam);
-      } catch (_) {
+      } catch (error) {
+        // Ignore first parsing error and try second method
         // Second attempt: try decoding URI component first
         try {
           sortOptions = JSON.parse(decodeURIComponent(sortParam));
@@ -101,6 +104,18 @@ export async function GET(request: NextRequest) {
     sortedData.sort((a: any, b: any) => (a.id > b.id ? 1 : -1));
   }
 
+  if (search) {
+    sortedData = sortedData.filter((item: any) => {
+      return (
+        item.username.toLowerCase().includes(search.toLowerCase()) ||
+        item.fullName.toLowerCase().includes(search.toLowerCase()) ||
+        item.email.toLowerCase().includes(search.toLowerCase()) ||
+        item.role.toLowerCase().includes(search.toLowerCase()) ||
+        item.status.toLowerCase().includes(search.toLowerCase())
+      );
+    });
+  }
+
   // Calculate pagination
   const totalElements = sortedData.length;
   const totalPages = Math.ceil(totalElements / size);
@@ -115,7 +130,8 @@ export async function GET(request: NextRequest) {
   return NextResponse.json({
     data: paginatedData,
     paging: {
-      page,
+      // Convert back to 1-based for client
+      page: page + 1,
       size,
       totalPages,
       totalElements,

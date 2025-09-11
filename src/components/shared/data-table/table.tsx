@@ -3,6 +3,7 @@
 import { flexRender } from '@tanstack/react-table';
 import { useTranslations } from 'next-intl';
 
+import { DataTableSkeleton } from '@/components/skeletons/data-table-skeleton';
 import {
   Table,
   TableBody,
@@ -23,6 +24,7 @@ import { DataTableViewOptions } from './view-options';
 
 export function DataTable<TData>({
   table,
+  isLoading,
   className,
   tbodyClassName,
   tableClassName,
@@ -33,6 +35,14 @@ export function DataTable<TData>({
   paginationClassName,
 }: DataTableProps<TData>) {
   const t = useTranslations();
+
+  if (isLoading)
+    return (
+      <DataTableSkeleton
+        columnCount={table.getAllColumns().length}
+        rowCount={Math.max(table.getRowModel().rows.length, 5)}
+      />
+    );
 
   return (
     <div>

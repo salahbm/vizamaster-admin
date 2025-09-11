@@ -3,6 +3,7 @@ import { UseFormReturn } from 'react-hook-form';
 
 export interface DataTableProps<TData> {
   table: TanstackTable<TData>;
+  isLoading?: boolean;
 
   // classNames
   className?: string;
