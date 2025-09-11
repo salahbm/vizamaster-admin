@@ -48,6 +48,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
+import { Uploader } from '@/components/ui/uploader';
 
 const schema = z.object({
   // Basic Information
@@ -144,7 +145,7 @@ export default function DashboardPage() {
   });
 
   const onSubmit = (data: z.infer<typeof schema>) => {
-    console.log(data);
+    console.info(data);
   };
 
   return (
@@ -587,13 +588,7 @@ export default function DashboardPage() {
                     name="photo"
                     label="Profile Photo"
                     control={form.control}
-                    render={({ field }) => (
-                      <Input
-                        placeholder="Upload or enter photo URL"
-                        type="file"
-                        {...field}
-                      />
-                    )}
+                    render={({ field }) => <Uploader {...field} />}
                   />
                 </div>
               </div>
