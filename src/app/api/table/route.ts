@@ -48,18 +48,58 @@ export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;
   const page = parseInt(searchParams.get('page') || '0');
   const size = parseInt(searchParams.get('size') || '10');
-  const sortField = searchParams.get('sortField') || 'id';
-  const sortDirection = searchParams.get('sortDirection') || 'asc';
+  const sortParam = searchParams.get('sort');
 
   // Apply sorting
   let sortedData = [...allData];
-  sortedData.sort((a: any, b: any) => {
-    if (sortDirection === 'desc') {
-      return a[sortField] > b[sortField] ? -1 : 1;
-    } else {
-      return a[sortField] > b[sortField] ? 1 : -1;
+
+  // Parse the sort parameter if it exists
+  if (sortParam) {
+    try {
+      // Try to parse the sort parameter as JSON
+      let sortOptions;
+
+      try {
+        // First attempt: direct JSON parsing
+        sortOptions = JSON.parse(sortParam);
+      } catch (_) {
+        // Second attempt: try decoding URI component first
+        try {
+          sortOptions = JSON.parse(decodeURIComponent(sortParam));
+        } catch (decodeError) {
+          // If both attempts fail, log the error and use default sorting
+          console.error('Error parsing sort parameter:', decodeError);
+          throw decodeError; // Re-throw to trigger the catch block below
+        }
+      }
+
+      if (Array.isArray(sortOptions) && sortOptions.length > 0) {
+        // Apply each sort option in order
+        sortedData.sort((a: any, b: any) => {
+          // Loop through each sort option
+          for (const { id, desc } of sortOptions) {
+            if (a[id] !== b[id]) {
+              // If values are different, determine sort order based on desc flag
+              if (desc) {
+                // Descending order
+                return a[id] > b[id] ? -1 : 1;
+              } else {
+                // Ascending order
+                return a[id] > b[id] ? 1 : -1;
+              }
+            }
+            // If values are equal, continue to next sort option
+          }
+          return 0; // If all values are equal
+        });
+      }
+    } catch (error) {
+      console.error('Error parsing sort parameter:', error);
     }
-  });
+  } else {
+    // Default sorting by ID if no sort parameter
+    sortedData.sort((a: any, b: any) => (a.id > b.id ? 1 : -1));
+  }
 
   // Calculate pagination
   const totalElements = sortedData.length;

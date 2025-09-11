@@ -1,4 +1,7 @@
 import { keepPreviousData, useQuery } from '@tanstack/react-query';
+import { ColumnSort } from '@tanstack/react-table';
+
+import { objectToSearchParams } from '@/lib/object-to-params';
 
 type User = {
   id: string;
@@ -25,11 +28,10 @@ export type PaginatedResponse = {
 async function getData(
   page: number,
   size: number,
-  sort: string,
+  sort: ColumnSort[] | ColumnSort,
 ): Promise<PaginatedResponse> {
-  const response = await fetch(
-    `/api/table?page=${page}&size=${size}&sort=${sort}`,
-  );
+  const query = objectToSearchParams({ page, size, sort });
+  const response = await fetch(`/api/table?${query}`);
   const data = await response.json();
   return (
     data ?? {
@@ -39,7 +41,11 @@ async function getData(
   );
 }
 
-export const useGetData = (page: number, size: number, sort: string) =>
+export const useGetData = (
+  page: number,
+  size: number,
+  sort: ColumnSort[] | ColumnSort,
+) =>
   useQuery({
     queryKey: ['table-data', { page, size, sort }],
     queryFn: () => getData(page, size, sort),

@@ -1,25 +1,25 @@
 'use client';
 
-import { useSearchParams } from 'next/navigation';
-
 import { DataTable } from '@/components/shared/data-table';
 import Loader from '@/components/ui/loader';
 
 import { useDataTable } from '@/hooks/common/use-data-table';
+import { useQueryReader } from '@/hooks/common/use-query-reader';
 import { useGetData } from '@/hooks/table';
 
 import { columns } from './columns';
 
 export function TasksTable() {
-  const params = useSearchParams();
+  // Use the improved query reader hook to get URL parameters
+  const query = useQueryReader({
+    page: { type: 'number', defaultValue: 1 },
+    size: { type: 'number', defaultValue: 10 },
+    sort: { type: 'object', defaultValue: [{ id: 'createdAt', desc: true }] },
+    search: { type: 'string', defaultValue: '' },
+  });
 
-  // Get pagination and sorting parameters from URL
-  const page = parseInt(params.get('page') || '0');
-  const size = parseInt(params.get('size') || '10');
-  const sortParam = params.get('sort') || 'id,desc';
-
-  // Use the data fetching hook
-  const { data, isLoading } = useGetData(page, size, sortParam);
+  // Use the data fetching hook with the parsed parameters
+  const { data, isLoading } = useGetData(query.page, query.size, query.sort);
 
   const { table } = useDataTable({
     data: data?.data,
