@@ -9,7 +9,7 @@ export default function DashboardPage() {
   const { theme, setTheme } = useTheme();
 
   return (
-    <div className="container py-10">
+    <div className="container pb-10">
       <h1 className="mb-6 text-3xl font-bold">Preferences</h1>
 
       <div className="grid gap-8">

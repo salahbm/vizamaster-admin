@@ -9,13 +9,19 @@ import {
   useState,
 } from 'react';
 
-export type FileMetadata = {
-  name: string;
-  size: number;
-  type: string;
-  url: string;
-  id: string;
-};
+import { z } from 'zod';
+
+export const FileMetadataSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  type: z.string(),
+  url: z.string(),
+  size: z.number(),
+  userId: z.string().optional(),
+  createdAt: z.date().optional(),
+});
+
+export type FileMetadata = z.infer<typeof FileMetadataSchema>;
 
 export type FileWithPreview = {
   file: File | FileMetadata;

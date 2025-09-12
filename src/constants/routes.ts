@@ -11,6 +11,7 @@ export const routes = {
   admins: '/settings/admins',
   preferences: '/settings/preferences',
   table: '/table',
+  forms: '/forms',
 };
 
 export interface SideNavItem {
@@ -27,20 +28,16 @@ export const SIDENAV: SideNavItem[] = [
     label: 'dashboard',
     icon: 'LayoutDashboard',
   },
-  {
-    href: routes.users,
-    label: 'users',
-    icon: 'Users',
-  },
-  {
-    href: routes.documents,
-    label: 'documents',
-    icon: 'FileText',
-  },
+
   {
     href: routes.table,
     label: 'table',
-    icon: 'FileText',
+    icon: 'Table',
+  },
+  {
+    href: routes.forms,
+    label: 'forms',
+    icon: 'Type',
   },
   {
     href: routes.settings,

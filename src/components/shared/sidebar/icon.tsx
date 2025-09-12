@@ -1,28 +1,17 @@
 import { FC } from 'react';
 
-import {
-  Circle,
-  FileText,
-  LayoutDashboard,
-  Settings,
-  User,
-  Users,
-} from 'lucide-react';
+import * as Icons from 'lucide-react';
+import { LucideProps } from 'lucide-react';
 
-// Map icon names to components
-const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
-  LayoutDashboard: LayoutDashboard,
-  Users: Users,
-  FileText: FileText,
-  Settings: Settings,
-  User: User,
-};
+type IconComponentType = React.ComponentType<LucideProps>;
 
 // Dynamic icon component that renders icons by name
 export const DynamicIcon: FC<{ name: string; className?: string }> = ({
   name,
   className,
 }) => {
-  const Icon = iconMap[name] || Circle;
+  // Cast the dynamic icon to the appropriate component type
+  const Icon = (Icons[name as keyof typeof Icons] ||
+    Icons.Circle) as IconComponentType;
   return <Icon className={className} />;
 };

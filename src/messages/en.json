@@ -12,12 +12,12 @@
   "Sidebar": {
     "dashboard": "Dashboard",
     "users": "Users",
-    "documents": "Documents",
     "settings": "Settings",
     "admins": "Admins",
     "profile": "Profile",
     "preferences": "Preferences",
-    "table": "Table"
+    "table": "Table",
+    "forms": "Forms"
   },
 
   "Common": {

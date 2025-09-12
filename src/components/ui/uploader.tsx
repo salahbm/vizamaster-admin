@@ -9,31 +9,30 @@ import {
   UploadIcon,
   XIcon,
 } from 'lucide-react';
-import { ControllerRenderProps } from 'react-hook-form';
 
 import { Button } from '@/components/ui/button';
 
 import {
   FileMetadata,
+  FileWithPreview,
   formatBytes,
   useFileUpload,
 } from '@/hooks/common/use-file-upload';
+import { TFieldValues } from '@/types/global';
 
 interface UploaderProps {
-  initialFiles?: FileMetadata[];
+  value?: TFieldValues;
   maxFiles?: number;
   maxSizeMB?: number;
-  field?: ControllerRenderProps<any, any>;
-  onChange?: (files: File[]) => void;
+  onChange?: (files: FileWithPreview[]) => void;
   accept?: string;
   multiple?: boolean;
 }
 
 function Uploader({
-  initialFiles,
+  value,
   maxSizeMB = 5,
   maxFiles = 6,
-  field,
   onChange,
   accept = 'image/svg+xml,image/png,image/jpeg,image/jpg,image/gif,application/pdf',
   multiple = true,
@@ -57,7 +56,8 @@ function Uploader({
     maxSize,
     multiple,
     maxFiles,
-    initialFiles,
+    initialFiles: value as FileMetadata[],
+    onFilesChange: onChange,
   });
 
   return (
@@ -71,7 +71,6 @@ function Uploader({
         data-dragging={isDragging || undefined}
         data-files={files.length > 0 || undefined}
         className="border-input data-[dragging=true]:bg-accent/50 has-[input:focus]:border-ring has-[input:focus]:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive relative flex min-h-52 flex-col items-center overflow-hidden rounded-lg border border-dashed p-4 transition-colors not-data-[files]:justify-center has-[input:focus]:ring-[3px]"
-        typeof="file"
       >
         <input
           {...getInputProps()}
