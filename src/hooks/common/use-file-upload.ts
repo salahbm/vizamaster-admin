@@ -163,6 +163,11 @@ export const useFileUpload = (
         inputRef.current.value = '';
       }
 
+      // Call onFilesChange with an empty array
+      if (onFilesChange) {
+        onFilesChange([] as unknown as FileWithPreview[]);
+      }
+
       const newState = {
         ...prev,
         files: [],
@@ -171,7 +176,7 @@ export const useFileUpload = (
 
       return newState;
     });
-  }, []);
+  }, [onFilesChange]);
 
   const addFiles = useCallback(
     (newFiles: FileList | File[]) => {
@@ -230,11 +235,31 @@ export const useFileUpload = (
         if (error) {
           errors.push(error);
         } else {
-          validFiles.push({
-            file,
-            id: generateUniqueId(file),
-            preview: createPreview(file),
-          });
+          // Create a proper FileMetadata object that matches the schema
+          const fileId = generateUniqueId(file);
+          const preview = createPreview(file);
+
+          // If it's a File object, transform it to match FileMetadataSchema
+          if (file instanceof File) {
+            validFiles.push({
+              file: {
+                id: fileId,
+                name: file.name,
+                type: file.type,
+                url: preview || '',
+                size: file.size,
+              },
+              id: fileId,
+              preview,
+            });
+          } else {
+            // It's already a FileMetadata object
+            validFiles.push({
+              file,
+              id: fileId,
+              preview,
+            });
+          }
         }
       });
 
@@ -249,6 +274,25 @@ export const useFileUpload = (
           const newFiles = !multiple
             ? validFiles
             : [...prev.files, ...validFiles];
+
+          // Call onFilesChange with the updated files array
+          // Convert FileWithPreview[] to FileMetadata[] for the form
+          if (onFilesChange) {
+            const fileMetadataArray = newFiles.map((item) => {
+              if (item.file instanceof File) {
+                return {
+                  id: item.id,
+                  name: item.file.name,
+                  type: item.file.type,
+                  url: item.preview || '',
+                  size: item.file.size,
+                };
+              }
+              return item.file;
+            });
+            onFilesChange(fileMetadataArray as unknown as FileWithPreview[]);
+          }
+
           return {
             ...prev,
             files: newFiles,
@@ -277,6 +321,7 @@ export const useFileUpload = (
       generateUniqueId,
       clearFiles,
       onFilesAdded,
+      onFilesChange,
       t,
     ],
   );
@@ -295,7 +340,23 @@ export const useFileUpload = (
         }
 
         const newFiles = prev.files.filter((file) => file.id !== id);
-        onFilesChange?.(newFiles);
+
+        // Convert FileWithPreview[] to FileMetadata[] for the form
+        if (onFilesChange) {
+          const fileMetadataArray = newFiles.map((item) => {
+            if (item.file instanceof File) {
+              return {
+                id: item.id,
+                name: item.file.name,
+                type: item.file.type,
+                url: item.preview || '',
+                size: item.file.size,
+              };
+            }
+            return item.file;
+          });
+          onFilesChange(fileMetadataArray as unknown as FileWithPreview[]);
+        }
 
         return {
           ...prev,

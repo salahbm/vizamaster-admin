@@ -129,7 +129,11 @@ function Uploader({
           role="alert"
         >
           <AlertCircleIcon className="size-4 shrink-0" />
-          <span>{errors[0]}</span>
+          <div className="flex flex-col">
+            {errors.map((error, index) => (
+              <span key={index}>{error}</span>
+            ))}
+          </div>
         </div>
       )}
 

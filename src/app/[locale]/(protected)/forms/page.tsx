@@ -22,22 +22,17 @@ const schema = z.object({
   // Basic Information
   username: z.string().refine((value) => value.trim() !== '', {
     params: { i18nKey: 'required' },
+    message: 'Username is required',
   }),
-  email: z.email(),
-  password: z.string().min(6),
+  email: z.string().email({ message: 'Please enter a valid email address' }),
+  password: z
+    .string()
+    .min(6, { message: 'Password must be at least 6 characters' }),
   description: z.string().optional(),
   telephone: z.string().optional(),
 
   // Preferences
   gender: z.string().optional(),
-  returnYear: z.string().optional(),
-  returnMonth: z.string().optional(),
-  returnDay: z.string().optional(),
-  country: z.string().min(2),
-  address: z.string().min(10),
-  postalCode: z.string().min(5),
-  city: z.string().min(2),
-  province: z.string().min(2),
   photo: z.array(FileMetadataSchema).optional(),
   files: z.array(FileMetadataSchema).optional(),
   interests: z.array(z.string()).optional(),
@@ -46,7 +41,6 @@ const schema = z.object({
   birthday: z.date().optional(),
   customFormatDate: z.date().optional(),
   minMaxDate: z.date().optional(),
-  errorDate: z.date().optional(),
   birthDate: z.date().optional(),
   appointmentDate: z.date().optional(),
   interval: z
@@ -60,9 +54,6 @@ const schema = z.object({
   subscriptionPlan: z.string().optional(),
   emailNotifications: z.boolean().optional(),
   smsNotifications: z.boolean().optional(),
-  advancedSetting: z.boolean().optional(),
-  emergencyName: z.string().optional(),
-  emergencyPhone: z.string().optional(),
 });
 
 export default function FormsPage() {
@@ -80,14 +71,6 @@ export default function FormsPage() {
 
       // Preferences
       gender: '',
-      returnYear: '',
-      returnMonth: '',
-      returnDay: '',
-      country: '',
-      address: '',
-      postalCode: '',
-      city: '',
-      province: '',
       photo: [],
       files: [],
       interests: [],
@@ -96,7 +79,6 @@ export default function FormsPage() {
       birthday: undefined,
       customFormatDate: undefined,
       minMaxDate: undefined,
-      errorDate: undefined,
       birthDate: undefined,
       appointmentDate: undefined,
       interval: {
@@ -108,9 +90,6 @@ export default function FormsPage() {
       subscriptionPlan: 'free',
       emailNotifications: false,
       smsNotifications: false,
-      advancedSetting: false,
-      emergencyName: '',
-      emergencyPhone: '',
     },
   });
 
@@ -128,7 +107,12 @@ export default function FormsPage() {
       <p className="text-muted-foreground mb-8">{t('Metadata.description')}</p>
 
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+        <form
+          onSubmit={form.handleSubmit(onSubmit, (data) => {
+            console.info(data);
+          })}
+          className="space-y-8"
+        >
           {/* Basic Information Section */}
           <div className="card p-6">
             <h2 className="mb-6 text-xl font-semibold">Basic Information</h2>
@@ -252,6 +236,8 @@ export default function FormsPage() {
                 label="Profile Photo"
                 control={form.control}
                 render={({ field }) => <Uploader {...field} maxFiles={1} />}
+                message="Upload a profile photo (max 2MB)"
+                messageClassName="text-muted-foreground text-xs"
               />
             </div>
             <div className="mt-4">
@@ -260,6 +246,8 @@ export default function FormsPage() {
                 label="Files"
                 control={form.control}
                 render={({ field }) => <Uploader {...field} maxFiles={5} />}
+                message="Upload up to 5 files (max 2MB each)"
+                messageClassName="text-muted-foreground text-xs"
               />
             </div>
           </div>
