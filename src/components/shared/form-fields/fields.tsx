@@ -46,7 +46,7 @@ export const FormFields = <T extends FieldValues>(props: CustomProps<T>) => {
           {message && (
             <FormDescription
               className={cn(
-                'font-caption-2 text-gray-5 mt-0.5',
+                'font-caption-2 text-muted-foreground mt-0.5',
                 messageClassName,
               )}
             >

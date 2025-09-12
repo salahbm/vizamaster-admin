@@ -9,7 +9,10 @@ import {
   useState,
 } from 'react';
 
+import { useTranslations } from 'next-intl';
 import { z } from 'zod';
+
+import { formatBytes } from '@/utils/formats';
 
 export const FileMetadataSchema = z.object({
   id: z.string(),
@@ -75,7 +78,7 @@ export const useFileUpload = (
     onFilesChange,
     onFilesAdded,
   } = options;
-
+  const t = useTranslations();
   const [state, setState] = useState<FileUploadState>({
     files: initialFiles.map((file) => ({
       file,
@@ -92,11 +95,11 @@ export const useFileUpload = (
     (file: File | FileMetadata): string | null => {
       if (file instanceof File) {
         if (file.size > maxSize) {
-          return `File "${file.name}" exceeds the maximum size of ${formatBytes(maxSize)}.`;
+          return `${t('Common.messages.fileSize', { maxSize: formatBytes(maxSize) })}`;
         }
       } else {
         if (file.size > maxSize) {
-          return `File "${file.name}" exceeds the maximum size of ${formatBytes(maxSize)}.`;
+          return `${t('Common.messages.fileSize', { maxSize: formatBytes(maxSize) })}`;
         }
       }
 
@@ -117,13 +120,13 @@ export const useFileUpload = (
         });
 
         if (!isAccepted) {
-          return `File "${file instanceof File ? file.name : file.name}" is not an accepted file type.`;
+          return t('Common.messages.fileAcceptType', { accept });
         }
       }
 
       return null;
     },
-    [accept, maxSize],
+    [accept, maxSize, t],
   );
 
   const createPreview = useCallback(
@@ -166,10 +169,9 @@ export const useFileUpload = (
         errors: [],
       };
 
-      onFilesChange?.(newState.files);
       return newState;
     });
-  }, [onFilesChange]);
+  }, []);
 
   const addFiles = useCallback(
     (newFiles: FileList | File[]) => {
@@ -192,7 +194,7 @@ export const useFileUpload = (
         maxFiles !== Infinity &&
         state.files.length + newFilesArray.length > maxFiles
       ) {
-        errors.push(`You can only upload a maximum of ${maxFiles} files.`);
+        errors.push(t('Common.messages.fileCount', { maxFiles }));
         setState((prev) => ({ ...prev, errors }));
         return;
       }
@@ -218,8 +220,8 @@ export const useFileUpload = (
         if (file.size > maxSize) {
           errors.push(
             multiple
-              ? `Some files exceed the maximum size of ${formatBytes(maxSize)}.`
-              : `File exceeds the maximum size of ${formatBytes(maxSize)}.`,
+              ? `${t('Common.messages.fileSize', { maxSize: formatBytes(maxSize) })}`
+              : `${t('Common.messages.fileSize', { maxSize: formatBytes(maxSize) })}`,
           );
           return;
         }
@@ -239,13 +241,14 @@ export const useFileUpload = (
       // Only update state if we have valid files to add
       if (validFiles.length > 0) {
         // Call the onFilesAdded callback with the newly added valid files
-        onFilesAdded?.(validFiles);
+        if (onFilesAdded) {
+          onFilesAdded(validFiles);
+        }
 
         setState((prev) => {
           const newFiles = !multiple
             ? validFiles
             : [...prev.files, ...validFiles];
-          onFilesChange?.(newFiles);
           return {
             ...prev,
             files: newFiles,
@@ -273,8 +276,8 @@ export const useFileUpload = (
       createPreview,
       generateUniqueId,
       clearFiles,
-      onFilesChange,
       onFilesAdded,
+      t,
     ],
   );
 
@@ -402,17 +405,4 @@ export const useFileUpload = (
       getInputProps,
     },
   ];
-};
-
-// Helper function to format bytes to human-readable format
-export const formatBytes = (bytes: number, decimals = 2): string => {
-  if (bytes === 0) return '0 Bytes';
-
-  const k = 1024;
-  const dm = decimals < 0 ? 0 : decimals;
-  const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
-
-  const i = Math.floor(Math.log(bytes) / Math.log(k));
-
-  return Number.parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + sizes[i];
 };

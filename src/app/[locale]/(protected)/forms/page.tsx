@@ -454,20 +454,15 @@ export default function FormsPage() {
                           checked={field.value}
                           onChange={field.onChange}
                         />
-                        <div className="space-y-1">
-                          <label
-                            htmlFor="emailNotifications"
-                            className="font-medium"
-                          >
-                            Email Notifications
-                          </label>
-                          <p className="text-muted-foreground text-xs">
-                            Receive updates, newsletters, and important
-                            announcements
-                          </p>
-                        </div>
+                        <label
+                          htmlFor="emailNotifications"
+                          className="font-medium"
+                        >
+                          Email Notifications
+                        </label>
                       </div>
                     )}
+                    message="Receive updates, newsletters, and important announcements"
                   />
                   <FormFields
                     name="smsNotifications"
@@ -479,19 +474,15 @@ export default function FormsPage() {
                           checked={field.value}
                           onChange={field.onChange}
                         />
-                        <div className="space-y-1">
-                          <label
-                            htmlFor="smsNotifications"
-                            className="font-medium"
-                          >
-                            SMS Notifications
-                          </label>
-                          <p className="text-muted-foreground text-xs">
-                            Receive text messages for urgent updates
-                          </p>
-                        </div>
+                        <label
+                          htmlFor="smsNotifications"
+                          className="font-medium"
+                        >
+                          SMS Notifications
+                        </label>
                       </div>
                     )}
+                    message="Enable SMS notifications to receive urgent updates"
                   />
                 </div>
               </div>

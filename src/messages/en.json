@@ -33,6 +33,9 @@
     "time": "Time",
     "reset": "Reset",
     "hide": "Hide",
+    "selectFiles": "Select files",
+    "uploadMore": "Upload more",
+    "removeAllFiles": "Remove all files",
     "placeholder": {
       "date": "Select date",
       "time": "Select time",
@@ -41,6 +44,14 @@
       "selectItems": "Select items",
       "enterValue": "Enter value",
       "selectEndDate": "Select end date"
+    },
+    "messages": {
+      "dropYourFilesHere": "Drop your files here",
+      "fileSize": "File size must be less than {maxSize}",
+      "fileType": "File type must be {accept}",
+      "fileCount": "File count must be less than {maxFiles}",
+      "fileUpload": "File upload failed",
+      "fileAcceptType": "File type must be {accept}"
     }
   },
   "zod": {
