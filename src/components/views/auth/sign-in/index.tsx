@@ -9,7 +9,6 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { ArrowRight } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useForm } from 'react-hook-form';
-import * as z from 'zod';
 
 import { FormFields } from '@/components/shared/form-fields';
 import { Button } from '@/components/ui/button';
@@ -18,20 +17,14 @@ import { Input, PasswordInput } from '@/components/ui/input';
 
 import { COOKIE_KEYS } from '@/constants/cookies';
 
+import { SignInSchema, signInSchema } from '@/server/common/dto';
+
 export function SignInView() {
   const router = useRouter();
   const t = useTranslations('auth');
   const [isLoading, setIsLoading] = useState(false);
 
-  // Form validation schema with translations
-  const signInSchema = z.object({
-    email: z.email(t('validation.email.invalid')),
-    password: z.string().min(6, t('validation.password.minLength', { min: 6 })),
-  });
-
-  type SignInFormValues = z.infer<typeof signInSchema>;
-
-  const form = useForm<SignInFormValues>({
+  const form = useForm<SignInSchema>({
     resolver: zodResolver(signInSchema),
     defaultValues: {
       email: '',
@@ -39,7 +32,7 @@ export function SignInView() {
     },
   });
 
-  const onSubmit = async (data: SignInFormValues) => {
+  const onSubmit = async (data: SignInSchema) => {
     setIsLoading(true);
 
     try {

@@ -1,66 +1,35 @@
 'use client';
 
-import { useState } from 'react';
-
 import Link from 'next/link';
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { ArrowRight } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useForm } from 'react-hook-form';
-import * as z from 'zod';
 
 import { FormFields } from '@/components/shared/form-fields';
 import { Button } from '@/components/ui/button';
 import { Form } from '@/components/ui/form';
 import { Input, PasswordInput } from '@/components/ui/input';
 
+import { useRegister } from '@/hooks/auth';
+import { SignUpSchema, signUpSchema } from '@/server/common/dto';
+
 export function SignUpView() {
   const t = useTranslations('auth');
-  const [isLoading, setIsLoading] = useState(false);
 
-  // Form validation schema with translations
-  const signUpSchema = z.object({
-    username: z.string().min(3, t('validation.username.minLength', { min: 3 })),
-    email: z.email(t('validation.email.invalid')),
-    password: z
-      .string()
-      .min(8, t('validation.password.minLength', { min: 8 }))
-      .regex(
-        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
-        t('validation.password.containsUppercase'),
-      ),
-  });
-
-  type SignUpFormValues = z.infer<typeof signUpSchema>;
-
-  const form = useForm<SignUpFormValues>({
+  const form = useForm<SignUpSchema>({
     resolver: zodResolver(signUpSchema),
     defaultValues: {
-      username: '',
+      name: '',
       email: '',
       password: '',
     },
   });
 
-  const onSubmit = async (data: SignUpFormValues) => {
-    setIsLoading(true);
+  const { mutateAsync: register, isPending } = useRegister();
 
-    try {
-      // Here you would implement your registration logic
-      console.info('Sign up data:', data);
-
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      // Redirect to success page after successful registration
-      // router.push('/success');
-    } catch (error) {
-      console.error('Sign up error:', error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  const onSubmit = async (data: SignUpSchema) => await register(data);
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center p-4">
@@ -75,7 +44,7 @@ export function SignUpView() {
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
             <FormFields
-              name="username"
+              name="name"
               label={t('signUp.usernameLabel')}
               required
               control={form.control}
@@ -83,7 +52,7 @@ export function SignUpView() {
                 <Input
                   placeholder={t('signUp.usernamePlaceholder')}
                   autoComplete="username"
-                  disabled={isLoading}
+                  disabled={isPending}
                   {...field}
                 />
               )}
@@ -99,7 +68,7 @@ export function SignUpView() {
                   placeholder={t('signUp.emailPlaceholder')}
                   type="email"
                   autoComplete="email"
-                  disabled={isLoading}
+                  disabled={isPending}
                   {...field}
                 />
               )}
@@ -116,14 +85,14 @@ export function SignUpView() {
                 <PasswordInput
                   placeholder={t('signUp.passwordPlaceholder')}
                   autoComplete="new-password"
-                  disabled={isLoading}
+                  disabled={isPending}
                   {...field}
                 />
               )}
             />
 
-            <Button type="submit" className="w-full" disabled={isLoading}>
-              {isLoading ? t('signUp.buttonLoading') : t('signUp.button')}
+            <Button type="submit" className="w-full" disabled={isPending}>
+              {isPending ? t('signUp.buttonLoading') : t('signUp.button')}
               <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
 

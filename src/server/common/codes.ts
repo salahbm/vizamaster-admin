@@ -1,0 +1,4 @@
+export const API_CODES = {
+  NOT_AUTHORIZED_ROLE: 4010,
+  NOT_FOUND: 4040,
+};

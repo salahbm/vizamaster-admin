@@ -1,0 +1,126 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+// // Country model
+// model Country {
+//   id        String    @id @default(uuid())
+//   name      String
+//   code      String    @unique
+//   flag      String?
+//   active    Boolean   @default(true)
+//   createdAt DateTime  @default(now()) @map("created_at")
+//   updatedAt DateTime  @updatedAt @map("updated_at")
+//   vacancies Vacancy[]
+
+//   @@map("countries")
+// }
+
+// // Vacancy model
+// model Vacancy {
+//   id          String      @id @default(uuid())
+//   title       String
+//   description String?
+//   countryId   String      @map("country_id")
+//   country     Country     @relation(fields: [countryId], references: [id], onDelete: Cascade)
+//   formSchema  Json        @map("form_schema") // Dynamic form schema stored as JSON
+//   active      Boolean     @default(true)
+//   createdAt   DateTime    @default(now()) @map("created_at")
+//   updatedAt   DateTime    @updatedAt @map("updated_at")
+//   applicants  Applicant[]
+
+//   @@index([countryId])
+//   @@map("vacancies")
+// }
+
+// // Applicant status enum
+// enum ApplicantStatus {
+//   PENDING
+//   REVIEWING
+//   APPROVED
+//   REJECTED
+// }
+
+// // Applicant model
+// model Applicant {
+//   id         String          @id @default(uuid())
+//   vacancyId  String          @map("vacancy_id")
+//   vacancy    Vacancy         @relation(fields: [vacancyId], references: [id], onDelete: Cascade)
+//   formData   Json            @map("form_data") // Form data submitted by applicant
+//   status     ApplicantStatus @default(PENDING)
+//   email      String
+//   phone      String?
+//   firstName  String          @map("first_name")
+//   lastName   String          @map("last_name")
+//   createdAt  DateTime        @default(now()) @map("created_at")
+//   updatedAt  DateTime        @updatedAt @map("updated_at")
+//   files      File[]
+
+//   @@index([vacancyId])
+//   @@index([status])
+//   @@map("applicants")
+// }
+
+// // File model
+// model File {
+//   id          String    @id @default(uuid())
+//   applicantId String    @map("applicant_id")
+//   applicant   Applicant @relation(fields: [applicantId], references: [id], onDelete: Cascade)
+//   filename    String
+//   path        String
+//   size        Int
+//   mimeType    String    @map("mime_type")
+//   createdAt   DateTime  @default(now()) @map("created_at")
+//   updatedAt   DateTime  @updatedAt @map("updated_at")
+
+//   @@index([applicantId])
+//   @@map("files")
+// }
+
+// User model for authentication
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String
+  name  String   
+  role      UserRole @default(USER)
+  sessions  Session[]
+  active    Boolean  @default(false)
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("users")
+  @@index([role])
+}
+
+model Session {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  refresh   String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("sessions")
+  @@index([userId])
+}
+
+
+// User role enum
+enum UserRole {
+  USER
+  EDITOR
+  ADMIN
+  CREATOR
+}

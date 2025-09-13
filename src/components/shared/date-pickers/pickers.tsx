@@ -233,7 +233,9 @@ export const DatePicker: React.FC<DatePickerProps> = ({
       case 'time':
         return <Clock className="ml-auto h-4 w-4 opacity-50" />;
       default:
-        return <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />;
+        return (
+          <CalendarIcon className="text-muted-foreground ml-auto h-4 w-4 opacity-50" />
+        );
     }
   };
 

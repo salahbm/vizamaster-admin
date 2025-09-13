@@ -114,7 +114,7 @@ export default function FormsPage() {
           className="space-y-8"
         >
           {/* Basic Information Section */}
-          <div className="card p-6">
+          <div className="card">
             <h2 className="mb-6 text-xl font-semibold">Basic Information</h2>
             <div className="grid gap-6 md:grid-cols-2">
               <FormFields
@@ -169,7 +169,7 @@ export default function FormsPage() {
           </div>
 
           {/* Preferences Section */}
-          <div className="card-md p-6">
+          <div className="card-md">
             <h2 className="mb-6 text-xl font-semibold">Preferences</h2>
             <div className="grid gap-6 md:grid-cols-2">
               <FormFields
@@ -253,226 +253,189 @@ export default function FormsPage() {
           </div>
 
           {/* Date Picker Examples */}
-          <div className="card-lg p-6">
+          <div className="card-lg">
             <h2 className="mb-6 text-xl font-semibold">Date Picker Examples</h2>
-            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-              <div className="rounded-lg border p-4 shadow-sm">
-                <h3 className="mb-4 text-lg font-medium">Basic Examples</h3>
-                <div className="space-y-4">
-                  <div>
-                    <p className="mb-2 text-sm font-medium">Basic DatePicker</p>
-                    <FormFields
-                      name="birthday"
-                      control={form.control}
-                      render={({ field }) => <DatePicker {...field} />}
-                    />
-                  </div>
-                  <div>
-                    <p className="mb-2 text-sm font-medium">
-                      Custom Format (yyyy-MM-dd)
-                    </p>
-                    <FormFields
-                      name="customFormatDate"
-                      control={form.control}
-                      render={({ field }) => (
-                        <DatePicker {...field} dateFormat="yyyy-MM-dd" />
-                      )}
-                    />
-                  </div>
-                  <div>
-                    <p className="mb-2 text-sm font-medium">
-                      With Min/Max Constraints
-                    </p>
-                    <FormFields
-                      name="minMaxDate"
-                      control={form.control}
-                      render={({ field }) => (
-                        <DatePicker
-                          {...field}
-                          minDate={new Date(2023, 0, 1)}
-                          maxDate={new Date(2025, 11, 31)}
-                        />
-                      )}
-                    />
-                  </div>
-                </div>
-              </div>
+            <div className="grid grid-cols-1 justify-start gap-6 md:grid-cols-2">
+              <h3 className="text-lg font-medium">Basic Examples</h3>
 
-              <div className="rounded-lg border p-4 shadow-sm">
-                <h3 className="mb-4 text-lg font-medium">
-                  Specialized Variants
-                </h3>
-                <div className="space-y-4">
-                  <div>
-                    <p className="mb-2 text-sm font-medium">Date-Time Picker</p>
-                    <FormFields
-                      name="appointmentDate"
-                      control={form.control}
-                      render={({ field }) => (
-                        <DatePicker {...field} variant="date-time" />
-                      )}
-                    />
-                  </div>
-                  <div>
-                    <p className="mb-2 text-sm font-medium">Time Picker</p>
-                    <FormFields
-                      name="appointmentDate"
-                      control={form.control}
-                      render={({ field }) => (
-                        <DatePicker {...field} variant="time" />
-                      )}
-                    />
-                  </div>
-                  <div>
-                    <p className="mb-2 text-sm font-medium">Month Picker</p>
-                    <FormFields
-                      name="birthDate"
-                      control={form.control}
-                      render={({ field }) => (
-                        <DatePicker {...field} variant="month" />
-                      )}
-                    />
-                  </div>
-                </div>
-              </div>
+              <FormFields
+                name="birthday"
+                label="Basic DatePicker"
+                control={form.control}
+                render={({ field }) => <DatePicker {...field} />}
+              />
+
+              <FormFields
+                name="customFormatDate"
+                label="Custom Format (yyyy-MM-dd)"
+                control={form.control}
+                render={({ field }) => (
+                  <DatePicker {...field} dateFormat="yyyy-MM-dd" />
+                )}
+              />
+
+              <FormFields
+                name="minMaxDate"
+                label="With Min/Max Constraints"
+                control={form.control}
+                render={({ field }) => (
+                  <DatePicker
+                    {...field}
+                    minDate={new Date(2023, 0, 1)}
+                    maxDate={new Date(2025, 11, 31)}
+                  />
+                )}
+              />
+
+              <h3 className="mb-4 text-lg font-medium">Specialized Variants</h3>
+
+              <FormFields
+                name="appointmentDate"
+                label="Date-Time Picker"
+                control={form.control}
+                render={({ field }) => (
+                  <DatePicker {...field} variant="date-time" />
+                )}
+              />
+              <FormFields
+                name="appointmentDate"
+                label="Time Picker"
+                control={form.control}
+                render={({ field }) => <DatePicker {...field} variant="time" />}
+              />
+
+              <FormFields
+                name="birthDate"
+                label="Month Picker"
+                control={form.control}
+                render={({ field }) => (
+                  <DatePicker {...field} variant="month" />
+                )}
+              />
             </div>
 
-            <div className="mt-6 space-y-4">
-              <h3 className="text-lg font-medium">Advanced Date Pickers</h3>
-              <div className="grid gap-6 md:grid-cols-2">
-                <div>
-                  <p className="mb-2 text-sm font-medium">Year Picker</p>
-                  <FormFields
-                    name="birthDate"
-                    control={form.control}
-                    render={({ field }) => (
-                      <DatePicker {...field} variant="year" />
-                    )}
-                  />
-                </div>
-                <div>
-                  <p className="mb-2 text-sm font-medium">Date Range Picker</p>
-                  <FormFields
-                    name="interval"
-                    control={form.control}
-                    render={({ field }) => (
-                      <DatePicker {...field} variant="range" />
-                    )}
-                  />
-                </div>
-              </div>
+            <h3 className="mb-4 text-lg font-medium">Advanced Date Pickers</h3>
+            <div className="grid gap-6 md:grid-cols-2">
+              <FormFields
+                name="birthDate"
+                label="Year Picker"
+                control={form.control}
+                render={({ field }) => <DatePicker {...field} variant="year" />}
+              />
+
+              <FormFields
+                name="interval"
+                label="Date Range Picker"
+                control={form.control}
+                render={({ field }) => (
+                  <DatePicker {...field} variant="range" />
+                )}
+              />
             </div>
           </div>
 
           {/* Advanced Form Components */}
-          <div className="card p-6">
-            <h2 className="mb-6 text-xl font-semibold">
-              Advanced Form Components
-            </h2>
+          <h2 className="mb-6 text-xl font-semibold">
+            Advanced Form Components
+          </h2>
 
-            <div className="space-y-6">
-              {/* Radio Group Form Example */}
-              <div className="space-y-2">
-                <h3 className="text-lg font-medium">Subscription Plan</h3>
+          <div className="space-y-6">
+            {/* Radio Group Form Example */}
+            <div className="space-y-2">
+              <h3 className="text-lg font-medium">Subscription Plan</h3>
+              <FormFields
+                name="subscriptionPlan"
+                control={form.control}
+                render={({ field }) => (
+                  <RadioGroup
+                    className="grid grid-cols-1 gap-4 md:grid-cols-3"
+                    {...field}
+                  >
+                    <div className="hover:bg-accent rounded-lg border p-4">
+                      <div className="flex items-start space-x-3">
+                        <RadioGroupItem value="free" id="free" />
+                        <div>
+                          <label htmlFor="free" className="font-medium">
+                            Free
+                          </label>
+                          <p className="text-muted-foreground text-sm">
+                            Basic features for personal use
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="hover:bg-accent rounded-lg border p-4">
+                      <div className="flex items-start space-x-3">
+                        <RadioGroupItem value="pro" id="pro" />
+                        <div>
+                          <label htmlFor="pro" className="font-medium">
+                            Pro
+                          </label>
+                          <p className="text-muted-foreground text-sm">
+                            Advanced features for professionals
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="hover:bg-accent rounded-lg border p-4">
+                      <div className="flex items-start space-x-3">
+                        <RadioGroupItem value="enterprise" id="enterprise" />
+                        <div>
+                          <label htmlFor="enterprise" className="font-medium">
+                            Enterprise
+                          </label>
+                          <p className="text-muted-foreground text-sm">
+                            Custom solutions for organizations
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </RadioGroup>
+                )}
+              />
+            </div>
+
+            {/* Checkbox Form Example */}
+            <div className="space-y-2">
+              <h3 className="text-lg font-medium">Notification Preferences</h3>
+              <div className="grid gap-4 md:grid-cols-2">
                 <FormFields
-                  name="subscriptionPlan"
+                  name="emailNotifications"
                   control={form.control}
                   render={({ field }) => (
-                    <RadioGroup
-                      className="grid grid-cols-1 gap-4 md:grid-cols-3"
-                      {...field}
-                    >
-                      <div className="hover:bg-accent rounded-lg border p-4">
-                        <div className="flex items-start space-x-3">
-                          <RadioGroupItem value="free" id="free" />
-                          <div>
-                            <label htmlFor="free" className="font-medium">
-                              Free
-                            </label>
-                            <p className="text-muted-foreground text-sm">
-                              Basic features for personal use
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="hover:bg-accent rounded-lg border p-4">
-                        <div className="flex items-start space-x-3">
-                          <RadioGroupItem value="pro" id="pro" />
-                          <div>
-                            <label htmlFor="pro" className="font-medium">
-                              Pro
-                            </label>
-                            <p className="text-muted-foreground text-sm">
-                              Advanced features for professionals
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="hover:bg-accent rounded-lg border p-4">
-                        <div className="flex items-start space-x-3">
-                          <RadioGroupItem value="enterprise" id="enterprise" />
-                          <div>
-                            <label htmlFor="enterprise" className="font-medium">
-                              Enterprise
-                            </label>
-                            <p className="text-muted-foreground text-sm">
-                              Custom solutions for organizations
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-                    </RadioGroup>
+                    <div className="flex items-center space-x-2">
+                      <Checkbox
+                        id="emailNotifications"
+                        checked={field.value}
+                        onChange={field.onChange}
+                      />
+                      <label
+                        htmlFor="emailNotifications"
+                        className="font-medium"
+                      >
+                        Email Notifications
+                      </label>
+                    </div>
                   )}
+                  message="Receive updates, newsletters, and important announcements"
                 />
-              </div>
-
-              {/* Checkbox Form Example */}
-              <div className="space-y-2">
-                <h3 className="text-lg font-medium">
-                  Notification Preferences
-                </h3>
-                <div className="grid gap-4 md:grid-cols-2">
-                  <FormFields
-                    name="emailNotifications"
-                    control={form.control}
-                    render={({ field }) => (
-                      <div className="flex items-center space-x-2">
-                        <Checkbox
-                          id="emailNotifications"
-                          checked={field.value}
-                          onChange={field.onChange}
-                        />
-                        <label
-                          htmlFor="emailNotifications"
-                          className="font-medium"
-                        >
-                          Email Notifications
-                        </label>
-                      </div>
-                    )}
-                    message="Receive updates, newsletters, and important announcements"
-                  />
-                  <FormFields
-                    name="smsNotifications"
-                    control={form.control}
-                    render={({ field }) => (
-                      <div className="flex items-center space-x-2">
-                        <Checkbox
-                          id="smsNotifications"
-                          checked={field.value}
-                          onChange={field.onChange}
-                        />
-                        <label
-                          htmlFor="smsNotifications"
-                          className="font-medium"
-                        >
-                          SMS Notifications
-                        </label>
-                      </div>
-                    )}
-                    message="Enable SMS notifications to receive urgent updates"
-                  />
-                </div>
+                <FormFields
+                  name="smsNotifications"
+                  control={form.control}
+                  render={({ field }) => (
+                    <div className="flex items-center space-x-2">
+                      <Checkbox
+                        id="smsNotifications"
+                        checked={field.value}
+                        onChange={field.onChange}
+                      />
+                      <label htmlFor="smsNotifications" className="font-medium">
+                        SMS Notifications
+                      </label>
+                    </div>
+                  )}
+                  message="Enable SMS notifications to receive urgent updates"
+                />
               </div>
             </div>
           </div>
