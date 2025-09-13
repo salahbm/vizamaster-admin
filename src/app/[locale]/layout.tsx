@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation';
 
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 
+import { Viewport } from 'next';
 import { hasLocale } from 'next-intl';
 
 import Loader from '@/components/ui/loader';
@@ -28,8 +29,33 @@ export async function generateMetadata({
     title: t('title'),
     description: t('description'),
     metadataBase: new URL(`http://localhost:3000`),
+    openGraph: {
+      title: t('title'),
+      description: t('description'),
+    },
+    twitter: {
+      title: t('title'),
+      description: t('description'),
+    },
+    robots: {
+      index: true,
+      follow: true,
+    },
+    keywords: ['vizamaster', 'admin', 'dashboard'],
+    icons: {
+      icon: '/favicon.ico',
+    },
   };
 }
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+  themeColor: '#000000',
+  colorScheme: 'dark',
+};
 
 export default async function IndexLayout({
   children,

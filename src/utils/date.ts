@@ -59,57 +59,43 @@ export function formatDateRelative(
  * @param date The date to convert
  * @returns The ISO string representation of the date
  */
-export function dateToISOString(date: Date): string {
-  if (!date) return '';
-  return date.toISOString();
-}
-
+export const dateToISOString = (date?: Date) => date?.toISOString() ?? '';
 /**
  * Convert an ISO string to a date
  * @param isoString The ISO string to convert
  * @returns The date representation of the ISO string
  */
-export const isoStringToDate = (isoString: string): Date => {
-  if (!isoString) return new Date();
-  return new Date(isoString);
-};
+export const isoStringToDate = (iso?: string) =>
+  iso ? new Date(iso) : new Date();
 
 /**
  * Get the year from a date
  * @param date The date to get the year from
  * @returns The year of the date
  */
-export const dateToYear = (date: Date): number => {
-  if (!date) return 0;
-  return date.getFullYear();
-};
+export const dateToYear = (date?: Date): number =>
+  date ? date.getFullYear() : 0;
 
 /**
  * Get the year from a date
  * @param year The year to get the date from
  * @returns The date of the year
  */
-export const yearToDate = (year: number): Date => {
-  if (!year) return new Date();
-  return new Date(year, 0, 1);
-};
+export const yearToDate = (year?: number): Date =>
+  year ? new Date(year, 0, 1) : new Date();
 
 /**
  * Get the month from a date
  * @param date The date to get the month from
  * @returns The month of the date
  */
-export const dateToMonth = (date: Date): number => {
-  if (!date) return 0;
-  return date.getMonth();
-};
+export const dateToMonth = (date?: Date): number =>
+  date ? date.getMonth() : 0;
 
 /**
  * Get the month from a date
  * @param month The month to get the date from
  * @returns The date of the month
  */
-export const monthToDate = (month: number): Date => {
-  if (!month) return new Date();
-  return new Date(month, 0, 1);
-};
+export const monthToDate = (month?: number): Date =>
+  month ? new Date(month, 0, 1) : new Date();

@@ -26,6 +26,73 @@
     "create": "Создать",
     "search": "Поиск"
   },
+  "auth": {
+    "signIn": {
+      "title": "С возвращением",
+      "subtitle": "Войдите в свой аккаунт, чтобы продолжить",
+      "emailLabel": "Электронная почта",
+      "emailPlaceholder": "Введите вашу почту",
+      "passwordLabel": "Пароль",
+      "passwordPlaceholder": "Введите ваш пароль",
+      "forgotPassword": "Забыли пароль?",
+      "button": "Войти",
+      "buttonLoading": "Вход...",
+      "noAccount": "Нет аккаунта?",
+      "signUpLink": "Зарегистрироваться"
+    },
+    "signUp": {
+      "title": "Создать аккаунт",
+      "subtitle": "Зарегистрируйтесь, чтобы начать работу с VizaMaster",
+      "usernameLabel": "Имя пользователя",
+      "usernamePlaceholder": "Введите имя пользователя",
+      "emailLabel": "Электронная почта",
+      "emailPlaceholder": "Введите вашу почту",
+      "passwordLabel": "Пароль",
+      "passwordPlaceholder": "Введите ваш пароль",
+      "confirmPasswordLabel": "Подтвердите пароль",
+      "confirmPasswordPlaceholder": "Подтвердите ваш пароль",
+      "button": "Зарегистрироваться",
+      "buttonLoading": "Создание аккаунта...",
+      "haveAccount": "Уже есть аккаунт?",
+      "signInLink": "Войти"
+    },
+    "forgotPassword": {
+      "title": "Сбросить пароль",
+      "subtitle": "Введите адрес электронной почты, и мы отправим вам ссылку для сброса пароля",
+      "emailLabel": "Электронная почта",
+      "emailPlaceholder": "Введите вашу почту",
+      "button": "Отправить ссылку",
+      "buttonLoading": "Отправка ссылки...",
+      "backToSignIn": "Вернуться к входу"
+    },
+    "success": {
+      "resetLinkSent": {
+        "title": "Проверьте вашу почту",
+        "message": "Мы отправили ссылку для сброса пароля на ваш адрес электронной почты",
+        "button": "Вернуться к входу"
+      }
+    },
+    "validation": {
+      "username": {
+        "required": "Имя пользователя обязательно",
+        "minLength": "Имя пользователя должно содержать не менее {min} символов"
+      },
+      "email": {
+        "required": "Электронная почта обязательна",
+        "invalid": "Пожалуйста, введите действительный адрес электронной почты"
+      },
+      "password": {
+        "required": "Пароль обязателен",
+        "minLength": "Пароль должен содержать не менее {min} символов",
+        "containsNumber": "Пароль должен содержать хотя бы одну цифру",
+        "containsUppercase": "Пароль должен содержать хотя бы одну заглавную букву"
+      },
+      "confirmPassword": {
+        "required": "Пожалуйста, подтвердите ваш пароль",
+        "match": "Пароли не совпадают"
+      }
+    }
+  },
   "zod": {
     "required": "Обязательное поле",
     "invalid_type": "Ожидался тип - {{expected}}, получено - {{received}}",
