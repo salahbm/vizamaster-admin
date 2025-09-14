@@ -18,7 +18,7 @@ const getAdmins = async (
   params: TAdminParams,
 ): Promise<PaginatedResult<Users>> => {
   return await agent.getPaginated(
-    'api/auth',
+    'api/admins',
     params.page,
     params.size,
     params.search,

@@ -15,10 +15,6 @@ export class AuthRepository {
   }
 
   getAllUsers(skip = 0, take = 50, search = '') {
-    // Ensure skip and take are valid numbers
-    const validSkip = typeof skip === 'number' && !isNaN(skip) ? skip : 0;
-    const validTake = typeof take === 'number' && !isNaN(take) ? take : 50;
-
     const where = search
       ? {
           OR: [
@@ -40,8 +36,8 @@ export class AuthRepository {
 
     return this.prisma.users.findMany({
       where,
-      skip: validSkip,
-      take: validTake,
+      skip,
+      take,
       orderBy: { createdAt: 'desc' },
       select: {
         id: true,

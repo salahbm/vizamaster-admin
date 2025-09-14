@@ -78,7 +78,7 @@ export function SignUpView() {
               name="password"
               label={t('signUp.passwordLabel')}
               required
-              message={t('validation.password.containsUppercase')}
+              message={t('signUp.pwdRegex')}
               messageClassName="text-muted-foreground text-xs"
               control={form.control}
               render={({ field }) => (

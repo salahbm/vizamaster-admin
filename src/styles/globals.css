@@ -146,6 +146,10 @@
   .card-lg {
     @apply bg-card text-card-foreground rounded-lg lg:border lg:p-4 lg:shadow-lg;
   }
+
+  .main-container {
+    @apply px-4 pb-4 lg:px-6;
+  }
 }
 
 @layer base {

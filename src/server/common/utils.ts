@@ -35,6 +35,33 @@ export function createPaginatedResult<T>(
   };
 }
 
+/**
+ * Parses pagination parameters from URL search parameters
+ */
+
+export function parsePaginationParams(searchParams: URLSearchParams) {
+  let page = 1;
+  let size = 50;
+
+  const pageParam = searchParams.get('page');
+  if (pageParam) {
+    const parsed = parseInt(pageParam, 10);
+    if (!isNaN(parsed) && parsed > 0) {
+      page = parsed;
+    }
+  }
+
+  const sizeParam = searchParams.get('size');
+  if (sizeParam) {
+    const parsed = parseInt(sizeParam, 10);
+    if (!isNaN(parsed) && parsed > 0) {
+      size = parsed;
+    }
+  }
+
+  return { page, size };
+}
+
 // /**
 //  * Builds filter conditions for Prisma queries
 //  */

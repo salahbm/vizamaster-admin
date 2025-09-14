@@ -9,21 +9,14 @@ export class AuthService {
   constructor(private readonly authRepository = new AuthRepository()) {}
 
   async getAllUsers(page = 1, size = 50, search = '') {
-    // Ensure page and size are valid numbers
-    const validPage =
-      typeof page === 'number' && !isNaN(page) && page > 0 ? page : 1;
-    const validSize =
-      typeof size === 'number' && !isNaN(size) && size > 0 ? size : 50;
-    const skip = Math.max(0, (validPage - 1) * validSize);
-
     const [users, total] = await Promise.all([
-      this.authRepository.getAllUsers(skip, validSize, search),
+      this.authRepository.getAllUsers(page, size, search),
       this.authRepository.countUsers(search),
     ]);
 
     return createPaginatedResult(users, total, {
-      page: validPage,
-      size: validSize,
+      page,
+      size,
     });
   }
 

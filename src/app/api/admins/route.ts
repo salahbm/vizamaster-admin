@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getTranslations } from 'next-intl/server';
 
 import { UnauthorizedError } from '@/server/common/errors';
+import { parsePaginationParams } from '@/server/common/utils';
 import { AuthService } from '@/server/modules/auth';
 import { auth } from '@/server/modules/auth/auth';
 import { AuthGuard } from '@/server/modules/auth/auth.guard';
@@ -23,44 +24,20 @@ export async function GET(request: NextRequest) {
     const user = await authService.findUserById(session.user.id);
 
     if (!user) throw new UnauthorizedError();
-
+    const start = performance.now();
     // Check if user has admin role
     await authGuard.requireRole(user, ['ADMIN', 'CREATOR']);
 
     // Get query parameters
-    const searchParams = request.nextUrl.searchParams;
-
-    // Parse page and size parameters, ensuring they are valid numbers
-    let page = 1;
-    try {
-      const pageParam = searchParams.get('page');
-      if (pageParam) {
-        const parsedPage = parseInt(pageParam, 10);
-        if (!isNaN(parsedPage) && parsedPage > 0) {
-          page = parsedPage;
-        }
-      }
-    } catch (e) {
-      // Default to page 1 if parsing fails
-    }
-
-    let size = 50;
-    try {
-      const sizeParam = searchParams.get('size');
-      if (sizeParam) {
-        const parsedSize = parseInt(sizeParam, 10);
-        if (!isNaN(parsedSize) && parsedSize > 0) {
-          size = parsedSize;
-        }
-      }
-    } catch (e) {
-      // Default to size 50 if parsing fails
-    }
+    const searchParams = new URL(request.url).searchParams;
 
     const search = searchParams.get('search') || '';
+    const { page, size } = parsePaginationParams(searchParams);
+
     // Get users
     const result = await authService.getAllUsers(page, size, search);
-
+    const end = performance.now();
+    console.log('Time taken:', end - start);
     return NextResponse.json(result);
   } catch (error: unknown) {
     const t = await getTranslations();

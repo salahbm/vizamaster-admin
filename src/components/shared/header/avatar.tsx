@@ -1,7 +1,5 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
-
 import { User } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
@@ -12,12 +10,10 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 
-import { authClient } from '@/lib/auth-client';
-
-import { routes } from '@/constants/routes';
+import { useLogout } from '@/hooks/auth/use-logout';
 
 const Avatar = () => {
-  const router = useRouter();
+  const { mutateAsync: logout } = useLogout();
 
   return (
     <DropdownMenu>
@@ -31,17 +27,7 @@ const Avatar = () => {
         <DropdownMenuItem>
           <button type="button">Profile</button>
         </DropdownMenuItem>
-        <DropdownMenuItem
-          onClick={async () =>
-            await authClient.signOut({
-              fetchOptions: {
-                onSuccess: () => {
-                  router.push(routes.signIn);
-                },
-              },
-            })
-          }
-        >
+        <DropdownMenuItem onClick={async () => await logout()}>
           Logout
         </DropdownMenuItem>
       </DropdownMenuContent>

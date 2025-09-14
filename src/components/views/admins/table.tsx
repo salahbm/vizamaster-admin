@@ -40,6 +40,8 @@ export const AdminsTable = () => {
     search: query.search,
   });
 
+  console.log(`file: table.tsx:37 ~ data:`, data);
+
   const { table } = useDataTable({
     data: data?.data as Users[],
     columns: columns,
@@ -47,6 +49,11 @@ export const AdminsTable = () => {
     getRowId: (originalRow: Users) => originalRow.id,
     shallow: false,
     clearOnDefault: true,
+    initialState: {
+      columnPinning: {
+        right: ['actions'],
+      },
+    },
     meta: { t },
   });
 
@@ -57,7 +64,7 @@ export const AdminsTable = () => {
       <Input
         value={search}
         type="search"
-        placeholder="Search..."
+        placeholder={t('Common.search')}
         onChange={(e) => debouncedSearch(e.target.value)}
       />
 

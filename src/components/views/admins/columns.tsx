@@ -2,13 +2,12 @@
 
 import { ColumnDef, Row } from '@tanstack/react-table';
 import { format } from 'date-fns';
-import { EllipsisVertical } from 'lucide-react';
+import { EllipsisVertical, Trash } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
 import { DataTableColumnHeader } from '@/components/shared/data-table/column-header';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Checkbox } from '@/components/ui/checkbox';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -18,30 +17,15 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 
-import { useChangeAdminRole, useToggleAdminStatus } from '@/hooks/admins';
+import {
+  useChangeAdminRole,
+  useDeleteAdmin,
+  useToggleAdminStatus,
+} from '@/hooks/admins';
 
 import { Users } from '../../../../generated/prisma';
 
 export const ADMIN_COLUMNS: ColumnDef<Users>[] = [
-  {
-    id: 'select',
-    header: ({ table }) => (
-      <Checkbox
-        checked={table.getIsAllPageRowsSelected()}
-        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-        aria-label="Select all"
-      />
-    ),
-    cell: ({ row }) => (
-      <Checkbox
-        checked={row.getIsSelected()}
-        onCheckedChange={(value) => row.toggleSelected(!!value)}
-        aria-label="Select row"
-      />
-    ),
-    enableSorting: false,
-    enableHiding: false,
-  },
   {
     accessorKey: 'name',
     header: ({ column, table }) => (
@@ -54,7 +38,6 @@ export const ADMIN_COLUMNS: ColumnDef<Users>[] = [
         }
       />
     ),
-    cell: ({ row }) => <div>{row.getValue('name')}</div>,
   },
   {
     accessorKey: 'email',
@@ -68,7 +51,6 @@ export const ADMIN_COLUMNS: ColumnDef<Users>[] = [
         }
       />
     ),
-    cell: ({ row }) => <div>{row.getValue('email')}</div>,
   },
   {
     accessorKey: 'role',
@@ -115,6 +97,20 @@ export const ADMIN_COLUMNS: ColumnDef<Users>[] = [
       return <div>{format(date, 'PPP')}</div>;
     },
   },
+  {
+    id: 'actions',
+    header: ({ column, table }) => (
+      <DataTableColumnHeader
+        column={column}
+        title={
+          table.options?.meta?.t
+            ? table.options.meta.t('Common.actions')
+            : 'Actions'
+        }
+      />
+    ),
+    cell: ({ row }) => <DeleteAdmin row={row} />,
+  },
 ];
 
 const ChangeRole = ({ row }: { row: Row<Users> }) => {
@@ -124,7 +120,7 @@ const ChangeRole = ({ row }: { row: Row<Users> }) => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <div className="flex-center gap-0.5">
+        <div className="flex-center w-full gap-0.5">
           <Button variant="ghost" size="md" className="!px-0 capitalize">
             {row.original.role.toLowerCase().replace('_', ' ')}
           </Button>
@@ -163,7 +159,7 @@ const ToggleStatus = ({ row }: { row: Row<Users> }) => {
   const isActive = row.original.active;
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger className="flex-center gap-0.5">
+      <DropdownMenuTrigger className="flex-center w-full gap-0.5">
         <Badge variant={isActive ? 'default' : 'destructive'}>
           {isActive ? t('status.active') : t('status.inactive')}
         </Badge>
@@ -183,6 +179,29 @@ const ToggleStatus = ({ row }: { row: Row<Users> }) => {
           disabled={!isActive}
         >
           {t('status.inactive')}
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+};
+
+const DeleteAdmin = ({ row }: { row: Row<Users> }) => {
+  const t = useTranslations();
+  const { mutateAsync: deleteAdmin } = useDeleteAdmin();
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger className="flex-center w-full">
+        <EllipsisVertical className="h-4 w-4" />
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end">
+        <DropdownMenuLabel>{t('Common.actions')}</DropdownMenuLabel>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem
+          onClick={async () => await deleteAdmin(row.original.id)}
+          className="flex-between"
+        >
+          {t('Common.delete')}
+          <Trash className="h-4 w-4" />
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

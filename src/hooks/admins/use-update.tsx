@@ -16,7 +16,7 @@ const update = async ({
 }: {
   id: string;
   data: Prisma.UsersUpdateInput;
-}) => agent.patch(`api/auth/${id}`, data);
+}) => agent.patch(`api/admins/${id}`, data);
 
 /**
  * Hook for updating admin user details
