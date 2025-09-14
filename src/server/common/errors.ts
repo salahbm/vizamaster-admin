@@ -2,12 +2,14 @@
 export class ApiError extends Error {
   status: number;
   code: number;
+  data?: unknown;
 
-  constructor(message: string, status: number, code: number) {
+  constructor(message: string, status: number, code: number, data?: unknown) {
     super(message);
     this.status = status;
     this.code = code;
     this.name = this.constructor.name;
+    this.data = data;
     Error.captureStackTrace(this, this.constructor);
   }
 }

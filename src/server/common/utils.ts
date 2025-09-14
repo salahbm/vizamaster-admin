@@ -1,44 +1,39 @@
-// import {
-//   FilterParams,
-//   PaginatedResult,
-//   PaginationParams,
-//   SortParams,
-// } from './types';
+import { PaginatedResult, PaginationParams } from './types';
 
-// /**
-//  * Builds pagination parameters for database queries
-//  */
-// export function buildPaginationParams(params: PaginationParams) {
-//   const page = Math.max(1, params.page || 1);
-//   const limit = Math.max(1, Math.min(100, params.limit || 10));
-//   const skip = (page - 1) * limit;
+/**
+ * Builds pagination parameters for database queries
+ */
+export function buildPaginationParams(params: PaginationParams) {
+  const page = Math.max(1, params.page || 1);
+  const size = Math.max(1, Math.min(100, params.size || 50));
+  const skip = (page - 1) * size;
 
-//   return {
-//     skip,
-//     take: limit,
-//     page,
-//     limit,
-//   };
-// }
+  return {
+    skip,
+    take: size,
+    page,
+    size,
+  };
+}
 
-// /**
-//  * Creates a paginated result object
-//  */
-// export function createPaginatedResult<T>(
-//   data: T[],
-//   total: number,
-//   { page, limit }: { page: number; limit: number },
-// ): PaginatedResult<T> {
-//   return {
-//     data,
-//     meta: {
-//       total,
-//       page,
-//       limit,
-//       totalPages: Math.ceil(total / limit),
-//     },
-//   };
-// }
+/**
+ * Creates a paginated result object
+ */
+export function createPaginatedResult<T>(
+  data: T[],
+  total: number,
+  { page, size }: { page: number; size: number },
+): PaginatedResult<T> {
+  return {
+    data,
+    meta: {
+      total,
+      page,
+      size,
+      totalPages: Math.ceil(total / size),
+    },
+  };
+}
 
 // /**
 //  * Builds filter conditions for Prisma queries

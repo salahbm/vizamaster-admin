@@ -23,7 +23,8 @@ export interface DataTableProps<TData> {
 // Extend TableMeta to support `t` property
 declare module '@tanstack/table-core' {
   interface TableMeta<TData extends RowData> {
-    t?: (_key: string, _data?: TData) => string; // Now TData is being used
+    // Using a generic function type for the translation function
+    t?: Function;
     form?: UseFormReturn<TData, unknown, undefined>;
     includePaginationReset?: boolean;
   }

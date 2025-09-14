@@ -101,7 +101,41 @@
       }
     }
   },
+  "admins": {
+    "actions": {
+      "changeRole": "Change role",
+      "toggleStatus": "Toggle status"
+    },
+    "columns": {
+      "active": "Status",
+      "createdAt": "Created At",
+      "email": "Email",
+      "name": "Name",
+      "role": "Role",
+      "status": "Status"
+    },
+    "description": "Manage user roles and active status",
+    "metadata": {
+      "description": "Manage user roles and active status",
+      "title": "Admins Management"
+    },
+    "roles": {
+      "admin": "Admin",
+      "editor": "Editor",
+      "user": "User"
+    },
+    "search": {
+      "placeholder": "Search by name or email..."
+    },
+    "status": {
+      "active": "Active",
+      "inactive": "Inactive"
+    },
+    "title": "Admins Management"
+  },
   "errors": {
+    "somethingWentWrong": "Something went wrong",
+    "generic": "An unexpected error occurred",
     "accountNotActive": "Your account is not active or requires admin approval.",
     "notAuthorizedRole": "You are not authorized to perform this action"
   },

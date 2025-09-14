@@ -13,7 +13,7 @@ import { cn } from '@/lib/utils';
 export default function Pagination<TData>({
   table,
   className,
-  sizeOptions = [10, 20, 50, 100],
+  sizeOptions = [50, 100, 150, 200],
 }: {
   table: Table<TData>;
   className?: string;
