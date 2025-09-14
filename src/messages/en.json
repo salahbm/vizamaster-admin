@@ -37,6 +37,7 @@
     "uploadMore": "Upload more",
     "removeAllFiles": "Remove all files",
     "actions": "Actions",
+    "signIn": "Sign In",
     "placeholder": {
       "date": "Select date",
       "time": "Select time",
@@ -52,7 +53,9 @@
       "fileType": "File type must be {accept}",
       "fileCount": "File count must be less than {maxFiles}",
       "fileUpload": "File upload failed",
-      "fileAcceptType": "File type must be {accept}"
+      "fileAcceptType": "File type must be {accept}",
+      "unauthorized": "Unauthorized",
+      "unauthorizedDescription": "You are not authorized to perform this action"
     }
   },
   "auth": {

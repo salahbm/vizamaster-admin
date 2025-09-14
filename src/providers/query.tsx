@@ -8,12 +8,12 @@ import {
   QueryClient,
   QueryClientProvider,
 } from '@tanstack/react-query';
+import { toast } from 'sonner';
 
-import { ApiResponse } from '@/types/response';
+import { useError } from '@/hooks/common/use-error';
+import { ApiError } from '@/server/common/errors';
 
-const isErrorData = <T extends unknown>(
-  error: unknown,
-): error is ApiResponse<T> => {
+const isErrorData = (error: unknown): error is ApiError => {
   return (
     typeof error === 'object' &&
     error !== null &&
@@ -30,6 +30,7 @@ const isErrorData = <T extends unknown>(
  */
 
 const QueryProvider = ({ children }: PropsWithChildren) => {
+  const { errorHandler } = useError();
   const [queryClient] = useState(
     () =>
       new QueryClient({
@@ -50,14 +51,14 @@ const QueryProvider = ({ children }: PropsWithChildren) => {
               `Error in query: ${JSON.stringify(query.queryKey)}`,
               error,
             );
-            if (isErrorData(error)) return alert(error.message);
+            if (isErrorData(error)) return errorHandler(error);
           },
         }),
         mutationCache: new MutationCache({
-          onError: (error: Error | ApiResponse<unknown>) => {
+          onError: (error: Error | ApiError) => {
             console.warn('Mutation error:', error ?? 'Unknown error');
 
-            if (isErrorData(error)) return alert(error.message);
+            if (isErrorData(error)) return errorHandler(error);
           },
 
           onSuccess: (
@@ -71,8 +72,8 @@ const QueryProvider = ({ children }: PropsWithChildren) => {
              * @param toast:
              * pass toast: false to disable toast default behavior is true
              */
-            // if (data && mutation.meta?.toast !== false)
-            //   return toast.success((data as ApiResponse).message);
+            if (data && mutation.meta?.toast !== false)
+              return toast.success((data as ApiError).message);
           },
         }),
       }),

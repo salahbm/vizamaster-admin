@@ -2,6 +2,9 @@ import { PropsWithChildren } from 'react';
 
 import { NuqsAdapter } from 'nuqs/adapters/next/app';
 
+import { Toaster } from '@/components/ui/sonner';
+
+import AlertProvider from './alert';
 import Internationalization from './intl';
 import IntlErrorHandlingProvider from './intl-error';
 import QueryProvider from './query';
@@ -12,12 +15,17 @@ export default async function RootLayout({ children }: PropsWithChildren) {
   return (
     <ThemeProvider>
       <Internationalization>
-        <IntlErrorHandlingProvider>
-          <QueryProvider>
-            <NuqsAdapter>{children}</NuqsAdapter>
-          </QueryProvider>
-          <ZodInitProvider />
-        </IntlErrorHandlingProvider>
+        <AlertProvider>
+          <IntlErrorHandlingProvider>
+            <QueryProvider>
+              <NuqsAdapter>
+                {children}
+                <Toaster />
+              </NuqsAdapter>
+            </QueryProvider>
+            <ZodInitProvider />
+          </IntlErrorHandlingProvider>
+        </AlertProvider>
       </Internationalization>
     </ThemeProvider>
   );
