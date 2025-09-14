@@ -24,7 +24,7 @@ export default async function AdminsPage() {
   const t = await getTranslations('admins');
 
   return (
-    <div className="container mx-auto py-6">
+    <div className="container mx-auto pb-6">
       <div className="mb-8">
         <h1 className="font-header mb-2">{t('metadata.title')}</h1>
         <p className="font-body-2 text-muted-foreground">

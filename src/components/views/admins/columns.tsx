@@ -2,11 +2,13 @@
 
 import { ColumnDef, Row } from '@tanstack/react-table';
 import { format } from 'date-fns';
+import { EllipsisVertical } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
 import { DataTableColumnHeader } from '@/components/shared/data-table/column-header';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -16,30 +18,30 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 
-import { useChangeAdminRole } from '@/hooks/admins';
+import { useChangeAdminRole, useToggleAdminStatus } from '@/hooks/admins';
 
 import { Users } from '../../../../generated/prisma';
 
 export const ADMIN_COLUMNS: ColumnDef<Users>[] = [
-  //   {
-  //     id: 'select',
-  //     header: ({ table }) => (
-  //       <Checkbox
-  //         checked={table.getIsAllPageRowsSelected()}
-  //         onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-  //         aria-label="Select all"
-  //       />
-  //     ),
-  //     cell: ({ row }) => (
-  //       <Checkbox
-  //         checked={row.getIsSelected()}
-  //         onCheckedChange={(value) => row.toggleSelected(!!value)}
-  //         aria-label="Select row"
-  //       />
-  //     ),
-  //     enableSorting: false,
-  //     enableHiding: false,
-  //   },
+  {
+    id: 'select',
+    header: ({ table }) => (
+      <Checkbox
+        checked={table.getIsAllPageRowsSelected()}
+        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+        aria-label="Select all"
+      />
+    ),
+    cell: ({ row }) => (
+      <Checkbox
+        checked={row.getIsSelected()}
+        onCheckedChange={(value) => row.toggleSelected(!!value)}
+        aria-label="Select row"
+      />
+    ),
+    enableSorting: false,
+    enableHiding: false,
+  },
   {
     accessorKey: 'name',
     header: ({ column, table }) => (
@@ -122,9 +124,12 @@ const ChangeRole = ({ row }: { row: Row<Users> }) => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" className="capitalize">
-          {row.original.role.toLowerCase().replace('_', ' ')}
-        </Button>
+        <div className="flex-center gap-0.5">
+          <Button variant="ghost" size="md" className="!px-0 capitalize">
+            {row.original.role.toLowerCase().replace('_', ' ')}
+          </Button>
+          <EllipsisVertical className="h-4 w-4" />
+        </div>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         <DropdownMenuLabel>{t('actions.changeRole')}</DropdownMenuLabel>
@@ -154,14 +159,32 @@ const ChangeRole = ({ row }: { row: Row<Users> }) => {
 
 const ToggleStatus = ({ row }: { row: Row<Users> }) => {
   const t = useTranslations('admins');
-  //   const toggleStatus = useToggleAdminStatus();
+  const toggleStatus = useToggleAdminStatus();
   const isActive = row.original.active;
-  console.log(`file: columns.tsx:159 ~ original:`, row.original);
   return (
-    <div className="flex items-center">
-      <Badge variant={isActive ? 'default' : 'destructive'}>
-        {isActive ? t('status.active') : t('status.inactive')}
-      </Badge>
-    </div>
+    <DropdownMenu>
+      <DropdownMenuTrigger className="flex-center gap-0.5">
+        <Badge variant={isActive ? 'default' : 'destructive'}>
+          {isActive ? t('status.active') : t('status.inactive')}
+        </Badge>
+        <EllipsisVertical className="h-4 w-4" />
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end">
+        <DropdownMenuLabel>{t('actions.toggleStatus')}</DropdownMenuLabel>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem
+          onClick={() => toggleStatus(row.original.id, !isActive)}
+          disabled={isActive}
+        >
+          {t('status.active')}
+        </DropdownMenuItem>
+        <DropdownMenuItem
+          onClick={() => toggleStatus(row.original.id, !isActive)}
+          disabled={!isActive}
+        >
+          {t('status.inactive')}
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 };

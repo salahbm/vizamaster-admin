@@ -4,15 +4,19 @@ import agent from '@/lib/agent';
 
 import { QueryKeys } from '@/constants/query-keys';
 
-import { Users } from '../../../generated/prisma';
+import { Prisma } from '../../../generated/prisma';
 import useMutation from '../common/use-mutation';
 
 /**
  * Update an admin user using the API agent
  */
-const update = async ({ id, data }: { id: string; data: Users }) => {
-  return agent.patch(`api/auth/${id}`, data);
-};
+const update = async ({
+  id,
+  data,
+}: {
+  id: string;
+  data: Prisma.UsersUpdateInput;
+}) => agent.patch(`api/auth/${id}`, data);
 
 /**
  * Hook for updating admin user details

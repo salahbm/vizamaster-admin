@@ -44,15 +44,10 @@ export const AdminsTable = () => {
     data: data?.data as Users[],
     columns: columns,
     pageCount: data?.meta.totalPages,
-    initialState: {
-      columnPinning: { left: ['select'] },
-    },
     getRowId: (originalRow: Users) => originalRow.id,
     shallow: false,
     clearOnDefault: true,
-    meta: {
-      t,
-    },
+    meta: { t },
   });
 
   if (isLoading) return <Loader />;
