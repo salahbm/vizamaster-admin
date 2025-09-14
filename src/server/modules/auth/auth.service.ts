@@ -9,7 +9,7 @@ export class AuthService {
   constructor() {}
 
   async checkApproval(userId: string) {
-    const user = await this.prisma.user.findUnique({ where: { id: userId } });
+    const user = await this.prisma.users.findUnique({ where: { id: userId } });
     if (!user) throw new NotFoundError('User not found', API_CODES.NOT_FOUND);
     if (!user.active)
       throw new UnauthorizedError(

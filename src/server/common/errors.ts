@@ -68,37 +68,28 @@ export class InternalServerError extends ApiError {
   }
 }
 
-// Error handler function
-export function handleApiError(error: unknown): ApiError {
-  if (error instanceof ApiError) {
-    return error;
+export function handleApiError(
+  errorOrMessage: unknown,
+  status?: number,
+  code?: number,
+): ApiError {
+  // If first argument is an error object
+  if (typeof errorOrMessage !== 'string') {
+    if (errorOrMessage instanceof ApiError) {
+      return errorOrMessage;
+    }
+
+    if (errorOrMessage instanceof Error) {
+      return new InternalServerError(errorOrMessage.message);
+    }
+
+    return new InternalServerError('An unknown error occurred');
   }
 
-  if (error instanceof Error) {
-    return new InternalServerError(error.message);
+  // If first argument is a message string
+  if (status && code) {
+    return new ApiError(errorOrMessage as string, status, code);
   }
 
-  return new InternalServerError('An unknown error occurred');
-}
-
-/**
- * Standard API response format
- * @param status HTTP status code (e.g., 200, 400, 404)
- * @param code HTTP status code (e.g., 200, 400, 404)
- * @param message Response message
- * @param data Optional data payload
- * @returns Standardized API response object
- */
-export function apiResponse<T = unknown>(
-  status: number,
-  code: number,
-  message: string,
-  data: T | null = null,
-) {
-  return {
-    status,
-    code,
-    message,
-    data,
-  };
+  return new InternalServerError(errorOrMessage as string);
 }

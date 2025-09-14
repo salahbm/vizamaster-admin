@@ -20,6 +20,8 @@ export default [
       '**/*.config.{js,ts,mjs}',
       '**/coverage',
       '.lintstagedrc.js',
+      '**/src/messages',
+      'generated',
     ],
   },
   {

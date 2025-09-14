@@ -1,5 +1,7 @@
 'use client';
 
+import { useRouter } from 'next/navigation';
+
 import { User } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
@@ -10,7 +12,13 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 
+import { authClient } from '@/lib/auth-client';
+
+import { routes } from '@/constants/routes';
+
 const Avatar = () => {
+  const router = useRouter();
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -23,7 +31,19 @@ const Avatar = () => {
         <DropdownMenuItem>
           <button type="button">Profile</button>
         </DropdownMenuItem>
-        <DropdownMenuItem>Logout</DropdownMenuItem>
+        <DropdownMenuItem
+          onClick={async () =>
+            await authClient.signOut({
+              fetchOptions: {
+                onSuccess: () => {
+                  router.push(routes.signIn);
+                },
+              },
+            })
+          }
+        >
+          Logout
+        </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );

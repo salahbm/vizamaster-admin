@@ -18,6 +18,11 @@ export async function generateMetadata({
   };
 }
 
-export default function SuccessPage() {
-  return <SuccessView type="resetLinkSent" />;
+export default async function SuccessPage({
+  params,
+}: {
+  params: Promise<{ type: string }>;
+}) {
+  const { type } = await params;
+  return <SuccessView type={type as 'resetLinkSent' | 'generic'} />;
 }

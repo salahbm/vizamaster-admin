@@ -1,4 +1,43 @@
+/**
+ * API error codes for consistent error handling
+ * Format: HTTP status code + specific error code
+ * Example: 4010 = 401 (Unauthorized) + 0 (Generic unauthorized error)
+ */
 export const API_CODES = {
-  NOT_AUTHORIZED_ROLE: 4010,
+  // 400 Bad Request (4000-4099)
+  BAD_REQUEST: 4000,
+  INVALID_INPUT: 4001,
+  MISSING_REQUIRED_FIELD: 4002,
+  INVALID_FORMAT: 4003,
+
+  // 401 Unauthorized (4010-4099)
+  UNAUTHORIZED: 4010,
+  INVALID_CREDENTIALS: 4011,
+  EXPIRED_TOKEN: 4012,
+  INVALID_TOKEN: 4013,
+  NOT_AUTHORIZED_ROLE: 4014,
+  ACCOUNT_INACTIVE: 4015,
+
+  // 403 Forbidden (4030-4099)
+  FORBIDDEN: 4030,
+  INSUFFICIENT_PERMISSIONS: 4031,
+
+  // 404 Not Found (4040-4099)
   NOT_FOUND: 4040,
+  USER_NOT_FOUND: 4041,
+  RESOURCE_NOT_FOUND: 4042,
+
+  // 409 Conflict (4090-4099)
+  CONFLICT: 4090,
+  DUPLICATE_EMAIL: 4091,
+  DUPLICATE_USERNAME: 4092,
+
+  // 422 Validation Error (4220-4299)
+  VALIDATION_ERROR: 4220,
+
+  // 500 Server Error (5000-5099)
+  SERVER_ERROR: 5000,
+  DATABASE_ERROR: 5001,
+  EXTERNAL_SERVICE_ERROR: 5002,
+  FAILED_TO_CREATE_USER: 5003,
 };

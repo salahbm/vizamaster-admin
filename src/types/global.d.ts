@@ -12,3 +12,10 @@ export type TFieldValues =
   | { from?: Date | undefined; to?: Date | undefined }
   | FileMetadata[]
   | FileMetadata;
+
+export interface IResponse<T> {
+  data: T;
+  message: string;
+  status: number;
+  code: number;
+}

@@ -1,9 +1,6 @@
 'use client';
 
-import { useState } from 'react';
-
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { ArrowRight } from 'lucide-react';
@@ -15,14 +12,11 @@ import { Button } from '@/components/ui/button';
 import { Form } from '@/components/ui/form';
 import { Input, PasswordInput } from '@/components/ui/input';
 
-import { COOKIE_KEYS } from '@/constants/cookies';
-
+import { useLogin } from '@/hooks/auth';
 import { SignInSchema, signInSchema } from '@/server/common/dto';
 
 export function SignInView() {
-  const router = useRouter();
   const t = useTranslations('auth');
-  const [isLoading, setIsLoading] = useState(false);
 
   const form = useForm<SignInSchema>({
     resolver: zodResolver(signInSchema),
@@ -32,29 +26,10 @@ export function SignInView() {
     },
   });
 
-  const onSubmit = async (data: SignInSchema) => {
-    setIsLoading(true);
+  const { mutateAsync: login, isPending: isLoading } = useLogin();
 
-    try {
-      // Here you would implement your authentication logic
-      console.info('Sign in data:', data);
-
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      // Set access token in cookie
-      document.cookie = `${COOKIE_KEYS.ACCESS_TOKEN}=${data.email}; path=/; expires=${new Date(
-        Date.now() + 60 * 60 * 24 * 7,
-      ).toUTCString()}`;
-
-      // Redirect to dashboard or home page after successful login
-      router.push('/dashboard');
-    } catch (error) {
-      console.error('Sign in error:', error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  const onSubmit = async (data: SignInSchema) =>
+    await login(data).then(() => form.reset());
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center p-4">

@@ -12,6 +12,7 @@ export const routes = {
   preferences: '/settings/preferences',
   table: '/table',
   forms: '/forms',
+  success: '/success',
 };
 
 export interface SideNavItem {

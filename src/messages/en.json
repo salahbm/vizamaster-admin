@@ -99,27 +99,11 @@
         "message": "We've sent a password reset link to your email address",
         "button": "Back to sign in"
       }
-    },
-    "validation": {
-      "username": {
-        "required": "Username is required",
-        "minLength": "Username must be at least {min} characters"
-      },
-      "email": {
-        "required": "Email is required",
-        "invalid": "Please enter a valid email address"
-      },
-      "password": {
-        "required": "Password is required",
-        "minLength": "Password must be at least {min} characters",
-        "containsNumber": "Password must contain at least one number",
-        "containsUppercase": "Password must contain at least one uppercase letter"
-      },
-      "confirmPassword": {
-        "required": "Please confirm your password",
-        "match": "Passwords do not match"
-      }
     }
+  },
+  "errors": {
+    "accountNotActive": "Your account is not active or requires admin approval.",
+    "notAuthorizedRole": "You are not authorized to perform this action"
   },
   "zod": {
     "required": "Please required this field",
