@@ -6,8 +6,8 @@ import { useTranslations } from 'next-intl';
 import { useQueryState } from 'nuqs';
 
 import { DataTable } from '@/components/shared/data-table';
+import { DataTableSkeleton } from '@/components/skeletons/data-table-skeleton';
 import { Input } from '@/components/ui/input';
-import Loader from '@/components/ui/loader';
 
 import { useAdmins } from '@/hooks/admins';
 import { useDataTable } from '@/hooks/common/use-data-table';
@@ -40,10 +40,8 @@ export const AdminsTable = () => {
     search: query.search,
   });
 
-  console.log(`file: table.tsx:37 ~ data:`, data);
-
   const { table } = useDataTable({
-    data: data?.data as Users[],
+    data: data?.data,
     columns: columns,
     pageCount: data?.meta.totalPages,
     getRowId: (originalRow: Users) => originalRow.id,
@@ -57,7 +55,7 @@ export const AdminsTable = () => {
     meta: { t },
   });
 
-  if (isLoading) return <Loader />;
+  if (isLoading) return <DataTableSkeleton columnCount={columns.length} />;
 
   return (
     <div className="space-y-4">

@@ -1,23 +1,30 @@
+import { NextRequest } from 'next/server';
+
 import { API_CODES } from '@/server/common/codes';
 import { NotFoundError, UnauthorizedError } from '@/server/common/errors';
-import { createPaginatedResult } from '@/server/common/utils';
+import { createPaginatedResult, createResponse } from '@/server/common/utils';
 
 import { Prisma, Users } from '../../../../generated/prisma';
+import { auth } from './auth';
+import { AuthGuard } from './auth.guard';
 import { AuthRepository } from './auth.repository';
 
 export class AuthService {
-  constructor(private readonly authRepository = new AuthRepository()) {}
+  constructor(
+    private readonly authRepository = new AuthRepository(),
+    private readonly authGuard = new AuthGuard(),
+  ) {}
 
   async getAllUsers(page = 1, size = 50, search = '') {
+    // Calculate skip based on page and size
+    const skip = Math.max(0, (page - 1) * size);
+
     const [users, total] = await Promise.all([
-      this.authRepository.getAllUsers(page, size, search),
+      this.authRepository.getAllUsers(skip, size, search),
       this.authRepository.countUsers(search),
     ]);
-
-    return createPaginatedResult(users, total, {
-      page,
-      size,
-    });
+    const paginatedData = createPaginatedResult(users, total, { page, size });
+    return createResponse(paginatedData);
   }
 
   async findUserById(id: string) {
@@ -27,19 +34,29 @@ export class AuthService {
   }
 
   async updateUser(id: string, data: Prisma.UsersUpdateInput) {
-    return this.authRepository.updateUser(id, data);
+    const updatedUser = await this.authRepository.updateUser(id, data);
+    return createResponse(updatedUser);
   }
 
-  async checkApproval(userId: string) {
-    const user = await this.findUserById(userId);
-    if (!user) throw new NotFoundError('User not found', API_CODES.NOT_FOUND);
+  async deleteUser(id: string) {
+    const deletedUser = await this.authRepository.deleteUser(id);
+    return createResponse(deletedUser);
+  }
 
-    if (!user.active && user.role === 'USER') {
-      throw new UnauthorizedError(
-        'Account pending admin approval',
-        API_CODES.NOT_AUTHORIZED_ROLE,
-      );
-    }
+  async checkAuth(request: NextRequest) {
+    // Check if user is authenticated
+    const session = await auth.api.getSession({
+      headers: request.headers,
+    });
+
+    if (!session) throw new UnauthorizedError();
+
+    const user = await this.findUserById(session.user.id);
+
+    if (!user) throw new NotFoundError();
+
+    // Check if user has admin role
+    await this.authGuard.requireRole({ role: user.role }, ['ADMIN', 'CREATOR']);
 
     return user;
   }

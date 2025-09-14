@@ -1,9 +1,8 @@
 import { useCallback, useMemo } from 'react';
 
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 
 import { useTranslations } from 'next-intl';
-import { toast } from 'sonner';
 
 import { routes } from '@/constants/routes';
 
@@ -13,6 +12,7 @@ import { ApiError } from '@/server/common/errors';
 
 export const useError = () => {
   const alert = useAlert();
+  const router = useRouter();
   const t = useTranslations();
   const pathname = usePathname();
 
@@ -37,9 +37,16 @@ export const useError = () => {
         });
       }
 
-      return toast.error(message);
+      return alert({
+        title: t('Common.messages.error'),
+        description: message,
+        icon: 'error',
+        cancelButton: null,
+        confirmText: t('Common.goBack'),
+        onConfirm: () => router.back(),
+      });
     },
-    [alert, t, isSignInPage],
+    [alert, t, isSignInPage, router],
   );
 
   return {

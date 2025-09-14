@@ -4,6 +4,9 @@
  * Example: 4010 = 401 (Unauthorized) + 0 (Generic unauthorized error)
  */
 export const API_CODES = {
+  // 200 Success (2000-2099)
+  SUCCESS: 2000,
+
   // 400 Bad Request (4000-4099)
   BAD_REQUEST: 4000,
   INVALID_INPUT: 4001,

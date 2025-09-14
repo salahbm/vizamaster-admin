@@ -17,12 +17,13 @@ type TAdminParams = {
 const getAdmins = async (
   params: TAdminParams,
 ): Promise<PaginatedResult<Users>> => {
-  return await agent.getPaginated(
+  const { data } = await agent.getPaginated(
     'api/admins',
     params.page,
     params.size,
     params.search,
   );
+  return data as unknown as PaginatedResult<Users>;
 };
 
 /**

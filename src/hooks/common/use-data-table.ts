@@ -110,7 +110,7 @@ export function useDataTable<TData>(props: UseDataTableProps<TData>) {
     SIZE_KEY,
     parseAsInteger
       .withOptions(queryStateOptions)
-      .withDefault(initialState?.pagination?.pageSize ?? 10),
+      .withDefault(initialState?.pagination?.pageSize ?? 50),
   );
 
   const pagination: PaginationState = React.useMemo(() => {

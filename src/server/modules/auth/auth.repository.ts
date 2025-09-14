@@ -79,13 +79,13 @@ export class AuthRepository {
     return this.prisma.accounts.findUnique({ where: { id } });
   }
 
-  // Sessions
-  findSessionById(id: string) {
-    return this.prisma.sessions.findUnique({ where: { id } });
-  }
-
   // UPDATE
   updateUser(id: string, data: Prisma.UsersUpdateInput) {
     return this.prisma.users.update({ where: { id }, data });
+  }
+
+  // DELETE
+  deleteUser(id: string) {
+    return this.prisma.users.delete({ where: { id } });
   }
 }

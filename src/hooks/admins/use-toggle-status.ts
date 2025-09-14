@@ -7,10 +7,10 @@ export const useToggleAdminStatus = () => {
   const updateAdmin = useUpdateAdmin();
 
   return useCallback(
-    (id: string, currentActive: boolean) => {
+    (id: string, newActiveState: boolean) => {
       return updateAdmin.mutate({
         id,
-        data: { active: !currentActive },
+        data: { active: newActiveState },
       });
     },
     [updateAdmin],

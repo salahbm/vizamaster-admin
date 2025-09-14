@@ -1,6 +1,23 @@
 import { PaginatedResult, PaginationParams } from './types';
 
 /**
+ * Create Response object
+ */
+export function createResponse<T>(
+  data?: T,
+  status: number = 200,
+  message: string = 'Success',
+  code: number = 2000,
+) {
+  return {
+    status,
+    message,
+    code,
+    ...(data !== undefined && { data }),
+  };
+}
+
+/**
  * Builds pagination parameters for database queries
  */
 export function buildPaginationParams(params: PaginationParams) {

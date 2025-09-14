@@ -11,7 +11,7 @@ import React, {
   useState,
 } from 'react';
 
-import { CircleAlert, CircleCheckBig, X } from 'lucide-react';
+import { CircleAlert, CircleCheckBig } from 'lucide-react';
 
 import {
   AlertDialog,
@@ -105,9 +105,9 @@ export interface IAlertContent {
 const baseDefaultOptions: AlertOptions = {
   title: '',
   description: '',
-  confirmText: '확인',
-  cancelText: '취소',
-  icon: '',
+  confirmText: 'Confirm',
+  cancelText: 'Cancel',
+  icon: 'CircleAlert',
   iconClassName: '',
   confirmButton: {},
   cancelButton: {},
@@ -186,13 +186,13 @@ const AlertContent: React.FC<IAlertContent> = memo(
           case 'error':
             return (
               <CircleAlert
-                className={cn('size-15 shrink-0 text-red-500', iconClassName)}
+                className={cn('size-10 shrink-0 text-red-500', iconClassName)}
               />
             );
           case 'success':
             return (
               <CircleCheckBig
-                className={cn('size-14 shrink-0 text-green-500', iconClassName)}
+                className={cn('size-10 shrink-0 text-green-500', iconClassName)}
               />
             );
           default:
@@ -214,13 +214,6 @@ const AlertContent: React.FC<IAlertContent> = memo(
           {...alertDialogContent}
         >
           <AlertDialogHeader {...alertDialogHeader} className="mb-6 py-0">
-            <button
-              type="button"
-              onClick={onCancel}
-              className="hover:bg-gray-1 absolute top-2 right-2 rounded p-2"
-            >
-              <X className="fill-navy size-6 shrink-0" />
-            </button>
             {icon && (
               <span className="flex-center mb-5 w-full">{renderIcon}</span>
             )}

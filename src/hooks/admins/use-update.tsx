@@ -28,7 +28,11 @@ export const useUpdateAdmin = () => {
     mutationFn: update,
     options: {
       onSuccess: () =>
-        queryClient.invalidateQueries({ queryKey: QueryKeys.admins.all }),
+        queryClient.invalidateQueries({
+          queryKey: QueryKeys.admins.all,
+          exact: false,
+          type: 'all',
+        }),
     },
   });
 };

@@ -245,7 +245,7 @@ class Agent {
   getPaginated<T>(
     endpoint: string,
     page = 1,
-    size = 10,
+    size = 50,
     search = '',
     options: RequestOptions = {},
   ): Promise<PaginatedResult<T>> {

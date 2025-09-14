@@ -22,6 +22,7 @@ import {
   useDeleteAdmin,
   useToggleAdminStatus,
 } from '@/hooks/admins';
+import { useAlert } from '@/providers/alert';
 
 import { Users } from '../../../../generated/prisma';
 
@@ -38,6 +39,9 @@ export const ADMIN_COLUMNS: ColumnDef<Users>[] = [
         }
       />
     ),
+    meta: {
+      label: 'admins.columns.name',
+    },
   },
   {
     accessorKey: 'email',
@@ -51,6 +55,9 @@ export const ADMIN_COLUMNS: ColumnDef<Users>[] = [
         }
       />
     ),
+    meta: {
+      label: 'admins.columns.email',
+    },
   },
   {
     accessorKey: 'role',
@@ -65,6 +72,9 @@ export const ADMIN_COLUMNS: ColumnDef<Users>[] = [
       />
     ),
     cell: ({ row }) => <ChangeRole row={row} />,
+    meta: {
+      label: 'admins.columns.role',
+    },
   },
   {
     accessorKey: 'active',
@@ -79,6 +89,9 @@ export const ADMIN_COLUMNS: ColumnDef<Users>[] = [
       />
     ),
     cell: ({ row }) => <ToggleStatus row={row} />,
+    meta: {
+      label: 'admins.columns.status',
+    },
   },
   {
     accessorKey: 'createdAt',
@@ -96,6 +109,9 @@ export const ADMIN_COLUMNS: ColumnDef<Users>[] = [
       const date = new Date(row.getValue('createdAt'));
       return <div>{format(date, 'PPP')}</div>;
     },
+    meta: {
+      label: 'admins.columns.createdAt',
+    },
   },
   {
     id: 'actions',
@@ -110,6 +126,9 @@ export const ADMIN_COLUMNS: ColumnDef<Users>[] = [
       />
     ),
     cell: ({ row }) => <DeleteAdmin row={row} />,
+    meta: {
+      label: 'Common.actions',
+    },
   },
 ];
 
@@ -169,13 +188,13 @@ const ToggleStatus = ({ row }: { row: Row<Users> }) => {
         <DropdownMenuLabel>{t('actions.toggleStatus')}</DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuItem
-          onClick={() => toggleStatus(row.original.id, !isActive)}
+          onClick={() => toggleStatus(row.original.id, true)}
           disabled={isActive}
         >
           {t('status.active')}
         </DropdownMenuItem>
         <DropdownMenuItem
-          onClick={() => toggleStatus(row.original.id, !isActive)}
+          onClick={() => toggleStatus(row.original.id, false)}
           disabled={!isActive}
         >
           {t('status.inactive')}
@@ -186,6 +205,7 @@ const ToggleStatus = ({ row }: { row: Row<Users> }) => {
 };
 
 const DeleteAdmin = ({ row }: { row: Row<Users> }) => {
+  const alert = useAlert();
   const t = useTranslations();
   const { mutateAsync: deleteAdmin } = useDeleteAdmin();
   return (
@@ -197,7 +217,14 @@ const DeleteAdmin = ({ row }: { row: Row<Users> }) => {
         <DropdownMenuLabel>{t('Common.actions')}</DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuItem
-          onClick={async () => await deleteAdmin(row.original.id)}
+          onClick={async () =>
+            alert({
+              title: t('Common.delete'),
+              description: t('Common.messages.deleteDescription'),
+              onConfirm: async () => await deleteAdmin(row.original.id),
+              confirmText: t('Common.delete'),
+            })
+          }
           className="flex-between"
         >
           {t('Common.delete')}

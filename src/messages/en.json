@@ -38,6 +38,7 @@
     "removeAllFiles": "Remove all files",
     "actions": "Actions",
     "signIn": "Sign In",
+    "goBack": "Go Back",
     "placeholder": {
       "date": "Select date",
       "time": "Select time",
@@ -55,7 +56,9 @@
       "fileUpload": "File upload failed",
       "fileAcceptType": "File type must be {accept}",
       "unauthorized": "Unauthorized",
-      "unauthorizedDescription": "You are not authorized to perform this action"
+      "unauthorizedDescription": "You are not authorized to perform this action",
+      "error": "Error",
+      "deleteDescription": "Are you sure you want to delete this data?"
     }
   },
   "auth": {
