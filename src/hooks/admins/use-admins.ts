@@ -1,10 +1,13 @@
 import { keepPreviousData, useQuery } from '@tanstack/react-query';
+import { ColumnSort } from '@tanstack/react-table';
 
 import agent from '@/lib/agent';
+import { objectToSearchParams } from '@/lib/object-to-params';
 
 import { QueryKeys } from '@/constants/query-keys';
 
-import { PaginatedResult } from '@/server/common/types';
+import { NotFoundError } from '@/server/common/errors';
+import { PaginatedResult, TResponse } from '@/server/common/types';
 
 import { Users } from '../../../generated/prisma';
 
@@ -12,18 +15,19 @@ type TAdminParams = {
   page: number;
   size: number;
   search?: string;
+  sort?: ColumnSort[] | ColumnSort;
 };
 
-const getAdmins = async (
-  params: TAdminParams,
-): Promise<PaginatedResult<Users>> => {
-  const { data } = await agent.getPaginated(
-    'api/admins',
-    params.page,
-    params.size,
-    params.search,
+export const getAdmins = async (params: TAdminParams) => {
+  const queries = objectToSearchParams(params);
+
+  const { data } = await agent.get<TResponse<PaginatedResult<Users>>>(
+    `api/admins?${queries}`,
   );
-  return data as unknown as PaginatedResult<Users>;
+
+  if (!data) throw new NotFoundError('Admins not found');
+
+  return data;
 };
 
 /**
@@ -32,6 +36,6 @@ const getAdmins = async (
 export const useAdmins = (params: TAdminParams) =>
   useQuery({
     queryFn: () => getAdmins(params),
-    queryKey: [QueryKeys.admins.all, params],
+    queryKey: [...QueryKeys.admins.all, { ...params }],
     placeholderData: keepPreviousData,
   });

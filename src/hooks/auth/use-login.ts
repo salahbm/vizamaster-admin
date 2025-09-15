@@ -28,7 +28,12 @@ const useLogin = () => {
   const router = useRouter();
   return useMutation({
     mutationFn: login,
-    options: { onSuccess: () => router.push(routes.dashboard) },
+    options: {
+      onSuccess: () => router.push(routes.dashboard),
+      meta: {
+        toast: false,
+      },
+    },
   });
 };
 

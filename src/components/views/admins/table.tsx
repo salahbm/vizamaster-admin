@@ -29,21 +29,25 @@ export const AdminsTable = () => {
   const query = useQueryReader({
     page: { type: 'number', defaultValue: 1 },
     size: { type: 'number', defaultValue: 50 },
-    sort: { type: 'object', defaultValue: [{ id: 'createdAt', desc: true }] },
+    sort: { type: 'object', defaultValue: [{ id: 'role', desc: true }] },
     search: { type: 'string', defaultValue: '' },
   });
 
-  const { data, isLoading, isFetching } = useAdmins({
+  const {
+    data: admins,
+    isLoading,
+    isFetching,
+  } = useAdmins({
     page: query.page,
     size: query.size,
-    // sort: query.sort,
+    sort: query.sort,
     search: query.search,
   });
 
   const { table } = useDataTable({
-    data: data?.data,
+    data: admins?.data,
     columns: columns,
-    pageCount: data?.meta.totalPages,
+    pageCount: admins?.meta?.totalPages,
     getRowId: (originalRow: Users) => originalRow.id,
     shallow: false,
     clearOnDefault: true,

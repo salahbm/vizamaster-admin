@@ -30,8 +30,6 @@ export const useUpdateAdmin = () => {
       onSuccess: () =>
         queryClient.invalidateQueries({
           queryKey: QueryKeys.admins.all,
-          exact: false,
-          type: 'all',
         }),
     },
   });

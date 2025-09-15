@@ -1,5 +1,7 @@
 import { NextRequest } from 'next/server';
 
+import { ColumnSort } from '@tanstack/react-table';
+
 import { API_CODES } from '@/server/common/codes';
 import { NotFoundError, UnauthorizedError } from '@/server/common/errors';
 import { createPaginatedResult, createResponse } from '@/server/common/utils';
@@ -15,12 +17,17 @@ export class AuthService {
     private readonly authGuard = new AuthGuard(),
   ) {}
 
-  async getAllUsers(page = 1, size = 50, search = '') {
+  async getAllUsers(
+    page = 1,
+    size = 50,
+    search = '',
+    sort?: ColumnSort[] | ColumnSort,
+  ) {
     // Calculate skip based on page and size
     const skip = Math.max(0, (page - 1) * size);
 
     const [users, total] = await Promise.all([
-      this.authRepository.getAllUsers(skip, size, search),
+      this.authRepository.getAllUsers(skip, size, search, sort),
       this.authRepository.countUsers(search),
     ]);
     const paginatedData = createPaginatedResult(users, total, { page, size });

@@ -17,3 +17,10 @@ export type PaginatedResult<T> = {
   data: T[];
   meta: PaginationMeta;
 };
+
+export type TResponse<T> = {
+  status: number;
+  message: string;
+  code: number;
+  data?: T;
+};

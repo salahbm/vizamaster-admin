@@ -1,3 +1,6 @@
+import { ColumnSort } from '@tanstack/react-table';
+
+import { Prisma } from '../../../generated/prisma';
 import { PaginatedResult, PaginationParams } from './types';
 
 /**
@@ -56,9 +59,10 @@ export function createPaginatedResult<T>(
  * Parses pagination parameters from URL search parameters
  */
 
-export function parsePaginationParams(searchParams: URLSearchParams) {
+export function parsePaginationAndSortParams(searchParams: URLSearchParams) {
   let page = 1;
   let size = 50;
+  let sort: ColumnSort[] | ColumnSort | undefined;
 
   const pageParam = searchParams.get('page');
   if (pageParam) {
@@ -76,46 +80,35 @@ export function parsePaginationParams(searchParams: URLSearchParams) {
     }
   }
 
-  return { page, size };
+  const sortParam = searchParams.get('sort');
+  if (sortParam) {
+    try {
+      sort = JSON.parse(sortParam);
+    } catch (error) {
+      console.error('Error parsing sort parameter:', error);
+    }
+  }
+
+  return { page, size, sort };
 }
 
-// /**
-//  * Builds filter conditions for Prisma queries
-//  */
-// export function buildFilterConditions(filters: FilterParams) {
-//   const conditions: Record<string, any> = {};
-
-//   Object.entries(filters).forEach(([key, value]) => {
-//     if (value === undefined) return;
-
-//     if (typeof value === 'string') {
-//       if (key.endsWith('Id')) {
-//         conditions[key] = value;
-//       } else {
-//         conditions[key] = { contains: value, mode: 'insensitive' };
-//       }
-//     } else if (Array.isArray(value)) {
-//       conditions[key] = { in: value };
-//     } else {
-//       conditions[key] = value;
-//     }
-//   });
-
-//   return conditions;
-// }
-
-// /**
-//  * Builds sort parameters for Prisma queries
-//  */
-// export function buildSortParams(sort?: SortParams) {
-//   if (!sort) return {};
-
-//   return {
-//     orderBy: {
-//       [sort.field]: sort.direction,
-//     },
-//   };
-// }
+/**
+ * Builds sort parameters for Prisma queries
+ */
+export function buildOrderBy<T extends string = string>(
+  sort: ColumnSort[] | ColumnSort | undefined,
+  defaultKey: T = 'createdAt' as T,
+  defaultDir: Prisma.SortOrder = 'desc',
+): Prisma.UsersOrderByWithRelationInput {
+  if (Array.isArray(sort) && sort.length > 0) {
+    const { id, desc } = sort[0];
+    return { [id]: (desc ? 'desc' : 'asc') as Prisma.SortOrder };
+  }
+  if (sort && !Array.isArray(sort)) {
+    return { [sort.id]: (sort.desc ? 'desc' : 'asc') as Prisma.SortOrder };
+  }
+  return { [defaultKey]: defaultDir };
+}
 
 // /**
 //  * Validates and sanitizes form data against a schema

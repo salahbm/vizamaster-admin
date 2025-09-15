@@ -5,7 +5,6 @@
 import { getTranslations } from 'next-intl/server';
 
 import { ApiError } from '@/server/common/errors';
-import { PaginatedResult } from '@/server/common/types';
 
 // HTTP methods supported by the agent
 type HttpMethod = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
@@ -83,9 +82,15 @@ class Agent {
       ? endpoint.slice(1)
       : endpoint;
 
-    // Combine base URL and endpoint
-    const url = this.baseUrl
-      ? `${this.baseUrl}/${normalizedEndpoint}`
+    // If baseUrl is empty, use absolute URL (important for Node/server)
+    const base =
+      this.baseUrl ||
+      (typeof window === 'undefined'
+        ? process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000' // fallback
+        : '');
+
+    const url = base
+      ? `${base.replace(/\/$/, '')}/${normalizedEndpoint}`
       : `/${normalizedEndpoint}`;
 
     // Add query parameters if provided
@@ -237,27 +242,6 @@ class Agent {
    */
   delete<T>(endpoint: string, options: RequestOptions = {}): Promise<T> {
     return this.request<T>('DELETE', endpoint, undefined, options);
-  }
-
-  /**
-   * Get a paginated list of items
-   */
-  getPaginated<T>(
-    endpoint: string,
-    page = 1,
-    size = 50,
-    search = '',
-    options: RequestOptions = {},
-  ): Promise<PaginatedResult<T>> {
-    return this.get<PaginatedResult<T>>(endpoint, {
-      ...options,
-      params: {
-        ...(options.params || {}),
-        page,
-        size,
-        ...(search ? { search } : {}),
-      },
-    });
   }
 }
 

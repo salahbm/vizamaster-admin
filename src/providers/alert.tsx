@@ -107,7 +107,7 @@ const baseDefaultOptions: AlertOptions = {
   description: '',
   confirmText: 'Confirm',
   cancelText: 'Cancel',
-  icon: 'CircleAlert',
+  icon: 'error',
   iconClassName: '',
   confirmButton: {},
   cancelButton: {},

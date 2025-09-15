@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getTranslations } from 'next-intl/server';
 
 import { UnauthorizedError } from '@/server/common/errors';
-import { parsePaginationParams } from '@/server/common/utils';
+import { parsePaginationAndSortParams } from '@/server/common/utils';
 import { AuthService } from '@/server/modules/auth';
 import { auth } from '@/server/modules/auth/auth';
 
@@ -26,10 +26,10 @@ export async function GET(request: NextRequest) {
 
     const search = searchParams.get('search') || '';
 
-    const { page, size } = parsePaginationParams(searchParams);
+    const { page, size, sort } = parsePaginationAndSortParams(searchParams);
 
     // Get users
-    const result = await authService.getAllUsers(page, size, search);
+    const result = await authService.getAllUsers(page, size, search, sort);
     return NextResponse.json(result);
   } catch (error: unknown) {
     const t = await getTranslations();

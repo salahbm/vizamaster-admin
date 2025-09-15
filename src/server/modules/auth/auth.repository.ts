@@ -1,3 +1,6 @@
+import { ColumnSort } from '@tanstack/react-table';
+
+import { buildOrderBy } from '@/server/common/utils';
 import prisma from '@/server/db/prisma';
 
 import { Prisma } from '../../../../generated/prisma';
@@ -14,7 +17,14 @@ export class AuthRepository {
     return this.prisma.users.findUnique({ where: { email } });
   }
 
-  getAllUsers(skip = 0, take = 50, search = '') {
+  getAllUsers(
+    skip = 0,
+    take = 50,
+    search = '',
+    sort?: ColumnSort[] | ColumnSort,
+  ) {
+    const orderBy = buildOrderBy(sort);
+
     const where = search
       ? {
           OR: [
@@ -38,7 +48,7 @@ export class AuthRepository {
       where,
       skip,
       take,
-      orderBy: { createdAt: 'desc' },
+      orderBy,
       select: {
         id: true,
         email: true,

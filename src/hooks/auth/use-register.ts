@@ -10,8 +10,8 @@ import useMutation from '@/hooks/common/use-mutation';
 import { SignUpSchema } from '@/server/common/dto';
 import { handleApiError } from '@/server/common/errors';
 
-const register = async (data: SignUpSchema) => {
-  const response = await authClient.signUp.email(
+const register = async (data: SignUpSchema) =>
+  await authClient.signUp.email(
     {
       email: data.email,
       password: data.password,
@@ -24,8 +24,6 @@ const register = async (data: SignUpSchema) => {
       },
     },
   );
-  return response;
-};
 
 const useRegister = () => {
   const router = useRouter();
@@ -33,6 +31,9 @@ const useRegister = () => {
     mutationFn: register,
     options: {
       onSuccess: () => router.push(`${routes.success}?type=generic`),
+      meta: {
+        toast: false,
+      },
     },
   });
 };
