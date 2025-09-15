@@ -1,8 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-import { getTranslations } from 'next-intl/server';
-
-import { UnauthorizedError } from '@/server/common/errors';
+import { UnauthorizedError, handleApiError } from '@/server/common/errors';
 import { parsePaginationAndSortParams } from '@/server/common/utils';
 import { AuthService } from '@/server/modules/auth';
 import { auth } from '@/server/modules/auth/auth';
@@ -32,18 +30,6 @@ export async function GET(request: NextRequest) {
     const result = await authService.getAllUsers(page, size, search, sort);
     return NextResponse.json(result);
   } catch (error: unknown) {
-    const t = await getTranslations();
-
-    if (error instanceof Error) {
-      return NextResponse.json(
-        { error: error.message || t('errors.somethingWentWrong') },
-        { status: 500 },
-      );
-    }
-
-    return NextResponse.json(
-      { error: t('errors.somethingWentWrong') },
-      { status: 500 },
-    );
+    return handleApiError(error);
   }
 }

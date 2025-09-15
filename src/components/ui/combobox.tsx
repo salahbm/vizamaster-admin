@@ -71,14 +71,15 @@ export const Combobox = React.forwardRef<HTMLButtonElement, ComboboxProps>(
     const handleSelect = (val: string) => {
       if (multiple) {
         const currentValues = Array.isArray(value) ? value : [];
-        const valueExists = currentValues.includes(val);
+        const stringValues = currentValues.map((v) => String(v));
+        const valueExists = stringValues.some((v) => v === val);
 
         if (valueExists) {
           // Remove the value if it already exists
-          onValueChange(currentValues.filter((v) => v !== val));
+          onValueChange(stringValues.filter((v) => v !== val));
         } else {
           // Add the value if it doesn't exist
-          onValueChange([...currentValues, val]);
+          onValueChange([...stringValues, val]);
         }
       } else {
         // Single select mode

@@ -1,3 +1,7 @@
+import { NextResponse } from 'next/server';
+
+import { getTranslations } from 'next-intl/server';
+
 // Base API error class
 export class ApiError extends Error {
   status: number;
@@ -70,28 +74,32 @@ export class InternalServerError extends ApiError {
   }
 }
 
-export function handleApiError(
+export async function handleApiError(
   errorOrMessage: unknown,
   status?: number,
   code?: number,
-): ApiError {
-  // If first argument is an error object
+): Promise<NextResponse> {
+  let apiError: ApiError;
+
   if (typeof errorOrMessage !== 'string') {
     if (errorOrMessage instanceof ApiError) {
-      return errorOrMessage;
+      apiError = errorOrMessage;
+    } else if (errorOrMessage instanceof Error) {
+      apiError = new ApiError(errorOrMessage.message, 500, 5000);
+    } else {
+      const t = await getTranslations();
+      apiError = new ApiError(t('errors.somethingWentWrong'), 500, 5000);
     }
-
-    if (errorOrMessage instanceof Error) {
-      return new InternalServerError(errorOrMessage.message);
-    }
-
-    return new InternalServerError('An unknown error occurred');
+  } else {
+    apiError = new ApiError(errorOrMessage, status || 500, code || 5000);
   }
 
-  // If first argument is a message string
-  if (status && code) {
-    return new ApiError(errorOrMessage as string, status, code);
-  }
-
-  return new InternalServerError(errorOrMessage as string);
+  return NextResponse.json(
+    {
+      message: apiError.message,
+      code: apiError.code,
+      data: apiError.data,
+    },
+    { status: apiError.status },
+  );
 }
