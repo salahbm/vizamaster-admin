@@ -77,22 +77,25 @@ class Agent {
     endpoint: string,
     params?: Record<string, string | number | boolean | undefined>,
   ): string {
-    // Remove leading slash if present to avoid double slashes
+    // Remove leading slash to avoid double slashes
     const normalizedEndpoint = endpoint.startsWith('/')
       ? endpoint.slice(1)
       : endpoint;
 
-    // If baseUrl is empty, use absolute URL (important for Node/server)
+    // Determine base URL
+    // - In Node (SSR) use localhost in dev, empty in prod
+    // - In browser (client) always empty (relative URL)
     const base =
-      this.baseUrl ||
-      (typeof window === 'undefined'
-        ? process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000' // fallback
-        : '');
+      typeof window === 'undefined'
+        ? process.env.NODE_ENV === 'development'
+          ? 'http://localhost:3000'
+          : '' // production: same origin
+        : '';
 
+    // Construct full URL
     const url = base
-      ? `${base.replace(/\/$/, '')}/${normalizedEndpoint}`
+      ? `${base}/${normalizedEndpoint}`
       : `/${normalizedEndpoint}`;
-
     // Add query parameters if provided
     if (params && Object.keys(params).length > 0) {
       const searchParams = new URLSearchParams();

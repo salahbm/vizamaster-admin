@@ -135,6 +135,14 @@
     color: transparent;
   }
 
+  .filter-label {
+    @apply text-muted-foreground w-36 text-left font-sans font-semibold whitespace-nowrap;
+  }
+
+  .filter-box {
+    @apply flex min-h-10 items-center justify-normal gap-5;
+  }
+
   .card {
     @apply bg-card text-card-foreground rounded lg:border lg:p-4 lg:shadow-sm;
   }
