@@ -23,6 +23,7 @@ model Users {
   sessionss     Sessions[]
   accountss     Accounts[]
   role          UserRole   @default(USER)
+  sidebar       SidebarUser[]
   active        Boolean    @default(false)
 
 
@@ -66,18 +67,34 @@ model Accounts {
   @@map("accounts")
 }
 
-model Verification {
-  id         String   @id
-  identifier String
-  value      String
-  expiresAt  DateTime
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @default(now()) @updatedAt
+model Sidebar {
+  id        String   @id @default(cuid())
+  labelEn   String
+  labelRu   String
+  href      String   @unique
+  icon      String?
+  parentId  String?  
+  parent    Sidebar? @relation("ParentChild", fields: [parentId], references: [id], onDelete: SetNull)
+  children  Sidebar[] @relation("ParentChild")
+  order     Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  @@map("verification")
+  users SidebarUser[] // pivot table
+  @@map("sidebar")
 }
 
+model SidebarUser {
+  id            String   @id @default(cuid())
+  userId        String
+  sidebarItemId String
+  user          Users    @relation(fields: [userId], references: [id])
+  sidebarItem   Sidebar  @relation(fields: [sidebarItemId], references: [id])
 
+  @@unique([userId, sidebarItemId])
+  @@index([userId])
+  @@map("sidebar_user")
+}
 
 enum UserRole {
   USER

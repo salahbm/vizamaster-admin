@@ -67,7 +67,7 @@ export const AdminsTable = () => {
         value={search}
         type="search"
         placeholder={t('Common.search')}
-        className="w-96"
+        className="md:w-96"
         onChange={(e) => debouncedSearch(e.target.value)}
       />
 

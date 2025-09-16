@@ -18,7 +18,7 @@ export default function Sidebar() {
       {/* Overlay */}
       {!isMinimized && (
         <div
-          className="fixed inset-0 z-1 bg-black/50 lg:hidden"
+          className="fixed inset-0 z-10 bg-black/50 lg:hidden"
           onClick={toggle}
         />
       )}

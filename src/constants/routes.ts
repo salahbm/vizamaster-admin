@@ -10,6 +10,7 @@ export const routes = {
   profile: '/settings/profile',
   admins: '/settings/admins',
   preferences: '/settings/preferences',
+  sidebar: '/settings/sidebar',
   table: '/table',
   forms: '/forms',
   success: '/success',
@@ -54,6 +55,11 @@ export const SIDENAV: SideNavItem[] = [
         href: routes.admins,
         label: 'admins',
         icon: 'Users',
+      },
+      {
+        href: routes.sidebar,
+        label: 'sidebar',
+        icon: 'Route',
       },
       {
         href: routes.preferences,

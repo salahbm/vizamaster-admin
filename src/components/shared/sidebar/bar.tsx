@@ -17,8 +17,9 @@ import { cn } from '@/lib/utils';
 
 import { SIDENAV, SideNavItem } from '@/constants/routes';
 
+import { useSidebar } from '@/hooks/settings/sidebar';
 import { usePathname } from '@/i18n/routing';
-import { useSidebar } from '@/store/sidebar';
+import { useSidebar as useSidebarStore } from '@/store/sidebar';
 
 import { DynamicIcon } from './icon';
 
@@ -39,8 +40,11 @@ const isPathActive = (pathname: string | null, href: string) => {
 const SidebarNav: FC = () => {
   const t = useTranslations();
   const pathname = usePathname();
-  const { isMinimized } = useSidebar();
+  const { isMinimized } = useSidebarStore();
   const [expanded, setExpanded] = useState<string[]>([]);
+
+  const { data } = useSidebar();
+  console.log(`file: bar.tsx:46 ~ data:`, data);
 
   const { activeParent, activeChild } = useMemo(() => {
     let parent: SideNavItem | undefined;

@@ -3,4 +3,11 @@ export const QueryKeys = {
     all: ['admins'],
     details: ['admins', 'details'],
   },
+
+  settings: {
+    sidebar: {
+      all: ['settings', 'sidebar'],
+      details: ['settings', 'sidebar', 'details'],
+    },
+  },
 } as const;
