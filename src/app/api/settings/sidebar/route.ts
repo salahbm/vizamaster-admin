@@ -8,6 +8,7 @@ export async function GET() {
   try {
     // Get all sidebars
     const result = await sidebarService.getAllSidebar();
+
     return NextResponse.json(result);
   } catch (error: unknown) {
     return handleApiError(error);

@@ -93,6 +93,8 @@ export default function Pagination<TData>({
     return pages;
   }, [currentPage, pageCount, renderButton]);
 
+  if (pageCount <= 1) return null;
+
   return (
     <div
       className={cn(

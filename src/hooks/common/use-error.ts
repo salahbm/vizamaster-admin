@@ -42,6 +42,7 @@ export const useError = () => {
         description: message,
         icon: 'error',
         cancelButton: null,
+        cancelText: t('Common.cancel'),
         confirmText: t('Common.goBack'),
         onConfirm: () => router.back(),
       });

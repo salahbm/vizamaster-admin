@@ -17,7 +17,6 @@ import { cn } from '@/lib/utils';
 
 import { SIDENAV, SideNavItem } from '@/constants/routes';
 
-import { useSidebar } from '@/hooks/settings/sidebar';
 import { usePathname } from '@/i18n/routing';
 import { useSidebar as useSidebarStore } from '@/store/sidebar';
 
@@ -43,8 +42,8 @@ const SidebarNav: FC = () => {
   const { isMinimized } = useSidebarStore();
   const [expanded, setExpanded] = useState<string[]>([]);
 
-  const { data } = useSidebar();
-  console.log(`file: bar.tsx:46 ~ data:`, data);
+  // const { data } = useSidebar();
+  // console.log(`file: bar.tsx:46 ~ data:`, data);
 
   const { activeParent, activeChild } = useMemo(() => {
     let parent: SideNavItem | undefined;
