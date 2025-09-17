@@ -8,8 +8,12 @@ import { TResponse } from '@/server/common/types';
 
 import { Sidebar } from '../../../../generated/prisma';
 
-export const getAllSidebar = async () =>
-  await agent.get<TResponse<Sidebar[]>>(`api/settings/sidebar`);
+export const getAllSidebar = async (): Promise<Sidebar[]> => {
+  const { data } =
+    await agent.get<TResponse<Sidebar[]>>(`api/settings/sidebar`);
+
+  return data || [];
+};
 
 /**
  * Hook for fetching all sidebars

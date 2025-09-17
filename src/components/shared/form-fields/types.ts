@@ -9,7 +9,7 @@ import {
   UseFormStateReturn,
 } from 'react-hook-form';
 
-export interface CustomProps<T extends FieldValues> {
+export interface IFormFields<T extends FieldValues> {
   id?: string;
   name: Path<T>;
   control: Control<T>;

@@ -22,7 +22,7 @@ import {
 
 import { cn } from '@/lib/utils';
 
-import { TFieldValues } from '@/types/global';
+import { FieldValueTypes } from '@/types/global';
 
 interface ComboboxProps
   extends Omit<
@@ -38,7 +38,7 @@ interface ComboboxProps
   }>;
   label?: string | React.ReactNode;
   onValueChange: (value: string | string[]) => void;
-  value: TFieldValues;
+  value: FieldValueTypes;
   placeholder?: string;
   modalPopover?: boolean;
   className?: string;

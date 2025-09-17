@@ -6,14 +6,14 @@ import { Eye, EyeOff } from 'lucide-react';
 
 import { cn } from '@/lib/utils';
 
-import { TFieldValues } from '@/types/global';
+import { FieldValueTypes } from '@/types/global';
 
 import { Input } from './input';
 
 interface PasswordInputProps
   extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'value'> {
   showToggle?: boolean;
-  value?: TFieldValues;
+  value?: FieldValueTypes;
 }
 
 export function PasswordInput({

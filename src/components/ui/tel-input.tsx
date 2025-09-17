@@ -3,7 +3,7 @@ import { Phone } from 'lucide-react';
 
 import { cn } from '@/lib/utils';
 
-import { TFieldValues } from '@/types/global';
+import { FieldValueTypes } from '@/types/global';
 
 import { Input } from './input';
 
@@ -11,7 +11,7 @@ interface TelephoneInputProps
   extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'value'> {
   showIcon?: boolean;
   formatPhoneNumber?: boolean;
-  value?: TFieldValues;
+  value?: FieldValueTypes;
 }
 
 export function TelephoneInput({

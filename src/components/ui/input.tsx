@@ -2,10 +2,10 @@ import * as React from 'react';
 
 import { cn } from '@/lib/utils';
 
-import { TFieldValues } from '@/types/global';
+import { FieldValueTypes } from '@/types/global';
 
 interface InputProps extends Omit<React.ComponentProps<'input'>, 'value'> {
-  value?: TFieldValues;
+  value?: FieldValueTypes;
 }
 
 function Input({ className, type, value, ...props }: InputProps) {

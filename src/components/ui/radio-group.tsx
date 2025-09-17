@@ -7,7 +7,7 @@ import { CircleIcon } from 'lucide-react';
 
 import { cn } from '@/lib/utils';
 
-import { TFieldValues } from '@/types/global';
+import { FieldValueTypes } from '@/types/global';
 
 function RadioGroup({
   className,
@@ -15,8 +15,8 @@ function RadioGroup({
   onChange,
   ...props
 }: Omit<React.ComponentProps<typeof RadioGroupPrimitive.Root>, 'value'> & {
-  value?: TFieldValues;
-  onChange?: (value: TFieldValues) => void;
+  value?: FieldValueTypes;
+  onChange?: (value: FieldValueTypes) => void;
 }) {
   return (
     <RadioGroupPrimitive.Root

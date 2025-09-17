@@ -20,7 +20,7 @@ import {
   FileWithPreview,
   useFileUpload,
 } from '@/hooks/common/use-file-upload';
-import { TFieldValues } from '@/types/global';
+import { FieldValueTypes } from '@/types/global';
 
 const makeAcceptString = (accept: string) => {
   const types = accept.split(',');
@@ -28,7 +28,7 @@ const makeAcceptString = (accept: string) => {
 };
 
 interface UploaderProps {
-  value?: TFieldValues;
+  value?: FieldValueTypes;
   maxFiles?: number;
   maxSizeMB?: number;
   onChange?: (files: FileWithPreview[]) => void;

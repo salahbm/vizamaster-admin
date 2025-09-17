@@ -4,7 +4,7 @@ import { Locale, format } from 'date-fns';
 import { ru } from 'date-fns/locale';
 import { useLocale } from 'next-intl';
 
-import { TFieldValues } from '@/types/global';
+import { FieldValueTypes } from '@/types/global';
 
 // Custom hook to get date locale
 export const useDateLocale = () => {
@@ -16,7 +16,7 @@ export const useDateLocale = () => {
  * Format a date or range value based on the variant
  */
 export const formatDateValue = (
-  value: TFieldValues | undefined,
+  value: FieldValueTypes | undefined,
   variant: 'default' | 'date-time' | 'time' | 'range' | 'month' | 'year',
   dateFormat: string,
   placeholder: string,
@@ -111,7 +111,7 @@ export const handleRangeSelection = (
 /**
  * Get selected range for calendar
  */
-export const getSelectedRange = (value: TFieldValues | undefined) => {
+export const getSelectedRange = (value: FieldValueTypes | undefined) => {
   return {
     from:
       value && typeof value === 'object' && 'from' in value

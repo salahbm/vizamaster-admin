@@ -7,7 +7,6 @@ import { useRouter } from 'next/navigation';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslations } from 'next-intl';
 import { useForm } from 'react-hook-form';
-import * as z from 'zod';
 
 import { FormFields } from '@/components/shared/form-fields';
 import { Button } from '@/components/ui/button';
@@ -24,18 +23,13 @@ import {
   useSidebarDetail,
   useUpdateSidebarById,
 } from '@/hooks/settings/sidebar';
-import { createSidebarDto } from '@/server/common/dto';
+import { TUpdateSidebarDto, updateSidebarDto } from '@/server/common/dto';
 
 import { sidebarDefaultValues } from './defaults';
 
 interface IUpsertSidebarProps {
   id?: string;
 }
-
-// Define the form schema using Zod
-
-// Infer the form values type from the schema
-type SidebarFormValues = z.infer<typeof createSidebarDto>;
 
 const UpsertSidebar: React.FC<IUpsertSidebarProps> = ({ id }) => {
   const t = useTranslations('sidebar');
@@ -48,23 +42,21 @@ const UpsertSidebar: React.FC<IUpsertSidebarProps> = ({ id }) => {
   const { mutateAsync: updateSidebarById } = useUpdateSidebarById();
 
   // Initialize form with default values
-  const form = useForm<SidebarFormValues>({
-    resolver: zodResolver(createSidebarDto) as any, // Type assertion to fix incompatible resolver types
+  const form = useForm<TUpdateSidebarDto>({
+    resolver: zodResolver(updateSidebarDto),
     defaultValues: sidebarDefaultValues(),
   });
 
   // Update form values when sidebar data is loaded (for edit mode)
   useEffect(() => {
-    if (sidebarData?.data) form.reset(sidebarDefaultValues(sidebarData.data));
+    if (sidebarData) form.reset(sidebarDefaultValues(sidebarData));
   }, [sidebarData, form]);
 
   // Prepare parent sidebar options for dropdown
   const parentOptions = useMemo(() => {
-    if (!allSidebars?.data || isLoadingSidebars) return [];
+    if (!allSidebars || isLoadingSidebars) return [];
 
-    const sidebarItems = Array.isArray(allSidebars.data)
-      ? allSidebars.data
-      : [];
+    const sidebarItems = Array.isArray(allSidebars) ? allSidebars : [];
 
     return sidebarItems
       .filter((item) => item.id !== id) // Filter out current sidebar to prevent self-reference
@@ -75,34 +67,19 @@ const UpsertSidebar: React.FC<IUpsertSidebarProps> = ({ id }) => {
   }, [allSidebars, id, isLoadingSidebars]);
 
   // Handle form submission
-  const onSubmit = form.handleSubmit(async (values) => {
-    try {
-      // Ensure values are properly formatted
-      const formattedValues = {
-        labelEn: values.labelEn,
-        labelRu: values.labelRu,
-        href: values.href,
-        order: values.order,
-        // Convert empty strings to undefined for optional fields
-        parentId: values.parentId || undefined,
-        icon: values.icon || undefined,
-      };
+  const onSubmit = async (values: TUpdateSidebarDto) => {
+    console.info('Submitting values:', values);
 
-      console.log('Submitting values:', formattedValues);
-
-      if (id) {
-        // Pass as an array of parameters [id, data]
-        await updateSidebarById([id, formattedValues]);
-      } else {
-        await createSidebar(formattedValues);
-      }
-    } catch (error) {
-      console.error('Form submission error:', error);
+    if (id) {
+      // Pass as an array of parameters [id, data]
+      await updateSidebarById(values);
+    } else {
+      await createSidebar(values);
     }
-  });
+  };
 
   if (isLoadingDetail && id) return <Loader />;
-  console.log(form.getValues());
+
   return (
     <div className="container mx-auto space-y-6 py-6">
       <div className="flex items-center justify-between">
@@ -114,15 +91,12 @@ const UpsertSidebar: React.FC<IUpsertSidebarProps> = ({ id }) => {
       <div className="card-md">
         <Form {...form}>
           <form
-            onSubmit={form.handleSubmit(
-              onSubmit as any,
-              handleFormError as any,
-            )}
+            onSubmit={form.handleSubmit(onSubmit, handleFormError)}
             className="space-y-6"
           >
             <div className="grid gap-6 md:grid-cols-2">
               {/* English Label */}
-              <FormFields<SidebarFormValues>
+              <FormFields
                 name="labelEn"
                 label={t('form.labelEn')}
                 required
@@ -136,7 +110,7 @@ const UpsertSidebar: React.FC<IUpsertSidebarProps> = ({ id }) => {
               />
 
               {/* Russian Label */}
-              <FormFields<SidebarFormValues>
+              <FormFields
                 name="labelRu"
                 label={t('form.labelRu')}
                 required
@@ -151,7 +125,7 @@ const UpsertSidebar: React.FC<IUpsertSidebarProps> = ({ id }) => {
             </div>
 
             {/* URL Path */}
-            <FormFields<SidebarFormValues>
+            <FormFields
               name="href"
               label={t('form.href')}
               required
@@ -163,7 +137,7 @@ const UpsertSidebar: React.FC<IUpsertSidebarProps> = ({ id }) => {
 
             <div className="grid gap-6 md:grid-cols-2">
               {/* Icon */}
-              <FormFields<SidebarFormValues>
+              <FormFields
                 name="icon"
                 label={t('form.icon')}
                 control={form.control}
@@ -177,7 +151,7 @@ const UpsertSidebar: React.FC<IUpsertSidebarProps> = ({ id }) => {
               />
 
               {/* Order */}
-              <FormFields<SidebarFormValues>
+              <FormFields
                 name="order"
                 label={t('form.order')}
                 required
@@ -189,7 +163,7 @@ const UpsertSidebar: React.FC<IUpsertSidebarProps> = ({ id }) => {
             </div>
 
             {/* Parent Sidebar */}
-            <FormFields<SidebarFormValues>
+            <FormFields
               name="parentId"
               label={t('form.parentId')}
               control={form.control}

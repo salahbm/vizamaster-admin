@@ -27,11 +27,11 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 import { cn } from '@/lib/utils';
 
-import { TFieldValues } from '@/types/global';
+import { FieldValueTypes } from '@/types/global';
 
 export interface DatePickerProps {
   /** The currently selected date */
-  value?: TFieldValues;
+  value?: FieldValueTypes;
   /** Callback function when date is selected */
   onChange?: (
     date: Date | undefined | string | string[] | { from: Date; to?: Date },

@@ -21,12 +21,10 @@ export async function PUT(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> },
 ) {
-  console.log(`file: route.ts:22 ~ request:`, request);
   const { id } = await params;
 
   try {
     const body = await request.json();
-    console.log(`file: route.ts:27 ~ body:`, body);
 
     const result = await sidebarService.updateSidebarById(id, body);
     return NextResponse.json(result);

@@ -1,6 +1,6 @@
 import { FileMetadata } from '@/hooks/common/use-file-upload';
 
-export type TFieldValues =
+export type FieldValueTypes =
   | string
   | number
   | boolean

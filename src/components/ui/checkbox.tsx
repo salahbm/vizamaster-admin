@@ -7,7 +7,7 @@ import { CheckIcon } from 'lucide-react';
 
 import { cn } from '@/lib/utils';
 
-import { TFieldValues } from '@/types/global';
+import { FieldValueTypes } from '@/types/global';
 
 function Checkbox({
   className,
@@ -15,8 +15,8 @@ function Checkbox({
   onChange,
   ...props
 }: Omit<React.ComponentProps<typeof CheckboxPrimitive.Root>, 'checked'> & {
-  checked?: TFieldValues;
-  onChange?: (value: TFieldValues) => void;
+  checked?: FieldValueTypes;
+  onChange?: (value: FieldValueTypes) => void;
 }) {
   return (
     <CheckboxPrimitive.Root

@@ -11,14 +11,22 @@ import agent from '@/lib/agent';
 import { QueryKeys } from '@/constants/query-keys';
 
 import useMutation from '@/hooks/common/use-mutation';
-import { CreateSidebarDto } from '@/server/common/dto';
+import { TCreateSidebarDto, TUpdateSidebarDto } from '@/server/common/dto';
+import { NotFoundError } from '@/server/common/errors';
 import { TResponse } from '@/server/common/types';
 
 import { Sidebar } from '../../../../generated/prisma';
 
 // Get a single sidebar by ID
-export const getSidebarById = async (id?: string) =>
-  await agent.get<TResponse<Sidebar>>(`api/settings/sidebar/${id}`);
+export const getSidebarById = async (id?: string): Promise<Sidebar> => {
+  const { data } = await agent.get<TResponse<Sidebar>>(
+    `api/settings/sidebar/${id}`,
+  );
+
+  if (!data) throw new NotFoundError('Sidebar not found');
+
+  return data;
+};
 
 /**
  * Hook for fetching a sidebar by ID
@@ -32,7 +40,7 @@ export const useSidebarDetail = (id?: string) =>
   });
 
 //   Create a new sidebar
-export const createSidebar = async (sidebar: CreateSidebarDto) =>
+export const createSidebar = async (sidebar: TCreateSidebarDto) =>
   await agent.post<TResponse<Sidebar>>('api/settings/sidebar', sidebar);
 
 export const useCreateSidebar = () => {
@@ -49,27 +57,11 @@ export const useCreateSidebar = () => {
 };
 
 // Update a sidebar by ID
-export const updateSidebarById = async (
-  id: string,
-  sidebar: CreateSidebarDto,
-) => {
-  console.log('Sending update with data:', sidebar);
-  console.log('Data type:', typeof sidebar);
-  console.log('Data stringified:', JSON.stringify(sidebar));
-
-  // Make sure we're not sending an empty object
-  if (!sidebar || Object.keys(sidebar).length === 0) {
-    throw new Error('Cannot update with empty data');
-  }
-
-  return await agent.put<TResponse<Sidebar>>(
-    `api/settings/sidebar/${id}`,
+export const updateSidebarById = async (sidebar: TUpdateSidebarDto) =>
+  await agent.put<TResponse<Sidebar>>(
+    `api/settings/sidebar/${sidebar.id}`,
     sidebar,
   );
-};
-
-// Define a type for the mutation parameters
-type UpdateSidebarParams = [string, CreateSidebarDto];
 
 export const useUpdateSidebarById = () => {
   const queryClient = useQueryClient();
@@ -77,8 +69,7 @@ export const useUpdateSidebarById = () => {
 
   return useMutation({
     // Use a wrapper function that accepts an array of parameters
-    mutationFn: ([id, data]: UpdateSidebarParams) =>
-      updateSidebarById(id, data),
+    mutationFn: updateSidebarById,
     options: {
       onSuccess: () => {
         queryClient.invalidateQueries({

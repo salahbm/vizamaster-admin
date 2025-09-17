@@ -24,12 +24,10 @@ async function seedSidebar(items = SIDENAV, parentId?: string) {
 }
 
 async function main() {
-  console.log('Clearing existing sidebar data...');
   await prisma.sidebar.deleteMany();
 
-  console.log('Seeding sidebar...');
   await seedSidebar();
-  console.log('✅ Sidebar seeded successfully!');
+  console.info('✅ Sidebar seeded successfully!');
 }
 
 main()

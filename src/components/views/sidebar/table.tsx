@@ -19,11 +19,8 @@ export const SidebarTable = () => {
 
   const { data, isLoading, isFetching } = useSidebar();
 
-  // Ensure we're working with an array of Sidebar objects
-  const sidebarItems = Array.isArray(data?.data) ? data?.data : [];
-
   const { table } = useDataTable({
-    data: sidebarItems,
+    data: data,
     columns: columns,
     pageCount: 0,
     getRowId: (originalRow: Sidebar) => originalRow.id,
