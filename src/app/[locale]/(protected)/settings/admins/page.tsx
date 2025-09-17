@@ -1,8 +1,12 @@
+import { redirect } from 'next/navigation';
+
 import { getTranslations } from 'next-intl/server';
 
 import { Metadata } from 'next';
 
 import { AdminsTable } from '@/components/views/admins';
+
+import { routes } from '@/constants/routes';
 
 import { AuthGuard } from '@/server/modules/auth/auth.guard';
 
@@ -19,7 +23,9 @@ export default async function AdminsPage() {
   const authGuard = new AuthGuard();
 
   // Check if user is authenticated
-  await authGuard.checkSession();
+  const session = await authGuard.checkSession();
+
+  if (!session) return redirect(routes.signIn);
 
   const t = await getTranslations('admins');
 

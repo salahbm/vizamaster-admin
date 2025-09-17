@@ -1,9 +1,6 @@
 import { headers } from 'next/headers';
-import { redirect } from 'next/navigation';
 
 import { getTranslations } from 'next-intl/server';
-
-import { routes } from '@/constants/routes';
 
 import { API_CODES } from '@/server/common/codes';
 import { UnauthorizedError } from '@/server/common/errors';
@@ -22,9 +19,14 @@ export class AuthGuard {
   }
 
   async checkSession() {
-    const session = await auth.api.getSession({
+    const res = await auth.api.getSession({
       headers: await headers(),
     });
-    if (!session) redirect(routes.signIn);
+
+    if (!res) await auth.api.signOut({ headers: await headers() });
+
+    return res;
   }
 }
+
+export const authGuard = new AuthGuard();

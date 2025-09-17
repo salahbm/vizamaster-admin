@@ -23,7 +23,7 @@ function getNormalizedPath(pathname: string): string {
   return pathname; // no locale prefix
 }
 
-export default function middleware(request: NextRequest) {
+export default async function middleware(request: NextRequest) {
   const { pathname, origin } = request.nextUrl;
 
   const segments = pathname.split('/');
