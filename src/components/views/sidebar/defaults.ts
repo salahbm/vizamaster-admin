@@ -1,8 +1,9 @@
 import { Sidebar } from '@/generated/prisma';
-import { TUpdateSidebarDto } from '@/server/common/dto';
+import { TCreateSidebarDto, TUpdateSidebarDto } from '@/server/common/dto';
 
-export const sidebarDefaultValues = (data?: TUpdateSidebarDto | Sidebar) => ({
-  id: data?.id || '',
+export const sidebarDefaultValues = (
+  data?: TUpdateSidebarDto | Sidebar,
+): TCreateSidebarDto => ({
   labelEn: data?.labelEn || '',
   labelRu: data?.labelRu || '',
   href: data?.href || '',

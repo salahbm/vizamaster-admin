@@ -25,25 +25,29 @@ export const useError = () => {
     (error: ApiError) => {
       const { message, code } = error;
 
-      /** When reset password token is expired */
-      if (code === API_CODES.UNAUTHORIZED && !isSignInPage) {
-        return alert({
-          title: t('Common.messages.unauthorized'),
-          description: message,
-          icon: 'error',
-          cancelButton: null,
-          confirmText: t('Common.signIn'),
-          onConfirm: () => {},
-        });
+      /** Handle specific error codes */
+      switch (code) {
+        case API_CODES.UNAUTHORIZED:
+          if (!isSignInPage) {
+            return alert({
+              title: t('Common.messages.unauthorized'),
+              description: message,
+              icon: 'error',
+              cancelButton: null,
+              confirmText: t('Common.signIn'),
+              onConfirm: () => {},
+            });
+          }
+          break;
       }
 
       return alert({
         title: t('Common.messages.error'),
         description: message,
         icon: 'error',
-        cancelText: t('Common.cancel'),
-        confirmText: t('Common.goBack'),
-        onConfirm: () => router.back(),
+        cancelText: t('Common.goBack'),
+        confirmText: t('Common.ok'),
+        onCancel: () => router.back(),
       });
     },
     [alert, t, isSignInPage, router],

@@ -10,14 +10,13 @@ import agent from '@/lib/agent';
 
 import { QueryKeys } from '@/constants/query-keys';
 
+import { Sidebar } from '@/generated/prisma';
 import useMutation from '@/hooks/common/use-mutation';
 import { TCreateSidebarDto, TUpdateSidebarDto } from '@/server/common/dto';
 import { NotFoundError } from '@/server/common/errors';
 import { TResponse } from '@/server/common/types';
 
-import { Sidebar } from '../../../../generated/prisma';
-
-// Get a single sidebar by ID
+// ───────────────── GET ────────────────── //
 export const getSidebarById = async (id?: string): Promise<Sidebar> => {
   const { data } = await agent.get<TResponse<Sidebar>>(
     `api/settings/sidebar/${id}`,
@@ -39,7 +38,7 @@ export const useSidebarDetail = (id?: string) =>
     enabled: !!id,
   });
 
-//   Create a new sidebar
+// ───────────────── CREATE ────────────────── //
 export const createSidebar = async (sidebar: TCreateSidebarDto) =>
   await agent.post<TResponse<Sidebar>>('api/settings/sidebar', sidebar);
 
@@ -60,7 +59,7 @@ export const useCreateSidebar = () => {
   });
 };
 
-// Update a sidebar by ID
+// ───────────────── UPDATE ────────────────── //
 export const updateSidebarById = async (sidebar: TUpdateSidebarDto) =>
   await agent.put<TResponse<Sidebar>>(
     `api/settings/sidebar/${sidebar.id}`,
@@ -72,7 +71,6 @@ export const useUpdateSidebarById = () => {
   const router = useRouter();
 
   return useMutation({
-    // Use a wrapper function that accepts an array of parameters
     mutationFn: updateSidebarById,
     options: {
       onSuccess: () => {

@@ -30,4 +30,9 @@ export class SidebarRepository {
       include: { sidebarItem: true },
     });
   }
+
+  // Create sidebar
+  async createSidebar(data: Omit<Sidebar, 'id' | 'createdAt' | 'updatedAt'>) {
+    return await this.prisma.sidebar.create({ data });
+  }
 }

@@ -23,7 +23,7 @@ import {
   useSidebarDetail,
   useUpdateSidebarById,
 } from '@/hooks/settings/sidebar';
-import { TUpdateSidebarDto, updateSidebarDto } from '@/server/common/dto';
+import { TSidebarDto, sidebarDto } from '@/server/common/dto';
 
 import { sidebarDefaultValues } from './defaults';
 
@@ -34,16 +34,19 @@ interface IUpsertSidebarProps {
 const UpsertSidebar: React.FC<IUpsertSidebarProps> = ({ id }) => {
   const t = useTranslations('sidebar');
   const router = useRouter();
+
+  // ───────────────── QUERIES ────────────────── //
   const { data: sidebarData, isLoading: isLoadingDetail } =
     useSidebarDetail(id);
   const { data: allSidebars, isLoading: isLoadingSidebars } = useSidebar();
 
+  // ───────────────── MUTATIONS ────────────────── //
   const { mutateAsync: createSidebar } = useCreateSidebar();
   const { mutateAsync: updateSidebarById } = useUpdateSidebarById();
 
   // Initialize form with default values
-  const form = useForm<TUpdateSidebarDto>({
-    resolver: zodResolver(updateSidebarDto),
+  const form = useForm<TSidebarDto>({
+    resolver: zodResolver(sidebarDto),
     defaultValues: sidebarDefaultValues(),
   });
 
@@ -66,18 +69,16 @@ const UpsertSidebar: React.FC<IUpsertSidebarProps> = ({ id }) => {
       }));
   }, [allSidebars, id, isLoadingSidebars]);
 
+  if (isLoadingDetail && id) return <Loader />;
+
   // Handle form submission
-  const onSubmit = async (values: TUpdateSidebarDto) => {
-    console.info('Submitting values:', values);
+  const onSubmit = async (values: TSidebarDto) => {
     if (id) {
-      // Pass as an array of parameters [id, data]
-      await updateSidebarById(values);
+      await updateSidebarById({ ...values, id });
     } else {
       await createSidebar(values);
     }
   };
-
-  if (isLoadingDetail && id) return <Loader />;
 
   return (
     <Form {...form}>
@@ -116,6 +117,7 @@ const UpsertSidebar: React.FC<IUpsertSidebarProps> = ({ id }) => {
           required
           control={form.control}
           render={({ field }) => <Input placeholder="/dashboard" {...field} />}
+          message={t('form.hrefMessage')}
         />
 
         <div className="grid gap-6 md:grid-cols-2">

@@ -1,4 +1,8 @@
-import { BadRequestError, NotFoundError } from '@/server/common/errors';
+import {
+  BadRequestError,
+  ConflictError,
+  NotFoundError,
+} from '@/server/common/errors';
 import { createResponse } from '@/server/common/utils';
 import { ISort } from '@/types/data-table';
 
@@ -40,6 +44,36 @@ class SidebarService {
     }
 
     return createResponse(sidebar);
+  }
+
+  async createSidebar(data: Omit<Sidebar, 'id' | 'createdAt' | 'updatedAt'>) {
+    try {
+      const sidebar = await this.repository.createSidebar(data);
+
+      if (!sidebar) {
+        throw new NotFoundError('Sidebar not found');
+      }
+
+      return createResponse(sidebar);
+    } catch (error: unknown) {
+      // Handle Prisma's unique constraint error
+      type PrismaError = {
+        code: string;
+        meta?: {
+          target?: string[];
+        };
+      };
+      const prismaError = error as PrismaError;
+      if (
+        prismaError.code === 'P2002' &&
+        prismaError.meta?.target?.includes('href')
+      ) {
+        throw new ConflictError(
+          `A sidebar with URL '${data.href}' already exists`,
+        );
+      }
+      throw error;
+    }
   }
 }
 

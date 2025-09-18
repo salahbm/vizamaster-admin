@@ -1,8 +1,8 @@
 import { ColumnSort } from '@tanstack/react-table';
 
+import { Prisma } from '@/generated/prisma';
 import { ISort } from '@/types/data-table';
 
-import { Prisma } from '../../../generated/prisma';
 import { BETTER_AUTH_CODES, BETTER_AUTH_ERROR_MESSAGES } from './codes';
 import { PaginatedResult, PaginationParams } from './types';
 
