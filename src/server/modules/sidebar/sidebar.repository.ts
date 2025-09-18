@@ -1,4 +1,6 @@
+import { buildOrderBy } from '@/server/common/utils';
 import prisma from '@/server/db/prisma';
+import { ISort } from '@/types/data-table';
 
 import { Sidebar } from '../../../../generated/prisma';
 
@@ -6,8 +8,9 @@ export class SidebarRepository {
   private readonly prisma = prisma;
 
   // Get all sidebars unlinked to user
-  async getAllSidebar() {
-    return await this.prisma.sidebar.findMany();
+  async getAllSidebar(sort?: ISort) {
+    const orderBy = buildOrderBy(sort);
+    return await this.prisma.sidebar.findMany({ orderBy });
   }
 
   // Get sidebar by id
@@ -27,9 +30,4 @@ export class SidebarRepository {
       include: { sidebarItem: true },
     });
   }
-
-  // Create Global Sidebar
-  // createGlobalSidebar(data: CreateSidebarDto) {
-  //   return this.prisma.sidebar.create({ data });
-  // }
 }

@@ -1,7 +1,9 @@
+import Link from 'next/link';
 import { redirect } from 'next/navigation';
 
 import { getTranslations } from 'next-intl/server';
 
+import { Plus } from 'lucide-react';
 import { Metadata } from 'next';
 
 import { SidebarTable } from '@/components/views/sidebar';
@@ -31,11 +33,17 @@ export default async function SidebarPage() {
 
   return (
     <div className="main-container">
-      <div className="mb-8">
-        <h1 className="font-header mb-2">{t('metadata.title')}</h1>
-        <p className="font-body-2 text-muted-foreground">
-          {t('metadata.description')}
-        </p>
+      <div className="flex-between mb-8">
+        <div>
+          <h1 className="font-header mb-2">{t('metadata.title')}</h1>
+          <p className="font-body-2 text-muted-foreground">
+            {t('metadata.description')}
+          </p>
+        </div>
+        <Link href={routes.sidebarUpsert} className="create-btn">
+          <Plus className="size-6" />
+          {t('form.create')}
+        </Link>
       </div>
 
       <SidebarTable />

@@ -69,7 +69,6 @@ const UpsertSidebar: React.FC<IUpsertSidebarProps> = ({ id }) => {
   // Handle form submission
   const onSubmit = async (values: TUpdateSidebarDto) => {
     console.info('Submitting values:', values);
-
     if (id) {
       // Pass as an array of parameters [id, data]
       await updateSidebarById(values);
@@ -81,115 +80,93 @@ const UpsertSidebar: React.FC<IUpsertSidebarProps> = ({ id }) => {
   if (isLoadingDetail && id) return <Loader />;
 
   return (
-    <div className="container mx-auto space-y-6 py-6">
-      <div className="flex items-center justify-between">
-        <h1 className="font-header">
-          {id ? t('edit.title') : t('create.title')}
-        </h1>
-      </div>
+    <Form {...form}>
+      <form
+        onSubmit={form.handleSubmit(onSubmit, handleFormError)}
+        className="space-y-6 py-6"
+      >
+        <div className="grid gap-6 md:grid-cols-2">
+          {/* English Label */}
+          <FormFields
+            name="labelEn"
+            label={t('form.labelEn')}
+            required
+            control={form.control}
+            render={({ field }) => (
+              <Input placeholder={t('form.labelEnPlaceholder')} {...field} />
+            )}
+          />
 
-      <div className="card-md">
-        <Form {...form}>
-          <form
-            onSubmit={form.handleSubmit(onSubmit, handleFormError)}
-            className="space-y-6"
-          >
-            <div className="grid gap-6 md:grid-cols-2">
-              {/* English Label */}
-              <FormFields
-                name="labelEn"
-                label={t('form.labelEn')}
-                required
-                control={form.control}
-                render={({ field }) => (
-                  <Input
-                    placeholder={t('form.labelEnPlaceholder')}
-                    {...field}
-                  />
-                )}
-              />
+          {/* Russian Label */}
+          <FormFields
+            name="labelRu"
+            label={t('form.labelRu')}
+            required
+            control={form.control}
+            render={({ field }) => (
+              <Input placeholder={t('form.labelRuPlaceholder')} {...field} />
+            )}
+          />
+        </div>
 
-              {/* Russian Label */}
-              <FormFields
-                name="labelRu"
-                label={t('form.labelRu')}
-                required
-                control={form.control}
-                render={({ field }) => (
-                  <Input
-                    placeholder={t('form.labelRuPlaceholder')}
-                    {...field}
-                  />
-                )}
-              />
-            </div>
+        {/* URL Path */}
+        <FormFields
+          name="href"
+          label={t('form.href')}
+          required
+          control={form.control}
+          render={({ field }) => <Input placeholder="/dashboard" {...field} />}
+        />
 
-            {/* URL Path */}
-            <FormFields
-              name="href"
-              label={t('form.href')}
-              required
-              control={form.control}
-              render={({ field }) => (
-                <Input placeholder="/dashboard" {...field} />
-              )}
+        <div className="grid gap-6 md:grid-cols-2">
+          {/* Icon */}
+          <FormFields
+            name="icon"
+            label={t('form.icon')}
+            control={form.control}
+            render={({ field }) => (
+              <Input placeholder="LayoutDashboard" {...field} />
+            )}
+          />
+
+          {/* Order */}
+          <FormFields
+            name="order"
+            label={t('form.order')}
+            required
+            control={form.control}
+            render={({ field }) => (
+              <Input type="number" min={0} placeholder="0" {...field} />
+            )}
+          />
+        </div>
+
+        {/* Parent Sidebar */}
+        <FormFields
+          name="parentId"
+          label={t('form.parentId')}
+          control={form.control}
+          render={({ field }) => (
+            <Combobox
+              placeholder={t('form.parentIdPlaceholder')}
+              options={parentOptions}
+              value={field.value}
+              onValueChange={field.onChange}
+              searchable
             />
+          )}
+        />
 
-            <div className="grid gap-6 md:grid-cols-2">
-              {/* Icon */}
-              <FormFields
-                name="icon"
-                label={t('form.icon')}
-                control={form.control}
-                render={({ field }) => (
-                  <Input placeholder="LayoutDashboard" {...field} />
-                )}
-              />
-
-              {/* Order */}
-              <FormFields
-                name="order"
-                label={t('form.order')}
-                required
-                control={form.control}
-                render={({ field }) => (
-                  <Input type="number" min={0} placeholder="0" {...field} />
-                )}
-              />
-            </div>
-
-            {/* Parent Sidebar */}
-            <FormFields
-              name="parentId"
-              label={t('form.parentId')}
-              control={form.control}
-              render={({ field }) => (
-                <Combobox
-                  placeholder={t('form.parentIdPlaceholder')}
-                  options={parentOptions}
-                  value={field.value}
-                  onValueChange={field.onChange}
-                  searchable
-                />
-              )}
-            />
-
-            <div className="flex justify-end space-x-4">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => router.back()}
-              >
-                {t('form.cancel')}
-              </Button>
-              <Button type="submit">
-                {id ? t('form.update') : t('form.create')}
-              </Button>
-            </div>
-          </form>
-        </Form>
-      </div>
-    </div>
+        <div className="flex justify-end space-x-4">
+          <Button type="button" variant="outline" onClick={() => router.back()}>
+            {t('form.cancel')}
+          </Button>
+          <Button type="submit">
+            {id ? t('form.update') : t('form.create')}
+          </Button>
+        </div>
+      </form>
+    </Form>
   );
 };
 

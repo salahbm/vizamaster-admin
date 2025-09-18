@@ -1,5 +1,7 @@
 import { ColumnSort } from '@tanstack/react-table';
 
+import { ISort } from '@/types/data-table';
+
 import { Prisma } from '../../../generated/prisma';
 import { BETTER_AUTH_CODES, BETTER_AUTH_ERROR_MESSAGES } from './codes';
 import { PaginatedResult, PaginationParams } from './types';
@@ -63,7 +65,7 @@ export function createPaginatedResult<T>(
 export function parsePaginationAndSortParams(searchParams: URLSearchParams) {
   let page = 1;
   let size = 50;
-  let sort: ColumnSort[] | ColumnSort | undefined;
+  let sort: ISort | undefined;
 
   const pageParam = searchParams.get('page');
   if (pageParam) {

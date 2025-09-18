@@ -7,6 +7,7 @@ export const QueryKeys = {
   settings: {
     sidebar: {
       all: ['settings', 'sidebar'],
+      table: ['settings', 'sidebar', 'table'],
       details: ['settings', 'sidebar', 'details'],
     },
   },

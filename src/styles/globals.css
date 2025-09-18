@@ -158,6 +158,10 @@
   .main-container {
     @apply px-4 pb-4 lg:px-6;
   }
+
+  .create-btn {
+    @apply bg-primary hover:bg-primary/90 text-primary-foreground flex cursor-pointer items-center gap-2 rounded px-3 py-2 transition-colors duration-300;
+  }
 }
 
 @layer base {

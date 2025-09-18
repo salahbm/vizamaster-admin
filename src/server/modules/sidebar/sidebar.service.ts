@@ -1,5 +1,6 @@
 import { BadRequestError, NotFoundError } from '@/server/common/errors';
 import { createResponse } from '@/server/common/utils';
+import { ISort } from '@/types/data-table';
 
 import { Sidebar } from '../../../../generated/prisma';
 import { SidebarRepository } from './sidebar.repository';
@@ -7,8 +8,8 @@ import { SidebarRepository } from './sidebar.repository';
 class SidebarService {
   constructor(private readonly repository: SidebarRepository) {}
 
-  async getAllSidebar() {
-    const sidebars = await this.repository.getAllSidebar();
+  async getAllSidebar(sort?: ISort) {
+    const sidebars = await this.repository.getAllSidebar(sort);
 
     if (!sidebars || !Array.isArray(sidebars)) {
       throw new NotFoundError('Sidebars not found');

@@ -48,10 +48,14 @@ export const useCreateSidebar = () => {
   return useMutation({
     mutationFn: createSidebar,
     options: {
-      onSuccess: () =>
+      onSuccess: () => {
         queryClient.invalidateQueries({
           queryKey: QueryKeys.settings.sidebar.all,
-        }),
+        });
+        queryClient.invalidateQueries({
+          queryKey: QueryKeys.settings.sidebar.table,
+        });
+      },
     },
   });
 };
@@ -74,6 +78,9 @@ export const useUpdateSidebarById = () => {
       onSuccess: () => {
         queryClient.invalidateQueries({
           queryKey: QueryKeys.settings.sidebar.all,
+        });
+        queryClient.invalidateQueries({
+          queryKey: QueryKeys.settings.sidebar.table,
         });
         router.back();
       },

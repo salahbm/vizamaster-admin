@@ -6,8 +6,6 @@ import {
   type PaginationState,
   type RowSelectionState,
   type SortingState,
-  type TableOptions,
-  type TableState,
   type Updater,
   type VisibilityState,
   getCoreRowModel,
@@ -23,38 +21,13 @@ import { type UseQueryStateOptions, parseAsInteger, useQueryState } from 'nuqs';
 
 import { getSortingStateParser } from '@/lib/data-table-func';
 
-import { ExtendedColumnSort } from '@/types/data-table';
+import { ISort, UseDataTableProps } from '@/types/data-table';
 
 const PAGE_KEY = 'page';
 const SIZE_KEY = 'size';
 const SORT_KEY = 'sort';
 const DEBOUNCE_MS = 300;
 const THROTTLE_MS = 50;
-
-interface UseDataTableProps<TData>
-  extends Omit<
-      TableOptions<TData>,
-      | 'state'
-      | 'pageCount'
-      | 'getCoreRowModel'
-      | 'manualFiltering'
-      | 'manualPagination'
-      | 'manualSorting'
-      | 'data'
-    >,
-    Partial<Pick<TableOptions<TData>, 'pageCount'>> {
-  data?: TData[];
-  initialState?: Omit<Partial<TableState>, 'sorting'> & {
-    sorting?: ExtendedColumnSort<TData>[];
-  };
-  history?: 'push' | 'replace';
-  debounceMs?: number;
-  throttleMs?: number;
-  clearOnDefault?: boolean;
-  scroll?: boolean;
-  shallow?: boolean;
-  startTransition?: React.TransitionStartFunction;
-}
 
 export function useDataTable<TData>(props: UseDataTableProps<TData>) {
   const {
@@ -65,6 +38,7 @@ export function useDataTable<TData>(props: UseDataTableProps<TData>) {
     history = 'replace',
     debounceMs = DEBOUNCE_MS,
     throttleMs = THROTTLE_MS,
+    limitUrlUpdates,
     clearOnDefault = false,
     scroll = false,
     shallow = true,
@@ -152,9 +126,9 @@ export function useDataTable<TData>(props: UseDataTableProps<TData>) {
     (updaterOrValue: Updater<SortingState>) => {
       if (typeof updaterOrValue === 'function') {
         const newSorting = updaterOrValue(sorting);
-        setSorting(newSorting as ExtendedColumnSort<TData>[]);
+        setSorting(newSorting as ISort[]);
       } else {
-        setSorting(updaterOrValue as ExtendedColumnSort<TData>[]);
+        setSorting(updaterOrValue as ISort[]);
       }
     },
     [sorting, setSorting],

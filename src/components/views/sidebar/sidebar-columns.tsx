@@ -61,6 +61,7 @@ export const SIDEBAR_COLUMNS: ColumnDef<Sidebar>[] = [
     meta: {
       label: 'sidebar.columns.name',
     },
+    enableSorting: false,
   },
   {
     accessorKey: 'href',
@@ -77,7 +78,6 @@ export const SIDEBAR_COLUMNS: ColumnDef<Sidebar>[] = [
     meta: {
       label: 'sidebar.columns.href',
     },
-    enableSorting: false,
   },
   {
     accessorKey: 'createdAt',

@@ -10,6 +10,7 @@ export const routes = {
   admins: '/settings/admins',
   preferences: '/settings/preferences',
   sidebar: '/settings/sidebar',
+  sidebarUpsert: '/settings/sidebar/create',
   table: '/table',
   forms: '/forms',
   success: '/success',

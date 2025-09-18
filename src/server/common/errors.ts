@@ -73,15 +73,18 @@ export class InternalServerError extends ApiError {
 }
 
 export async function handleApiError(
-  errorOrMessage: string,
+  errorOrMessage?: string | unknown,
   status?: number,
   code?: number,
 ): Promise<NextResponse> {
   let apiError: ApiError;
-  console.log(`LOGGING 👀:`, errorOrMessage, status, code);
 
   if (errorOrMessage === '' || errorOrMessage === undefined) {
-    apiError = new ApiError(errorOrMessage, status || 500, code || 5000);
+    apiError = new ApiError(
+      errorOrMessage || 'Something went wrong',
+      status || 500,
+      code || 5000,
+    );
   } else {
     apiError = new ApiError(
       'Something went wrong',

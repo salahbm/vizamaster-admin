@@ -146,18 +146,6 @@
       "description": "Manage routes and sidebar items",
       "title": "Sidebar Management"
     },
-    "columns": {
-      "name": "Name",
-      "href": "URL Path",
-      "createdAt": "Created At",
-      "order": "Order"
-    },
-    "create": {
-      "title": "Create Sidebar Item"
-    },
-    "edit": {
-      "title": "Edit Sidebar Item"
-    },
     "form": {
       "labelEn": "English Label",
       "labelEnPlaceholder": "Enter English label",
@@ -177,23 +165,6 @@
       "name": "Name",
       "href": "URL Path",
       "createdAt": "Created At"
-    },
-    "validation": {
-      "labelEn": {
-        "required": "English label is required",
-        "min": "English label must be at least {min} characters"
-      },
-      "labelRu": {
-        "required": "Russian label is required",
-        "min": "Russian label must be at least {min} characters"
-      },
-      "href": {
-        "required": "URL path is required"
-      },
-      "order": {
-        "required": "Order is required",
-        "min": "Order must be a positive number"
-      }
     }
   },
   "errors": {
