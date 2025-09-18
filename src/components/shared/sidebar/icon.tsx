@@ -6,12 +6,12 @@ import { LucideProps } from 'lucide-react';
 type IconComponentType = React.ComponentType<LucideProps>;
 
 // Dynamic icon component that renders icons by name
-export const DynamicIcon: FC<{ name: string; className?: string }> = ({
+export const DynamicIcon: FC<{ name?: string | null; className?: string }> = ({
   name,
   className,
 }) => {
   // Cast the dynamic icon to the appropriate component type
   const Icon = (Icons[name as keyof typeof Icons] ||
-    Icons.Circle) as IconComponentType;
+    Icons.File) as IconComponentType;
   return <Icon className={className} />;
 };

@@ -41,7 +41,7 @@ export function DataTableColumnHeader<TData, TValue>({
     <DropdownMenu>
       <DropdownMenuTrigger
         className={cn(
-          'hover:bg-accent focus:ring-ring data-[state=open]:bg-accent [&_svg]:text-muted-foreground -ml-1.5 flex h-fit w-full items-center justify-center gap-1.5 rounded px-2 focus:ring-1 focus:outline-none [&_svg]:size-4 [&_svg]:shrink-0',
+          'hover:bg-background focus:ring-ring data-[state=open]:bg-accent [&_svg]:text-muted-foreground -ml-1.5 flex h-fit w-full cursor-pointer items-center justify-center gap-1.5 rounded px-2 focus:ring-1 focus:outline-none [&_svg]:size-4 [&_svg]:shrink-0',
           className,
         )}
         {...props}
@@ -56,7 +56,7 @@ export function DataTableColumnHeader<TData, TValue>({
             <ChevronsUpDown />
           ))}
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="start" className="w-28">
+      <DropdownMenuContent align="end" className="w-28">
         {column.getCanSort() && (
           <>
             <DropdownMenuItem

@@ -4,8 +4,9 @@ import { FC, useEffect, useMemo, useState } from 'react';
 
 import Link from 'next/link';
 
-import { useTranslations } from 'next-intl';
+import { useLocale } from 'next-intl';
 
+import { SideNavSkeleton } from '@/components/skeletons';
 import {
   Accordion,
   AccordionContent,
@@ -13,10 +14,11 @@ import {
   AccordionTrigger,
 } from '@/components/ui/accordion';
 
-import { cn } from '@/lib/utils';
+import { cn, convertSidebarToNavItems } from '@/lib/utils';
 
-import { SIDENAV, SideNavItem } from '@/constants/routes';
+import { SideNavItem } from '@/constants/routes';
 
+import { useSidebar } from '@/hooks/settings/sidebar';
 import { usePathname } from '@/i18n/routing';
 import { useSidebar as useSidebarStore } from '@/store/sidebar';
 
@@ -37,20 +39,24 @@ const isPathActive = (pathname: string | null, href: string) => {
 };
 
 const SidebarNav: FC = () => {
-  const t = useTranslations();
+  const locale = useLocale();
   const pathname = usePathname();
   const { isMinimized } = useSidebarStore();
   const [expanded, setExpanded] = useState<string[]>([]);
 
-  // const { data } = useSidebar();
-  // console.log(`file: bar.tsx:46 ~ data:`, data);
+  const { data, isLoading, isFetching } = useSidebar();
+
+  const memoizedData = useMemo(
+    () => convertSidebarToNavItems(data, locale),
+    [data, locale],
+  );
 
   const { activeParent, activeChild } = useMemo(() => {
     let parent: SideNavItem | undefined;
     let child: SideNavItem | undefined;
 
     // First check for exact child matches
-    for (const item of SIDENAV) {
+    for (const item of memoizedData) {
       if (item.children) {
         for (const c of item.children) {
           if (isPathActive(pathname, c.href)) {
@@ -65,7 +71,7 @@ const SidebarNav: FC = () => {
 
     // If no child match, check for parent match
     if (!parent) {
-      for (const item of SIDENAV) {
+      for (const item of memoizedData) {
         if (isPathActive(pathname, item.href)) {
           parent = item;
           break;
@@ -74,13 +80,15 @@ const SidebarNav: FC = () => {
     }
 
     return { activeParent: parent, activeChild: child };
-  }, [pathname]);
+  }, [pathname, memoizedData]);
 
   useEffect(() => {
-    if (activeParent?.label && !expanded.includes(activeParent.label)) {
-      setExpanded((prev) => [...prev, activeParent.label]);
+    if (activeParent?.id && !expanded.includes(activeParent.id)) {
+      setExpanded((prev) => [...prev, activeParent.id]);
     }
-  }, [activeParent?.label, expanded]);
+  }, [activeParent?.id, expanded]);
+
+  if (!memoizedData || isFetching || isLoading) return <SideNavSkeleton />;
 
   const onAccordionChange = (value: string | string[]) =>
     setExpanded(value ? (Array.isArray(value) ? value : [value]) : []);
@@ -102,7 +110,7 @@ const SidebarNav: FC = () => {
       )}
     >
       <div className="space-y-1">
-        {SIDENAV.map((item) => {
+        {memoizedData.map((item) => {
           const hasChildren = !!item.children?.length;
           const isActive = activeParent?.href === item.href;
           const isChildActive = !!activeChild;
@@ -115,16 +123,16 @@ const SidebarNav: FC = () => {
                 value={expanded}
                 onValueChange={onAccordionChange}
               >
-                <AccordionItem value={item.label} className="border-none">
+                <AccordionItem value={item.id} className="border-none">
                   <AccordionTrigger
                     className={cn(
                       navItemClasses(
                         isActive ||
-                          (activeParent?.label === item.label && isChildActive),
+                          (activeParent?.id === item.id && isChildActive),
                       ),
                       isMinimized && 'justify-center px-2 [&>svg]:hidden',
                     )}
-                    title={t(`Sidebar.${item.label}`)}
+                    title={item.label}
                   >
                     <span className="flex items-center gap-2">
                       <DynamicIcon
@@ -132,7 +140,7 @@ const SidebarNav: FC = () => {
                         className="size-5 text-current"
                         aria-hidden
                       />
-                      {!isMinimized && t(`Sidebar.${item.label}`)}
+                      {!isMinimized && item.label}
                     </span>
                   </AccordionTrigger>
                   {!isMinimized && (
@@ -155,7 +163,7 @@ const SidebarNav: FC = () => {
                                 className="size-5 text-current"
                                 aria-hidden
                               />
-                              {t(`Sidebar.${child.label}`)}
+                              {child.label}
                             </Link>
                           );
                         })}
@@ -180,7 +188,7 @@ const SidebarNav: FC = () => {
               title={item.label}
             >
               <DynamicIcon name={item.icon} className="size-5 text-current" />
-              {!isMinimized && t(`Sidebar.${item.label}`)}
+              {!isMinimized && item.label}
             </Link>
           );
         })}

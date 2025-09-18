@@ -17,55 +17,9 @@ export const routes = {
 };
 
 export interface SideNavItem {
+  id: string;
   href: string;
   label: string;
-  icon: string;
+  icon: string | null;
   children?: SideNavItem[];
 }
-
-// Define the navigation items
-export const SIDENAV: SideNavItem[] = [
-  {
-    href: routes.dashboard,
-    label: 'dashboard',
-    icon: 'LayoutDashboard',
-  },
-
-  {
-    href: routes.table,
-    label: 'table',
-    icon: 'Table',
-  },
-  {
-    href: routes.forms,
-    label: 'forms',
-    icon: 'Type',
-  },
-  {
-    href: routes.settings,
-    label: 'settings',
-    icon: 'Settings',
-    children: [
-      {
-        href: routes.profile,
-        label: 'profile',
-        icon: 'User',
-      },
-      {
-        href: routes.admins,
-        label: 'admins',
-        icon: 'Users',
-      },
-      {
-        href: routes.sidebar,
-        label: 'sidebar',
-        icon: 'Route',
-      },
-      {
-        href: routes.preferences,
-        label: 'preferences',
-        icon: 'Settings',
-      },
-    ],
-  },
-];

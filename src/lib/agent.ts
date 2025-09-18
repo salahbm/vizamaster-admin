@@ -94,6 +94,7 @@ class Agent {
     const url = base
       ? `${base}/${normalizedEndpoint}`
       : `/${normalizedEndpoint}`;
+
     // Add query parameters if provided
     if (params && Object.keys(params).length > 0) {
       const searchParams = new URLSearchParams();

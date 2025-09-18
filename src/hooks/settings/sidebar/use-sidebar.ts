@@ -4,6 +4,7 @@ import agent from '@/lib/agent';
 
 import { QueryKeys } from '@/constants/query-keys';
 
+import { NotFoundError } from '@/server/common/errors';
 import { TResponse } from '@/server/common/types';
 
 import { Sidebar } from '../../../../generated/prisma';
@@ -11,8 +12,8 @@ import { Sidebar } from '../../../../generated/prisma';
 export const getAllSidebar = async (): Promise<Sidebar[]> => {
   const { data } =
     await agent.get<TResponse<Sidebar[]>>(`api/settings/sidebar`);
-
-  return data || [];
+  if (!data) throw new NotFoundError('Sidebar not found');
+  return data;
 };
 
 /**
