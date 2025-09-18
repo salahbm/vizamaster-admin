@@ -45,3 +45,23 @@ export async function POST(request: NextRequest) {
     return handleApiError(error);
   }
 }
+
+export async function PATCH(req: Request) {
+  const searchParams = new URL(req.url).searchParams;
+  const userId = searchParams.get('userId');
+
+  if (!userId) throw new BadRequestError('User id is required');
+
+  const body = await req.json();
+
+  if (!body.sidebarIds || !Array.isArray(body.sidebarIds)) {
+    throw new BadRequestError('Invalid sidebar IDs');
+  }
+
+  const updatedAdmin = await sidebarService.updateAdminSidebars(
+    userId,
+    body.sidebarIds,
+  );
+
+  return NextResponse.json(updatedAdmin);
+}

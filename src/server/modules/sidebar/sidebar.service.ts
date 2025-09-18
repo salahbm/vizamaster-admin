@@ -93,8 +93,30 @@ class SidebarService {
       throw new NotFoundError('Sidebars not found');
     }
 
+    const mappedSidebars = sidebars.map((sidebar) => {
+      return {
+        id: sidebar.sidebarItem.id,
+        labelEn: sidebar.sidebarItem.labelEn,
+        labelRu: sidebar.sidebarItem.labelRu,
+        href: sidebar.sidebarItem.href,
+        icon: sidebar.sidebarItem.icon,
+        parentId: sidebar.sidebarItem.parentId,
+        order: sidebar.sidebarItem.order,
+      };
+    });
+
     // Ensure we're returning an array of sidebar items
-    return createResponse(sidebars);
+    return createResponse(mappedSidebars);
+  }
+
+  // Update admin sidebars
+  async updateAdminSidebars(userId: string, sidebarIds: string[]) {
+    const result = await this.repository.updateAdminSidebars(
+      userId,
+      sidebarIds,
+    );
+
+    return createResponse(result);
   }
 }
 

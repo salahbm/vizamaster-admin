@@ -22,7 +22,7 @@ export const getAllSidebar = async (id?: string): Promise<Sidebar[]> => {
     throw new NotFoundError('User not found', API_CODES.NOT_FOUND);
 
   const { data } = await agent.get<TResponse<Sidebar[]>>(
-    `api/settings/sidebar/user-sidebars?userId=${userRes.data.id}`,
+    `api/settings/sidebar/admin-sidebars?userId=${userRes.data.id}`,
   );
 
   if (!data) throw new NotFoundError('Sidebar not found');

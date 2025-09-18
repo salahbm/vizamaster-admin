@@ -38,6 +38,34 @@ export class SidebarRepository {
 
   // Delete sidebar by id
   async deleteSidebarById(id: string) {
-    return await this.prisma.sidebar.delete({ where: { id } });
+    return await this.prisma.$transaction(async (tx) => {
+      // First, delete all related entries in the pivot table
+      await tx.sidebarUser.deleteMany({
+        where: { sidebarItemId: id },
+      });
+
+      // Then, delete the sidebar item itself
+      return await tx.sidebar.delete({ where: { id } });
+    });
+  }
+
+  // Update admin sidebars
+  updateAdminSidebars(userId: string, sidebarIds: string[]) {
+    return this.prisma.$transaction(async (tx) => {
+      // First, delete all existing sidebar entries for this user
+      await tx.sidebarUser.deleteMany({
+        where: { userId },
+      });
+
+      // Then, create new entries for the provided sidebar IDs
+      const newSidebarEntries = await tx.sidebarUser.createMany({
+        data: sidebarIds.map((sidebarId) => ({
+          userId,
+          sidebarItemId: sidebarId,
+        })),
+      });
+
+      return newSidebarEntries;
+    });
   }
 }

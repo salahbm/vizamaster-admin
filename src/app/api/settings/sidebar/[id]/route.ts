@@ -29,12 +29,6 @@ export async function PUT(
     const result = await sidebarService.updateSidebarById(id, body);
     return NextResponse.json(result);
   } catch (error) {
-    if (error instanceof SyntaxError && error.message.includes('JSON')) {
-      return NextResponse.json(
-        { error: 'Invalid or empty request body' },
-        { status: 400 },
-      );
-    }
     return handleApiError(error);
   }
 }

@@ -21,8 +21,10 @@ import { Form } from '@/components/ui/form';
 import Loader from '@/components/ui/loader';
 
 import { Users } from '@/generated/prisma';
-import { useUpdateAdminSidebars } from '@/hooks/admins/use-update-sidebars';
-import { useSidebarTable } from '@/hooks/settings/sidebar';
+import {
+  useSidebarTable,
+  useUpdateAdminSidebars,
+} from '@/hooks/settings/sidebar';
 
 const schema = z.object({
   sidebarIds: z.array(z.string()).min(1, 'Please select at least one sidebar'),
@@ -41,7 +43,9 @@ export const ManageSidebars = ({
 }: ManageSidebarsProps) => {
   const locale = useLocale();
   const t = useTranslations();
-  const { data: sidebars = [], isLoading } = useSidebarTable();
+  const { data: sidebars = [], isLoading } = useSidebarTable({
+    sort: { id: 'createdAt', desc: true },
+  });
   const { mutateAsync: updateSidebars, isPending } = useUpdateAdminSidebars();
 
   // Prepare routes

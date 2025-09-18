@@ -217,7 +217,7 @@ const ActionsCell = ({ row }: { row: Row<Users> }) => {
     <>
       <DropdownMenu>
         <DropdownMenuTrigger className="flex-center w-full">
-          <EllipsisVertical className="h-4 w-4" />
+          <EllipsisVertical className="size-4" />
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
           <DropdownMenuLabel>{t('Common.actions')}</DropdownMenuLabel>
@@ -227,7 +227,7 @@ const ActionsCell = ({ row }: { row: Row<Users> }) => {
             className="flex-between"
           >
             {t('admins.actions.manageSidebars')}
-            <Settings className="h-4 w-4" />
+            <Settings className="size-4" />
           </DropdownMenuItem>
           <DropdownMenuItem
             onClick={async () =>
@@ -241,7 +241,7 @@ const ActionsCell = ({ row }: { row: Row<Users> }) => {
             className="flex-between"
           >
             {t('Common.delete')}
-            <Trash className="h-4 w-4" />
+            <Trash className="size-4" />
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>

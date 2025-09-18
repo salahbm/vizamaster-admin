@@ -112,7 +112,7 @@ const SidebarNav: FC = () => {
       )}
     >
       <div className="space-y-1">
-        {memoizedData.map((item) => {
+        {memoizedData.map((item, idx) => {
           const hasChildren = !!item.children?.length;
           const isActive = activeParent?.href === item.href;
           const isChildActive = !!activeChild;
@@ -148,15 +148,15 @@ const SidebarNav: FC = () => {
                   {!isMinimized && (
                     <AccordionContent>
                       <div className="space-y-1 pt-1 pl-6">
-                        {item.children!.map((child) => {
+                        {item.children!.map((child, index) => {
                           const childActive = isPathActive(
                             pathname,
                             child.href,
                           );
                           return (
                             <Link
-                              key={child.href}
-                              href={child.href}
+                              key={index}
+                              href={child.href ?? '#'}
                               className={navItemClasses(childActive)}
                               onClick={() => isMobile && toggle()}
                               aria-current={childActive ? 'page' : undefined}
@@ -181,8 +181,8 @@ const SidebarNav: FC = () => {
           const isItemActive = isPathActive(pathname, item.href);
           return (
             <Link
-              key={item.href}
-              href={item.href}
+              key={idx}
+              href={item.href ?? '#'}
               className={cn(
                 navItemClasses(isItemActive),
                 isMinimized && 'justify-center px-2',

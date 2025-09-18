@@ -4,7 +4,7 @@ import agent from '@/lib/agent';
 
 import { QueryKeys } from '@/constants/query-keys';
 
-import useMutation from '../common/use-mutation';
+import useMutation from '@/hooks/common/use-mutation';
 
 /**
  * Update an admin user's sidebars using the API agent
@@ -15,7 +15,7 @@ const update = async ({
 }: {
   id: string;
   data: { sidebarIds: string[] };
-}) => agent.patch(`api/admins/${id}/sidebars`, data);
+}) => agent.patch(`api/settings/sidebar/admin-sidebars?userId=${id}`, data);
 
 /**
  * Hook for updating admin user's sidebars
@@ -26,10 +26,15 @@ export const useUpdateAdminSidebars = () => {
   return useMutation({
     mutationFn: update,
     options: {
-      onSuccess: () =>
+      onSuccess: () => {
         queryClient.invalidateQueries({
           queryKey: QueryKeys.admins.all,
-        }),
+        });
+        queryClient.invalidateQueries({
+          queryKey: QueryKeys.settings.sidebar.all,
+          type: 'all',
+        });
+      },
     },
   });
 };
