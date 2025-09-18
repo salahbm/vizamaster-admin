@@ -142,11 +142,7 @@ const UpsertSidebar: React.FC<IUpsertSidebarProps> = ({ id }) => {
                 label={t('form.icon')}
                 control={form.control}
                 render={({ field }) => (
-                  <Input
-                    placeholder="lucide-home"
-                    {...field}
-                    value={field.value || ''}
-                  />
+                  <Input placeholder="LayoutDashboard" {...field} />
                 )}
               />
 

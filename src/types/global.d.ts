@@ -1,17 +1,20 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { FileMetadata } from '@/hooks/common/use-file-upload';
 
 export type FieldValueTypes =
   | string
+  | string[]
   | number
+  | number[]
   | boolean
   | 'intermediate'
   | Date
-  | string[]
+  | FileMetadata[]
+  | FileMetadata
+  | { from?: Date | undefined; to?: Date | undefined }
   | undefined
   | null
-  | { from?: Date | undefined; to?: Date | undefined }
-  | FileMetadata[]
-  | FileMetadata;
+  | any;
 
 export interface IResponse<T> {
   data: T;

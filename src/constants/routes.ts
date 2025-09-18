@@ -6,7 +6,6 @@ export const routes = {
   dashboard: '/dashboard',
   users: '/users',
   documents: '/documents',
-  settings: '/settings',
   profile: '/settings/profile',
   admins: '/settings/admins',
   preferences: '/settings/preferences',

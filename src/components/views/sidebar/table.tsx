@@ -26,6 +26,11 @@ export const SidebarTable = () => {
     getRowId: (originalRow: Sidebar) => originalRow.id,
     shallow: false,
     clearOnDefault: true,
+    initialState: {
+      columnPinning: {
+        right: ['actions'],
+      },
+    },
     meta: { t },
   });
 
