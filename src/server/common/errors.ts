@@ -1,7 +1,5 @@
 import { NextResponse } from 'next/server';
 
-import { getTranslations } from 'next-intl/server';
-
 // Base API error class
 export class ApiError extends Error {
   status: number;
@@ -75,23 +73,21 @@ export class InternalServerError extends ApiError {
 }
 
 export async function handleApiError(
-  errorOrMessage: unknown,
+  errorOrMessage: string,
   status?: number,
   code?: number,
 ): Promise<NextResponse> {
   let apiError: ApiError;
+  console.log(`LOGGING 👀:`, errorOrMessage, status, code);
 
-  if (typeof errorOrMessage !== 'string') {
-    if (errorOrMessage instanceof ApiError) {
-      apiError = errorOrMessage;
-    } else if (errorOrMessage instanceof Error) {
-      apiError = new ApiError(errorOrMessage.message, 500, 5000);
-    } else {
-      const t = await getTranslations();
-      apiError = new ApiError(t('errors.somethingWentWrong'), 500, 5000);
-    }
-  } else {
+  if (errorOrMessage === '' || errorOrMessage === undefined) {
     apiError = new ApiError(errorOrMessage, status || 500, code || 5000);
+  } else {
+    apiError = new ApiError(
+      'Something went wrong',
+      status || 500,
+      code || 5000,
+    );
   }
 
   return NextResponse.json(

@@ -64,4 +64,6 @@ export const FormFields = memo(
       />
     );
   },
-);
+) as <T extends FieldValues>(
+  props: IFormFields<T>,
+) => ReturnType<typeof FormField>;

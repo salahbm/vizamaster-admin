@@ -1,6 +1,7 @@
 import { ColumnSort } from '@tanstack/react-table';
 
 import { Prisma } from '../../../generated/prisma';
+import { BETTER_AUTH_CODES, BETTER_AUTH_ERROR_MESSAGES } from './codes';
 import { PaginatedResult, PaginationParams } from './types';
 
 /**
@@ -111,101 +112,13 @@ export function buildOrderBy<T extends string = string>(
 }
 
 // /**
-//  * Validates and sanitizes form data against a schema
+//  * Get error message based on code and language
 //  */
-// export function validateFormData(formData: any, formSchema: any) {
-//   const errors: Record<string, string> = {};
-//   const sanitizedData: Record<string, any> = {};
-
-//   formSchema.fields.forEach((field: any) => {
-//     const value = formData[field.id];
-
-//     // Check required fields
-//     if (
-//       field.required &&
-//       (value === undefined || value === null || value === '')
-//     ) {
-//       errors[field.id] = `${field.label} is required`;
-//       return;
-//     }
-
-//     // Skip validation if field is not required and value is empty
-//     if (
-//       !field.required &&
-//       (value === undefined || value === null || value === '')
-//     ) {
-//       return;
-//     }
-
-//     // Type-specific validation
-//     switch (field.type) {
-//       case 'email':
-//         if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
-//           errors[field.id] = `${field.label} must be a valid email address`;
-//         }
-//         break;
-
-//       case 'number':
-//         const numValue = Number(value);
-//         if (isNaN(numValue)) {
-//           errors[field.id] = `${field.label} must be a number`;
-//         } else if (
-//           field.validation?.min !== undefined &&
-//           numValue < field.validation.min
-//         ) {
-//           errors[field.id] =
-//             `${field.label} must be at least ${field.validation.min}`;
-//         } else if (
-//           field.validation?.max !== undefined &&
-//           numValue > field.validation.max
-//         ) {
-//           errors[field.id] =
-//             `${field.label} must be at most ${field.validation.max}`;
-//         }
-//         sanitizedData[field.id] = numValue;
-//         return;
-
-//       case 'select':
-//         if (
-//           field.options &&
-//           !field.options.some((opt) => opt.value === value)
-//         ) {
-//           errors[field.id] =
-//             `${field.label} must be one of the available options`;
-//         }
-//         break;
-
-//       default:
-//         if (typeof value === 'string' && field.validation?.pattern) {
-//           const regex = new RegExp(field.validation.pattern);
-//           if (!regex.test(value)) {
-//             errors[field.id] =
-//               field.validation.message || `${field.label} is invalid`;
-//           }
-//         }
-//     }
-
-//     sanitizedData[field.id] = value;
-//   });
-
-//   return {
-//     isValid: Object.keys(errors).length === 0,
-//     errors,
-//     sanitizedData,
-//   };
-// }
-
-// /**
-//  * Generates a random string (useful for temporary passwords, etc.)
-//  */
-// export function generateRandomString(length = 10) {
-//   const chars =
-//     'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-//   let result = '';
-
-//   for (let i = 0; i < length; i++) {
-//     result += chars.charAt(Math.floor(Math.random() * chars.length));
-//   }
-
-//   return result;
-// }
+export const getErrorMessage = (code: string, lang: 'en' | 'ru') => {
+  if (code in BETTER_AUTH_CODES) {
+    return BETTER_AUTH_ERROR_MESSAGES[
+      code as keyof typeof BETTER_AUTH_ERROR_MESSAGES
+    ][lang];
+  }
+  return '';
+};

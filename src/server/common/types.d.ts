@@ -1,3 +1,5 @@
+import { authClient } from '@/lib/auth-client';
+
 // Input parameters for pagination functions
 export type PaginationParams = {
   page?: number;
@@ -24,3 +26,13 @@ export type TResponse<T> = {
   code: number;
   data?: T;
 };
+
+type ErrorTypes = Partial<
+  Record<
+    keyof typeof authClient.$ERROR_CODES,
+    {
+      en: string;
+      ru: string;
+    }
+  >
+>;

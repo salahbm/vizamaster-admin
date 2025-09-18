@@ -2,8 +2,6 @@
  * API Agent for handling HTTP requests
  * This module provides a centralized way to make API calls with proper error handling and type safety
  */
-import { getTranslations } from 'next-intl/server';
-
 import { ApiError } from '@/server/common/errors';
 
 // HTTP methods supported by the agent
@@ -249,28 +247,7 @@ class Agent {
 }
 
 // Create and export a singleton instance
-export const agent = new Agent();
-
-// Export a function to get a translated error message
-export async function getErrorMessage(error: unknown): Promise<string> {
-  try {
-    const t = await getTranslations();
-
-    if (error instanceof ApiError) {
-      // Return specific error message if available
-      return error.message || t('errors.generic');
-    }
-
-    if (error instanceof Error) {
-      return error.message || t('errors.generic');
-    }
-
-    return t('errors.generic');
-  } catch {
-    // Fallback if translations fail
-    return 'An unexpected error occurred';
-  }
-}
+const agent = new Agent();
 
 // Export the ApiError class for type checking
 export default agent;
