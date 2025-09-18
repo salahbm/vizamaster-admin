@@ -9,12 +9,12 @@ import { DataTable } from '@/components/shared/data-table';
 import { DataTableSkeleton } from '@/components/skeletons/data-table-skeleton';
 import { Input } from '@/components/ui/input';
 
+import { Users } from '@/generated/prisma';
 import { useAdmins } from '@/hooks/admins';
 import { useDataTable } from '@/hooks/common/use-data-table';
 import { useDebounce } from '@/hooks/common/use-debounce';
 import { useQueryReader } from '@/hooks/common/use-query-reader';
 
-import { Users } from '../../../../generated/prisma';
 import { ADMIN_COLUMNS } from './columns';
 
 export const AdminsTable = () => {

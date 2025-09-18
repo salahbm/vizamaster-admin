@@ -35,9 +35,7 @@ export class AuthService {
   }
 
   async findUserById(id: string) {
-    const user = await this.authRepository.findUserById(id);
-    if (!user) throw new NotFoundError('User not found', API_CODES.NOT_FOUND);
-    return user;
+    return await this.authRepository.findUserById(id);
   }
 
   async updateUser(id: string, data: Prisma.UsersUpdateInput) {

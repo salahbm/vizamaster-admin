@@ -5,11 +5,10 @@ import { objectToSearchParams } from '@/lib/object-to-params';
 
 import { QueryKeys } from '@/constants/query-keys';
 
+import { Sidebar } from '@/generated/prisma';
 import { NotFoundError } from '@/server/common/errors';
 import { TResponse } from '@/server/common/types';
 import { ISort } from '@/types/data-table';
-
-import { Sidebar } from '../../../../generated/prisma';
 
 interface IParams {
   sort?: ISort | ISort[];
@@ -30,6 +29,6 @@ export const getSideBarTable = async (params?: IParams): Promise<Sidebar[]> => {
 export const useSidebarTable = (params?: IParams) =>
   useQuery({
     queryFn: () => getSideBarTable(params),
-    queryKey: [...QueryKeys.settings.sidebar.table, { ...params }],
+    queryKey: [...QueryKeys.settings.sidebar.table, { sort: params?.sort }],
     placeholderData: keepPreviousData,
   });

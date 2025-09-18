@@ -17,6 +17,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 
+import { useDeleteSidebarById } from '@/hooks/settings/sidebar';
 import { useAlert } from '@/providers/alert';
 
 import { Sidebar } from '../../../../generated/prisma';
@@ -124,7 +125,7 @@ const DeleteSidebarItem = ({ row }: { row: Row<Sidebar> }) => {
   const alert = useAlert();
   const router = useRouter();
   const t = useTranslations();
-  // const { mutateAsync: deleteSidebarItem } = useDeleteSidebarItem();
+  const { mutateAsync: deleteSidebarItem } = useDeleteSidebarById();
   return (
     <DropdownMenu>
       <DropdownMenuTrigger className="flex-center w-full">
@@ -145,7 +146,7 @@ const DeleteSidebarItem = ({ row }: { row: Row<Sidebar> }) => {
             alert({
               title: t('Common.delete'),
               description: t('Common.messages.deleteDescription'),
-              // onConfirm: async () => await deleteSidebarItem(row.original.id),
+              onConfirm: async () => await deleteSidebarItem(row.original.id),
               confirmText: t('Common.delete'),
             })
           }

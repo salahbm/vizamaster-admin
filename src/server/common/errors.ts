@@ -93,6 +93,8 @@ export async function handleApiError(
     );
   }
 
+  console.error('ERROR IN ROUTE ERR HANLDLER', errorOrMessage, status, code);
+
   return NextResponse.json(
     {
       message: apiError.message,

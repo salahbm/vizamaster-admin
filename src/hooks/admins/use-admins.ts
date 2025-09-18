@@ -22,7 +22,7 @@ export const getAdmins = async (params: TAdminParams) => {
   const queries = objectToSearchParams(params);
 
   const { data } = await agent.get<TResponse<PaginatedResult<Users>>>(
-    `api/admins?${queries}`,
+    `api/admins?${queries}&include=sidebars`,
   );
 
   if (!data) throw new NotFoundError('Admins not found');

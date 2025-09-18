@@ -75,6 +75,27 @@ class SidebarService {
       throw error;
     }
   }
+
+  async deleteSidebarById(id: string) {
+    const sidebar = await this.repository.deleteSidebarById(id);
+
+    if (!sidebar) {
+      throw new NotFoundError('Sidebar not found');
+    }
+
+    return createResponse(sidebar);
+  }
+
+  async getUserSidebars(userId: string) {
+    const sidebars = await this.repository.getUserSidebars(userId);
+
+    if (!sidebars || !Array.isArray(sidebars)) {
+      throw new NotFoundError('Sidebars not found');
+    }
+
+    // Ensure we're returning an array of sidebar items
+    return createResponse(sidebars);
+  }
 }
 
 export const sidebarService = new SidebarService(new SidebarRepository());

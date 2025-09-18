@@ -1,8 +1,10 @@
 'use client';
 
+import { useState } from 'react';
+
 import { ColumnDef, Row } from '@tanstack/react-table';
 import { format } from 'date-fns';
-import { EllipsisVertical, Trash } from 'lucide-react';
+import { EllipsisVertical, Settings, Trash } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
 import { DataTableColumnHeader } from '@/components/shared/data-table/column-header';
@@ -17,6 +19,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 
+import { Users } from '@/generated/prisma';
 import {
   useChangeAdminRole,
   useDeleteAdmin,
@@ -24,7 +27,7 @@ import {
 } from '@/hooks/admins';
 import { useAlert } from '@/providers/alert';
 
-import { Users } from '../../../../generated/prisma';
+import { ManageSidebars } from './manage-sidebars';
 
 export const ADMIN_COLUMNS: ColumnDef<Users>[] = [
   {
@@ -125,7 +128,7 @@ export const ADMIN_COLUMNS: ColumnDef<Users>[] = [
         }
       />
     ),
-    cell: ({ row }) => <DeleteAdmin row={row} />,
+    cell: ({ row }) => <ActionsCell row={row} />,
     meta: {
       label: 'Common.actions',
     },
@@ -204,33 +207,51 @@ const ToggleStatus = ({ row }: { row: Row<Users> }) => {
   );
 };
 
-const DeleteAdmin = ({ row }: { row: Row<Users> }) => {
+const ActionsCell = ({ row }: { row: Row<Users> }) => {
+  const [isSidebarModal, setSidebarModal] = useState(false);
+
   const alert = useAlert();
   const t = useTranslations();
   const { mutateAsync: deleteAdmin } = useDeleteAdmin();
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger className="flex-center w-full">
-        <EllipsisVertical className="h-4 w-4" />
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
-        <DropdownMenuLabel>{t('Common.actions')}</DropdownMenuLabel>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem
-          onClick={async () =>
-            alert({
-              title: t('Common.delete'),
-              description: t('Common.messages.deleteDescription'),
-              onConfirm: async () => await deleteAdmin(row.original.id),
-              confirmText: t('Common.delete'),
-            })
-          }
-          className="flex-between"
-        >
-          {t('Common.delete')}
-          <Trash className="h-4 w-4" />
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
+    <>
+      <DropdownMenu>
+        <DropdownMenuTrigger className="flex-center w-full">
+          <EllipsisVertical className="h-4 w-4" />
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end">
+          <DropdownMenuLabel>{t('Common.actions')}</DropdownMenuLabel>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem
+            onClick={() => setSidebarModal(true)}
+            className="flex-between"
+          >
+            {t('admins.actions.manageSidebars')}
+            <Settings className="h-4 w-4" />
+          </DropdownMenuItem>
+          <DropdownMenuItem
+            onClick={async () =>
+              alert({
+                title: t('Common.delete'),
+                description: t('Common.messages.deleteDescription'),
+                onConfirm: async () => await deleteAdmin(row.original.id),
+                confirmText: t('Common.delete'),
+              })
+            }
+            className="flex-between"
+          >
+            {t('Common.delete')}
+            <Trash className="h-4 w-4" />
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+      {isSidebarModal && (
+        <ManageSidebars
+          isOpen={isSidebarModal}
+          onClose={() => setSidebarModal(false)}
+          user={row.original}
+        />
+      )}
+    </>
   );
 };

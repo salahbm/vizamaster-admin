@@ -113,7 +113,8 @@
   "admins": {
     "actions": {
       "changeRole": "Change role",
-      "toggleStatus": "Toggle status"
+      "toggleStatus": "Toggle status",
+      "manageSidebars": "Routes"
     },
     "columns": {
       "active": "Status",
@@ -124,6 +125,7 @@
       "status": "Status"
     },
     "description": "Manage user roles and active status",
+    "selectSidebars": "Select routes allowed for this admin",
     "metadata": {
       "description": "Manage user roles and active status",
       "title": "Admins Management"
@@ -135,6 +137,9 @@
     },
     "search": {
       "placeholder": "Search by name or email..."
+    },
+    "placeholders": {
+      "selectSidebars": "Select sidebars"
     },
     "status": {
       "active": "Active",

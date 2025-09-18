@@ -35,4 +35,9 @@ export class SidebarRepository {
   async createSidebar(data: Omit<Sidebar, 'id' | 'createdAt' | 'updatedAt'>) {
     return await this.prisma.sidebar.create({ data });
   }
+
+  // Delete sidebar by id
+  async deleteSidebarById(id: string) {
+    return await this.prisma.sidebar.delete({ where: { id } });
+  }
 }

@@ -38,3 +38,18 @@ export async function PUT(
     return handleApiError(error);
   }
 }
+
+export async function DELETE(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> },
+) {
+  try {
+    const { id } = await params;
+
+    const result = await sidebarService.deleteSidebarById(id);
+
+    return NextResponse.json(result);
+  } catch (error: unknown) {
+    return handleApiError(error);
+  }
+}

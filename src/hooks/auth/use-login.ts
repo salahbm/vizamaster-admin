@@ -1,5 +1,6 @@
 import { useRouter } from 'next/navigation';
 
+import { User } from 'better-auth';
 import { useLocale } from 'next-intl';
 
 import { authClient } from '@/lib/auth-client';
@@ -11,11 +12,12 @@ import { API_CODES } from '@/server/common/codes';
 import { SignInSchema } from '@/server/common/dto';
 import { UnauthorizedError } from '@/server/common/errors';
 import { getErrorMessage } from '@/server/common/utils';
+import { useAuthStore } from '@/store/auth-store';
 
-const login = async (data: SignInSchema, locale: 'en' | 'ru') => {
-  const { error } = await authClient.signIn.email({
-    email: data.email,
-    password: data.password,
+const login = async (body: SignInSchema, locale: 'en' | 'ru') => {
+  const { error, data } = await authClient.signIn.email({
+    email: body.email,
+    password: body.password,
   });
 
   // Handle auth errors
@@ -36,15 +38,21 @@ const login = async (data: SignInSchema, locale: 'en' | 'ru') => {
       data: null,
     };
   }
+
+  return data;
 };
 
 const useLogin = () => {
   const router = useRouter();
   const locale = useLocale();
+  const { setUser } = useAuthStore();
   return useMutation({
     mutationFn: (data: SignInSchema) => login(data, locale as 'en' | 'ru'),
     options: {
-      onSuccess: () => router.push(routes.dashboard),
+      onSuccess: (data) => {
+        setUser(data?.user as User);
+        router.push(routes.dashboard);
+      },
       meta: {
         toast: false,
       },

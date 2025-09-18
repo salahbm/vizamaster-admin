@@ -144,9 +144,11 @@ export const Combobox = React.forwardRef<HTMLButtonElement, ComboboxProps>(
           )}
           {...props}
         >
-          {label ?? (localLabel as string)}
+          <span className="min-w-0 flex-1 truncate text-left">
+            {label ?? (localLabel as string)}
+          </span>
 
-          <div className="flex items-center gap-1">
+          <div className="flex flex-shrink-0 items-center gap-1">
             {selectedValues.length > 2 && (
               <div
                 onClick={handleClear}

@@ -25,9 +25,10 @@ export default function Sidebar() {
 
       <aside
         className={cn(
-          'bg-background fixed top-16 left-0 z-20 flex h-[calc(100vh-4rem)] w-64 flex-col border-r transition-all duration-300 md:relative md:top-0 md:z-auto',
-          isMinimized && 'lg:w-16',
-          isMinimized ? '-translate-x-full lg:translate-x-0' : 'translate-x-0',
+          'bg-background fixed top-16 left-0 z-20 flex h-[calc(100vh-4rem)] flex-col border-r transition-all duration-300 md:relative md:top-0 lg:z-auto',
+          isMinimized
+            ? '-translate-x-full lg:w-16 lg:translate-x-0'
+            : 'w-64 translate-x-0',
         )}
       >
         <button

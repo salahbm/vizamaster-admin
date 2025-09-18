@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-import { handleApiError } from '@/server/common/errors';
-import { parsePaginationAndSortParams } from '@/server/common/utils';
+import { BadRequestError, handleApiError } from '@/server/common/errors';
 import { sidebarService } from '@/server/modules/sidebar/sidebar.service';
 
 // GET /api/settings/sidebar
@@ -9,13 +8,17 @@ export async function GET(request: NextRequest) {
   try {
     // Get all sidebars
     const searchParams = new URL(request.url).searchParams;
+    const userId = searchParams.get('userId');
 
-    const { sort } = parsePaginationAndSortParams(searchParams);
+    if (!userId) {
+      throw new BadRequestError('User id is required');
+    }
 
-    const result = await sidebarService.getAllSidebar(sort);
+    const result = await sidebarService.getUserSidebars(userId);
 
     return NextResponse.json(result);
   } catch (error: unknown) {
+    console.error('Error creating sidebar:', error);
     return handleApiError(error);
   }
 }
@@ -38,6 +41,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(result);
   } catch (error: unknown) {
+    console.error('Error creating sidebar:', error);
     return handleApiError(error);
   }
 }

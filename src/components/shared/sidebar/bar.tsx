@@ -18,6 +18,7 @@ import { cn, convertSidebarToNavItems } from '@/lib/utils';
 
 import { SideNavItem } from '@/constants/routes';
 
+import { useIsMobile } from '@/hooks/common/use-mobile';
 import { useSidebar } from '@/hooks/settings/sidebar';
 import { usePathname } from '@/i18n/routing';
 import { useSidebar as useSidebarStore } from '@/store/sidebar';
@@ -39,9 +40,10 @@ const isPathActive = (pathname: string | null, href: string) => {
 };
 
 const SidebarNav: FC = () => {
+  const isMobile = useIsMobile();
   const locale = useLocale();
   const pathname = usePathname();
-  const { isMinimized } = useSidebarStore();
+  const { isMinimized, toggle } = useSidebarStore();
   const [expanded, setExpanded] = useState<string[]>([]);
 
   const { data, isLoading, isFetching } = useSidebar();
@@ -156,6 +158,7 @@ const SidebarNav: FC = () => {
                               key={child.href}
                               href={child.href}
                               className={navItemClasses(childActive)}
+                              onClick={() => isMobile && toggle()}
                               aria-current={childActive ? 'page' : undefined}
                             >
                               <DynamicIcon
@@ -184,6 +187,7 @@ const SidebarNav: FC = () => {
                 navItemClasses(isItemActive),
                 isMinimized && 'justify-center px-2',
               )}
+              onClick={() => isMobile && toggle()}
               aria-current={isItemActive ? 'page' : undefined}
               title={item.label}
             >

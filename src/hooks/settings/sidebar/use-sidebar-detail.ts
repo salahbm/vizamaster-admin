@@ -85,3 +85,25 @@ export const useUpdateSidebarById = () => {
     },
   });
 };
+
+// ───────────────── DELETE ────────────────── //
+export const deleteSidebarById = async (id: string) =>
+  await agent.delete<TResponse<Sidebar>>(`api/settings/sidebar/${id}`);
+
+export const useDeleteSidebarById = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: deleteSidebarById,
+    options: {
+      onSuccess: () => {
+        queryClient.invalidateQueries({
+          queryKey: QueryKeys.settings.sidebar.all,
+        });
+        queryClient.invalidateQueries({
+          queryKey: QueryKeys.settings.sidebar.table,
+        });
+      },
+    },
+  });
+};
