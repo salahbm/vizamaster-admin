@@ -33,6 +33,7 @@ export function DataTable<TData>({
   tdClassName,
   trClassName,
   paginationClassName,
+  children,
 }: DataTableProps<TData>) {
   const t = useTranslations();
 
@@ -46,12 +47,20 @@ export function DataTable<TData>({
 
   return (
     <div>
-      <div className="mb-4 flex items-center justify-end gap-2">
-        <DataTableViewOptions table={table} />
-        <DataTableResetSortings
-          table={table}
-          includePagination={table.options.meta?.includePaginationReset}
-        />
+      <div
+        className={cn(
+          'mb-2 flex w-full flex-col-reverse items-center gap-2 md:flex-row',
+          children ? 'md:justify-between' : 'justify-end',
+        )}
+      >
+        {children}
+        <div className="flex w-full items-center gap-2">
+          <DataTableViewOptions table={table} />
+          <DataTableResetSortings
+            table={table}
+            includePagination={table.options.meta?.includePaginationReset}
+          />
+        </div>
       </div>
       <div className={cn('overflow-hidden rounded-md border', className)}>
         <Table className={tableClassName}>

@@ -1,2 +1,2 @@
-export * from './sidebar-table';
-export * from './upsert';
+export * from './codes-table';
+export * from './codes-upsert';

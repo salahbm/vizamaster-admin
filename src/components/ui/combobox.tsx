@@ -27,7 +27,7 @@ import { FieldValueTypes } from '@/types/global';
 interface ComboboxProps
   extends Omit<
     React.ButtonHTMLAttributes<HTMLButtonElement>,
-    'value' | 'onValueChange'
+    'value' | 'onChange'
   > {
   options?: Array<{
     value: string;
@@ -37,7 +37,7 @@ interface ComboboxProps
     id?: string;
   }>;
   label?: string | React.ReactNode;
-  onValueChange: (value: string | string[]) => void;
+  onChange: (value: string | string[]) => void;
   value: FieldValueTypes;
   placeholder?: string;
   modalPopover?: boolean;
@@ -52,7 +52,7 @@ export const Combobox = React.forwardRef<HTMLButtonElement, ComboboxProps>(
     {
       options = [],
       label,
-      onValueChange,
+      onChange,
       value,
       placeholder = 'Select',
       modalPopover = true,
@@ -76,14 +76,14 @@ export const Combobox = React.forwardRef<HTMLButtonElement, ComboboxProps>(
 
         if (valueExists) {
           // Remove the value if it already exists
-          onValueChange(stringValues.filter((v) => v !== val));
+          onChange(stringValues.filter((v) => v !== val));
         } else {
           // Add the value if it doesn't exist
-          onValueChange([...stringValues, val]);
+          onChange([...stringValues, val]);
         }
       } else {
         // Single select mode
-        onValueChange(val);
+        onChange(val);
         setOpen(false);
       }
     };
@@ -106,7 +106,7 @@ export const Combobox = React.forwardRef<HTMLButtonElement, ComboboxProps>(
 
     const handleClear = (event: React.MouseEvent<HTMLElement>) => {
       event.stopPropagation();
-      onValueChange(multiple ? [] : '');
+      onChange(multiple ? [] : '');
     };
 
     // Display text for the trigger button

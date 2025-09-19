@@ -11,6 +11,8 @@ export const routes = {
   success: '/success',
   groupCodes: '/settings/group-codes',
   groupCodesUpsert: '/settings/group-codes/create',
+  codes: '/settings/codes',
+  codesUpsert: '/settings/codes/create',
 };
 
 export interface SideNavItem {

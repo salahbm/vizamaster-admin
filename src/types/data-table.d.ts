@@ -24,6 +24,8 @@ export interface DataTableProps<TData> {
 
   // form control
   form?: UseFormReturn<TData>;
+
+  children?: React.ReactNode;
 }
 
 // Header Intl Cell

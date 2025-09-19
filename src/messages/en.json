@@ -42,6 +42,7 @@
     "goBack": "Go Back",
     "name": "Name",
     "code": "Code",
+    "groupCode": "Group Code",
     "createdAt": "Created At",
     "placeholder": {
       "date": "Select date",
@@ -195,7 +196,16 @@
       "update": "Update Item",
       "code": "Code",
       "codePlaceholder": "Enter code",
-      "codeMessage": "Code must be unique"
+      "codeMessage": "Code must be unique",
+      "groupCode": "Group Code",
+      "groupCodePlaceholder": "Select group code",
+      "groupCodeMessage": "Group code is required and must be unique"
+    }
+  },
+  "codes": {
+    "metadata": {
+      "description": "Manage codes",
+      "title": "Codes Management"
     }
   },
   "errors": {

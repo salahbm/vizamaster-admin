@@ -1,11 +1,13 @@
+import { Fragment } from 'react';
+
 import { getTranslations } from 'next-intl/server';
 
 import { Metadata } from 'next';
 
-import UpsertSidebar from '@/components/views/sidebar/upsert';
+import UpsertCode from '@/components/views/codes/codes-upsert';
 
 export async function generateMetadata(): Promise<Metadata> {
-  const t = await getTranslations('sidebar');
+  const t = await getTranslations('codes');
 
   return {
     title: t('metadata.title'),
@@ -20,10 +22,10 @@ export default async function SidebarUpsertPage({
 }) {
   const { id } = await params;
 
-  const t = await getTranslations('sidebar');
+  const t = await getTranslations('codes');
 
   return (
-    <div className="main-container">
+    <Fragment>
       <div className="mb-8">
         <h1 className="font-header mb-2">{t('metadata.title')}</h1>
         <p className="font-body-2 text-muted-foreground">
@@ -31,7 +33,7 @@ export default async function SidebarUpsertPage({
         </p>
       </div>
 
-      <UpsertSidebar id={id} />
-    </div>
+      <UpsertCode id={id} />
+    </Fragment>
   );
 }

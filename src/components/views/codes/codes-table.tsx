@@ -13,13 +13,13 @@ import { GroupCodes } from '@/generated/prisma';
 import { useDataTable } from '@/hooks/common/use-data-table';
 import { useDebounce } from '@/hooks/common/use-debounce';
 import { useQueryReader } from '@/hooks/common/use-query-reader';
-import { useGroupCodes } from '@/hooks/settings/group-codes';
+import { useCodes } from '@/hooks/settings/codes';
 
-import { GROUP_CODES_COLUMNS } from './group-codes-columns';
+import { CODES_COLUMNS } from './codes-columns';
 
-export const GroupCodesTable = () => {
+export const CodesTable = () => {
   const t = useTranslations();
-  const columns = useMemo(() => GROUP_CODES_COLUMNS, []);
+  const columns = useMemo(() => CODES_COLUMNS, []);
 
   // Use the improved query reader hook to get URL parameters
   const [search, setSearch] = useQueryState('search');
@@ -29,15 +29,17 @@ export const GroupCodesTable = () => {
   const query = useQueryReader({
     sort: { type: 'object', defaultValue: [{ id: 'createdAt', desc: false }] },
     page: { type: 'number', defaultValue: 1 },
-    limit: { type: 'number', defaultValue: 10 },
+    size: { type: 'number', defaultValue: 10 },
     search: { type: 'string', defaultValue: '' },
+    groupCodeId: { type: 'string', defaultValue: '' },
   });
 
-  const { data, isLoading, isFetching } = useGroupCodes({
+  const { data, isLoading, isFetching } = useCodes({
     page: query.page,
-    size: query.limit,
+    size: query.size,
     sort: query.sort,
     search: query.search,
+    groupCodeId: query.groupCodeId,
   });
 
   const { table } = useDataTable({
@@ -60,8 +62,8 @@ export const GroupCodesTable = () => {
   return (
     <DataTable table={table} isLoading={isLoading || isFetching}>
       <Input
+        value={search}
         type="search"
-        value={search ?? ''}
         placeholder={t('Common.search')}
         className="shrink-0 md:w-[30rem]"
         onChange={(e) => debouncedSearch(e.target.value)}

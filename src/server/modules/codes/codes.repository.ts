@@ -1,21 +1,18 @@
-import { GroupCodes, Prisma, PrismaClient, Sidebar } from '@/generated/prisma';
+import { Codes, Prisma } from '@/generated/prisma';
 import { buildOrderBy } from '@/server/common/utils';
 import prisma from '@/server/db/prisma';
 import { ISort } from '@/types/data-table';
 
-export class GroupCodesRepository {
-  private readonly prisma: PrismaClient['groupCodes'];
-
-  constructor() {
-    this.prisma = prisma.groupCodes;
-  }
+export class CodesRepository {
+  private readonly prisma = prisma;
 
   // Get all group codes unlinked to user
-  async getAllGroupCodes(
+  async getAllCodes(
+    skip: number,
+    take: number,
     sort?: ISort,
     search?: string,
-    skip?: number,
-    take?: number,
+    groupCodeId?: string,
   ) {
     const orderBy = buildOrderBy(sort);
 
@@ -36,16 +33,27 @@ export class GroupCodesRepository {
             },
           ],
         }
-      : {};
-    return await this.prisma.findMany({
+      : groupCodeId
+        ? {
+            groupCodeId,
+          }
+        : {};
+    return await this.prisma.codes.findMany({
       where,
       skip,
       take,
       orderBy,
+      include: {
+        groupCode: {
+          select: {
+            code: true,
+          },
+        },
+      },
     });
   }
 
-  async countGroupCodes(search?: string) {
+  async countCodes(search?: string, groupCodeId?: string) {
     const where = search
       ? {
           OR: [
@@ -63,29 +71,34 @@ export class GroupCodesRepository {
             },
           ],
         }
-      : {};
-    return this.prisma.count({ where });
+      : groupCodeId
+        ? {
+            groupCodeId,
+          }
+        : {};
+    return this.prisma.codes.count({ where });
   }
 
   // Get group code by id
-  async getGroupCodeById(id: string) {
-    return await this.prisma.findUnique({ where: { id } });
+  async getCodeById(id: string) {
+    return await this.prisma.codes.findUnique({ where: { id } });
   }
 
   // Update group code by id
-  async updateGroupCodeById(id: string, data: Sidebar) {
-    return await this.prisma.update({ where: { id }, data });
+  async updateCodeById(
+    id: string,
+    data: Omit<Codes, 'id' | 'createdAt' | 'updatedAt'>,
+  ) {
+    return await this.prisma.codes.update({ where: { id }, data });
   }
 
   // Create group code
-  async createGroupCode(
-    data: Omit<GroupCodes, 'id' | 'createdAt' | 'updatedAt'>,
-  ) {
-    return await this.prisma.create({ data });
+  async createCode(data: Omit<Codes, 'id' | 'createdAt' | 'updatedAt'>) {
+    return await this.prisma.codes.create({ data });
   }
 
   // Delete group code by id
-  async deleteGroupCodeById(id: string) {
-    return await this.prisma.delete({ where: { id } });
+  async deleteCodeById(id: string) {
+    return await this.prisma.codes.delete({ where: { id } });
   }
 }
