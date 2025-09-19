@@ -103,10 +103,9 @@ export const ManageSidebars = ({
               render={({ field }) => (
                 <Combobox
                   multiple
-                  value={field.value}
-                  onValueChange={field.onChange}
                   placeholder={t('admins.placeholders.selectSidebars')}
                   options={routes}
+                  {...field}
                 />
               )}
               message={

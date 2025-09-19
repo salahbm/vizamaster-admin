@@ -89,7 +89,7 @@ export const CODES_COLUMNS: ColumnDef<GroupCodes>[] = [
     ),
     cell: ({ row }) => {
       const date = new Date(row.getValue('createdAt'));
-      return <div>{format(date, 'PPP')}</div>;
+      return <div>{format(date, 'dd.MM.yyyy')}</div>;
     },
     meta: {
       label: 'Common.createdAt',

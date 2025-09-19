@@ -110,7 +110,7 @@ export const ADMIN_COLUMNS: ColumnDef<Users>[] = [
     ),
     cell: ({ row }) => {
       const date = new Date(row.getValue('createdAt'));
-      return <div>{format(date, 'PPP')}</div>;
+      return <div>{format(date, 'dd.MM.yyyy')}</div>;
     },
     meta: {
       label: 'admins.columns.createdAt',

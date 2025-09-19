@@ -3,7 +3,7 @@
 import { useMemo } from 'react';
 
 import { useTranslations } from 'next-intl';
-import { useQueryState } from 'nuqs';
+import { parseAsString as n, useQueryState } from 'nuqs';
 
 import { DataTable } from '@/components/shared/data-table';
 import { DataTableSkeleton } from '@/components/skeletons/data-table-skeleton';
@@ -12,7 +12,7 @@ import { Input } from '@/components/ui/input';
 import { Users } from '@/generated/prisma';
 import { useAdmins } from '@/hooks/admins';
 import { useDataTable } from '@/hooks/common/use-data-table';
-import { useDebounce } from '@/hooks/common/use-debounce';
+import { useDebounceValue } from '@/hooks/common/use-debounce-val';
 import { useQueryReader } from '@/hooks/common/use-query-reader';
 
 import { ADMIN_COLUMNS } from './columns';
@@ -22,9 +22,9 @@ export const AdminsTable = () => {
   const columns = useMemo(() => ADMIN_COLUMNS, []);
 
   // Use the improved query reader hook to get URL parameters
-  const [search, setSearch] = useQueryState('search');
+  const [search, setSearch] = useQueryState('search', n.withDefault(''));
 
-  const debouncedSearch = useDebounce(setSearch);
+  const debounced = useDebounceValue(search, 500);
 
   const query = useQueryReader({
     page: { type: 'number', defaultValue: 1 },
@@ -41,7 +41,7 @@ export const AdminsTable = () => {
     page: query.page,
     size: query.size,
     sort: query.sort,
-    search: query.search,
+    search: debounced,
   });
 
   const { table } = useDataTable({
@@ -62,16 +62,14 @@ export const AdminsTable = () => {
   if (isLoading) return <DataTableSkeleton columnCount={columns.length} />;
 
   return (
-    <div className="space-y-4">
+    <DataTable table={table} isLoading={isLoading || isFetching}>
       <Input
         value={search}
         type="search"
         placeholder={t('Common.search')}
-        className="md:w-96"
-        onChange={(e) => debouncedSearch(e.target.value)}
+        className="shrink-0 md:w-[30rem]"
+        onChange={(e) => setSearch(e.target.value)}
       />
-
-      <DataTable table={table} isLoading={isLoading || isFetching} />
-    </div>
+    </DataTable>
   );
 };

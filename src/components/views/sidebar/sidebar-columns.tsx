@@ -94,7 +94,7 @@ export const SIDEBAR_COLUMNS: ColumnDef<Sidebar>[] = [
     ),
     cell: ({ row }) => {
       const date = new Date(row.getValue('createdAt'));
-      return <div>{format(date, 'PPP')}</div>;
+      return <div>{format(date, 'dd.MM.yyyy')}</div>;
     },
     meta: {
       label: 'sidebar.columns.createdAt',
