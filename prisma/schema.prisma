@@ -67,6 +67,13 @@ model Accounts {
   @@map("accounts")
 }
 
+enum UserRole {
+  USER
+  EDITOR
+  ADMIN
+  CREATOR
+}
+
 model Sidebar {
   id        String   @id @default(cuid())
   labelEn   String
@@ -96,9 +103,36 @@ model SidebarUser {
   @@map("sidebar_user")
 }
 
-enum UserRole {
-  USER
-  EDITOR
-  ADMIN
-  CREATOR
+model GroupCodes {
+  id        String   @id @default(cuid())
+  code      String   @unique
+  labelEn   String
+  labelRu   String
+
+  codes Codes[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("group_codes")
+  @@index([code])
 }
+
+model Codes {
+  id        String   @id @default(cuid())
+  code      String   @unique
+  labelEn   String
+  labelRu   String
+  groupCodeId String
+
+  groupCode GroupCodes @relation(fields: [groupCodeId], references: [id], onDelete: Cascade)
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("codes")
+  @@index([code])
+  @@index([groupCodeId])
+}
+  
+

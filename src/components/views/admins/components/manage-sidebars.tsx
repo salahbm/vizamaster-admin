@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { InfoIcon } from 'lucide-react';
@@ -48,6 +48,13 @@ export const ManageSidebars = ({
   });
   const { mutateAsync: updateSidebars, isPending } = useUpdateAdminSidebars();
 
+  const form = useForm<z.infer<typeof schema>>({
+    resolver: zodResolver(schema),
+    defaultValues: {
+      sidebarIds: [],
+    },
+  });
+
   // Prepare routes
   const routes = useMemo(() => {
     if (!sidebars || isLoading) return [];
@@ -61,19 +68,20 @@ export const ManageSidebars = ({
     }));
   }, [sidebars, isLoading, locale]);
 
-  const form = useForm<z.infer<typeof schema>>({
-    resolver: zodResolver(schema),
-    defaultValues: {
-      sidebarIds: sidebars?.map((s) => s.id) || [],
-    },
-  });
+  useEffect(() => {
+    if (sidebars) {
+      form.reset({
+        sidebarIds: sidebars.map((sidebar) => sidebar?.id),
+      });
+    }
+  }, [form, sidebars]);
+
+  if (isLoading) return <Loader />;
 
   const onSubmit = async (data: z.infer<typeof schema>) => {
     await updateSidebars({ id: user.id, data });
     onClose();
   };
-
-  if (isLoading) return <Loader />;
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
