@@ -17,37 +17,18 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 
-import { useDeleteSidebarById } from '@/hooks/settings/sidebar';
+import { GroupCodes } from '@/generated/prisma';
+import { useDeleteGroupCodeById } from '@/hooks/settings/group-codes';
 import { useAlert } from '@/providers/alert';
 
-import { Sidebar } from '../../../../generated/prisma';
-
-export const SIDEBAR_COLUMNS: ColumnDef<Sidebar>[] = [
-  {
-    accessorKey: 'order',
-    header: ({ column, table }) => (
-      <DataTableColumnHeader
-        column={column}
-        title={
-          table.options?.meta?.t
-            ? table.options.meta.t('sidebar.columns.order')
-            : 'Order'
-        }
-      />
-    ),
-    meta: {
-      label: 'sidebar.columns.order',
-    },
-  },
+export const GROUP_CODES_COLUMNS: ColumnDef<GroupCodes>[] = [
   {
     accessorKey: 'name',
     header: ({ column, table }) => (
       <DataTableColumnHeader
         column={column}
         title={
-          table.options?.meta?.t
-            ? table.options.meta.t('sidebar.columns.name')
-            : 'Name'
+          table.options?.meta?.t ? table.options.meta.t('Common.name') : 'Name'
         }
       />
     ),
@@ -60,24 +41,22 @@ export const SIDEBAR_COLUMNS: ColumnDef<Sidebar>[] = [
       );
     },
     meta: {
-      label: 'sidebar.columns.name',
+      label: 'Common.name',
     },
     enableSorting: false,
   },
   {
-    accessorKey: 'href',
+    accessorKey: 'code',
     header: ({ column, table }) => (
       <DataTableColumnHeader
         column={column}
         title={
-          table.options?.meta?.t
-            ? table.options.meta.t('sidebar.columns.href')
-            : 'URL Path'
+          table.options?.meta?.t ? table.options.meta.t('Common.code') : 'Code'
         }
       />
     ),
     meta: {
-      label: 'sidebar.columns.href',
+      label: 'Common.code',
     },
   },
   {
@@ -87,7 +66,7 @@ export const SIDEBAR_COLUMNS: ColumnDef<Sidebar>[] = [
         column={column}
         title={
           table.options?.meta?.t
-            ? table.options.meta.t('sidebar.columns.createdAt')
+            ? table.options.meta.t('Common.createdAt')
             : 'Created At'
         }
       />
@@ -97,7 +76,7 @@ export const SIDEBAR_COLUMNS: ColumnDef<Sidebar>[] = [
       return <div>{format(date, 'PPP')}</div>;
     },
     meta: {
-      label: 'sidebar.columns.createdAt',
+      label: 'Common.createdAt',
     },
     enableSorting: false,
   },
@@ -113,7 +92,7 @@ export const SIDEBAR_COLUMNS: ColumnDef<Sidebar>[] = [
         }
       />
     ),
-    cell: ({ row }) => <DeleteSidebarItem row={row} />,
+    cell: ({ row }) => <DeleteGroupCodeItem row={row} />,
     meta: {
       label: 'Common.actions',
     },
@@ -121,11 +100,11 @@ export const SIDEBAR_COLUMNS: ColumnDef<Sidebar>[] = [
   },
 ];
 
-const DeleteSidebarItem = ({ row }: { row: Row<Sidebar> }) => {
+const DeleteGroupCodeItem = ({ row }: { row: Row<GroupCodes> }) => {
   const alert = useAlert();
   const router = useRouter();
   const t = useTranslations();
-  const { mutateAsync: deleteSidebarItem } = useDeleteSidebarById();
+  const { mutateAsync: deleteGroupCodeItem } = useDeleteGroupCodeById();
   return (
     <DropdownMenu>
       <DropdownMenuTrigger className="flex-center w-full">
@@ -136,7 +115,9 @@ const DeleteSidebarItem = ({ row }: { row: Row<Sidebar> }) => {
         <DropdownMenuSeparator />
         <DropdownMenuItem
           className="flex-between"
-          onClick={() => router.push(`/settings/sidebar/${row.original.id}`)}
+          onClick={() =>
+            router.push(`/settings/group-codes/${row.original.id}`)
+          }
         >
           {t('Common.edit')}
           <Edit className="h-4 w-4" />
@@ -146,7 +127,7 @@ const DeleteSidebarItem = ({ row }: { row: Row<Sidebar> }) => {
             alert({
               title: t('Common.delete'),
               description: t('Common.messages.deleteDescription'),
-              onConfirm: async () => await deleteSidebarItem(row.original.id),
+              onConfirm: async () => await deleteGroupCodeItem(row.original.id),
               confirmText: t('Common.delete'),
             })
           }

@@ -2,10 +2,10 @@ import { getTranslations } from 'next-intl/server';
 
 import { Metadata } from 'next';
 
-import UpsertSidebar from '@/components/views/sidebar/upsert';
+import UpsertGroupCode from '@/components/views/group-codes/group-codes-upsert';
 
 export async function generateMetadata(): Promise<Metadata> {
-  const t = await getTranslations('sidebar');
+  const t = await getTranslations('groupCodes');
 
   return {
     title: t('metadata.title'),
@@ -20,7 +20,7 @@ export default async function SidebarUpsertPage({
 }) {
   const { id } = await params;
 
-  const t = await getTranslations('sidebar');
+  const t = await getTranslations('groupCodes');
 
   return (
     <div className="main-container">
@@ -31,7 +31,7 @@ export default async function SidebarUpsertPage({
         </p>
       </div>
 
-      <UpsertSidebar id={id} />
+      <UpsertGroupCode id={id} />
     </div>
   );
 }

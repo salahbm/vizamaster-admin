@@ -10,5 +10,13 @@ export const QueryKeys = {
       table: ['settings', 'sidebar', 'table'],
       details: ['settings', 'sidebar', 'details'],
     },
+    groupCodes: {
+      all: ['settings', 'groupCodes'],
+      details: ['settings', 'groupCodes', 'details'],
+    },
+    codes: {
+      all: ['settings', 'codes'],
+      details: ['settings', 'codes', 'details'],
+    },
   },
 } as const;

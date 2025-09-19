@@ -6,14 +6,14 @@ import { getTranslations } from 'next-intl/server';
 import { Plus } from 'lucide-react';
 import { Metadata } from 'next';
 
-import { SidebarTable } from '@/components/views/sidebar';
+import { GroupCodesTable } from '@/components/views/group-codes';
 
 import { routes } from '@/constants/routes';
 
 import { AuthGuard } from '@/server/modules/auth/auth.guard';
 
 export async function generateMetadata(): Promise<Metadata> {
-  const t = await getTranslations('sidebar');
+  const t = await getTranslations('groupCodes');
 
   return {
     title: t('metadata.title'),
@@ -29,7 +29,7 @@ export default async function SidebarPage() {
 
   if (!session) return redirect(routes.signIn);
 
-  const t = await getTranslations('sidebar');
+  const t = await getTranslations('groupCodes');
 
   return (
     <div className="main-container">
@@ -40,13 +40,13 @@ export default async function SidebarPage() {
             {t('metadata.description')}
           </p>
         </div>
-        <Link href={routes.sidebarUpsert} className="create-btn">
+        <Link href={routes.groupCodesUpsert} className="create-btn">
           <Plus className="size-6" />
           {t('form.create')}
         </Link>
       </div>
 
-      <SidebarTable />
+      <GroupCodesTable />
     </div>
   );
 }

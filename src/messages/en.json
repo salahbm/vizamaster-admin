@@ -40,6 +40,9 @@
     "actions": "Actions",
     "signIn": "Sign In",
     "goBack": "Go Back",
+    "name": "Name",
+    "code": "Code",
+    "createdAt": "Created At",
     "placeholder": {
       "date": "Select date",
       "time": "Select time",
@@ -175,6 +178,24 @@
       "name": "Name",
       "href": "URL Path",
       "createdAt": "Created At"
+    }
+  },
+  "groupCodes": {
+    "metadata": {
+      "description": "Manage group codes",
+      "title": "Group Codes Management"
+    },
+    "form": {
+      "labelEn": "English Label",
+      "labelEnPlaceholder": "Enter English label",
+      "labelRu": "Russian Label",
+      "labelRuPlaceholder": "Enter Russian label",
+      "cancel": "Cancel",
+      "create": "Create Item",
+      "update": "Update Item",
+      "code": "Code",
+      "codePlaceholder": "Enter code",
+      "codeMessage": "Code must be unique"
     }
   },
   "errors": {

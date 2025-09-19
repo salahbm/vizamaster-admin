@@ -1,19 +1,16 @@
 // Define routes and navigation structure
 
 export const routes = {
-  home: '/',
   signIn: '/sign-in',
   dashboard: '/dashboard',
-  users: '/users',
-  documents: '/documents',
-  profile: '/settings/profile',
   admins: '/settings/admins',
   preferences: '/settings/preferences',
   sidebar: '/settings/sidebar',
   sidebarUpsert: '/settings/sidebar/create',
-  table: '/table',
   forms: '/forms',
   success: '/success',
+  groupCodes: '/settings/group-codes',
+  groupCodesUpsert: '/settings/group-codes/create',
 };
 
 export interface SideNavItem {
