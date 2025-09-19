@@ -58,7 +58,6 @@ const QueryProvider = ({ children }: PropsWithChildren) => {
         mutationCache: new MutationCache({
           onError: (error: Error | ApiError) => {
             console.warn('Mutation error:', error ?? 'Unknown error');
-
             if (isErrorData(error)) return errorHandler(error);
           },
 
@@ -69,10 +68,7 @@ const QueryProvider = ({ children }: PropsWithChildren) => {
             mutation: { meta?: { toast?: boolean } },
           ) => {
             console.info('Mutation success:', data);
-            /**
-             * @param toast:
-             * pass toast: false to disable toast default behavior is true
-             */
+            // pass toast: false to disable toast default behavior is true
             if (data && mutation.meta?.toast !== false)
               return toast.success((data as ApiError).message);
           },

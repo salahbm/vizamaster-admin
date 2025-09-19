@@ -1,8 +1,10 @@
+// hooks/common/use-error.ts
 import { useCallback, useMemo } from 'react';
 
 import { usePathname, useRouter } from 'next/navigation';
 
 import { useTranslations } from 'next-intl';
+import { toast } from 'sonner';
 
 import { routes } from '@/constants/routes';
 
@@ -23,11 +25,11 @@ export const useError = () => {
 
   const errorHandler = useCallback(
     (error: ApiError) => {
-      const { message, code } = error;
+      const { message, code, data } = error;
 
       /** Handle specific error codes */
       switch (code) {
-        case API_CODES.UNAUTHORIZED:
+        case API_CODES.UNAUTHORIZED: // e.g., 4010
           if (!isSignInPage) {
             return alert({
               title: t('Common.messages.unauthorized'),
@@ -35,20 +37,30 @@ export const useError = () => {
               icon: 'error',
               cancelButton: null,
               confirmText: t('Common.signIn'),
-              onConfirm: () => {},
+              onConfirm: () => {
+                router.push(routes.signIn); // Redirect to sign-in
+              },
             });
           }
           break;
+        case API_CODES.VALIDATION_ERROR: // e.g., 4220
+          return toast.error(
+            data && data === Object && 'errors' in data && data.errors
+              ? `${message}: ${Object.entries(data.errors)
+                  .map(
+                    ([field, msgs]) =>
+                      `${field}: ${(msgs as string[])?.join(', ')}`,
+                  )
+                  .join('; ')}`
+              : message,
+          );
+        case API_CODES.NOT_FOUND: // e.g., 4040
+          return toast.error(t('Common.messages.notFound', { message }));
+        case API_CODES.CONFLICT: // e.g., 4090
+          return toast.error(t('Common.messages.conflict', { message }));
+        default:
+          return toast.error(message || t('Common.messages.unknownError'));
       }
-
-      return alert({
-        title: t('Common.messages.error'),
-        description: message,
-        icon: 'error',
-        cancelText: t('Common.goBack'),
-        confirmText: t('Common.ok'),
-        onCancel: () => router.back(),
-      });
     },
     [alert, t, isSignInPage, router],
   );

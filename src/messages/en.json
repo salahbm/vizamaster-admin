@@ -59,7 +59,10 @@
       "unauthorized": "Unauthorized",
       "unauthorizedDescription": "You are not authorized to perform this action",
       "error": "Error",
-      "deleteDescription": "Are you sure you want to delete this data?"
+      "deleteDescription": "Are you sure you want to delete this data?",
+      "notFound": "Not found {message}",
+      "conflict": "Conflict {message}",
+      "unknownError": "Unknown error"
     }
   },
   "auth": {
