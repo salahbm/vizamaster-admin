@@ -69,16 +69,19 @@ const UpsertSidebar: React.FC<IUpsertSidebarProps> = ({ id }) => {
       }));
   }, [allSidebars, id, isLoadingSidebars]);
 
-  if (isLoadingDetail && id) return <Loader />;
-
   // Handle form submission
   const onSubmit = async (values: TSidebarDto) => {
     if (id) {
-      await updateSidebarById({ ...values, id });
+      await updateSidebarById({ ...values, id, order: Number(values.order) });
     } else {
-      await createSidebar(values);
+      await createSidebar({ ...values, order: Number(values.order) });
     }
+    router.back();
   };
+
+  if (isLoadingDetail && id) return <Loader />;
+
+  console.info('Current form values:', form.getValues());
 
   return (
     <Form {...form}>

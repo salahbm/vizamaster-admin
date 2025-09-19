@@ -18,10 +18,10 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { Form } from '@/components/ui/form';
-import Loader from '@/components/ui/loader';
 
 import { Users } from '@/generated/prisma';
 import {
+  useSidebar,
   useSidebarTable,
   useUpdateAdminSidebars,
 } from '@/hooks/settings/sidebar';
@@ -46,6 +46,8 @@ export const ManageSidebars = ({
   const { data: sidebars = [], isLoading } = useSidebarTable({
     sort: { id: 'createdAt', desc: true },
   });
+  const { data: adminSidebars = [], isLoading: adminSidebarsLoading } =
+    useSidebar();
   const { mutateAsync: updateSidebars, isPending } = useUpdateAdminSidebars();
 
   const form = useForm<z.infer<typeof schema>>({
@@ -69,14 +71,14 @@ export const ManageSidebars = ({
   }, [sidebars, isLoading, locale]);
 
   useEffect(() => {
-    if (sidebars) {
+    if (adminSidebars) {
       form.reset({
-        sidebarIds: sidebars.map((sidebar) => sidebar?.id),
+        sidebarIds: adminSidebars.map((sidebar) => sidebar?.id),
       });
     }
-  }, [form, sidebars]);
+  }, [form, adminSidebars]);
 
-  if (isLoading) return <Loader />;
+  if (isLoading) return null;
 
   const onSubmit = async (data: z.infer<typeof schema>) => {
     await updateSidebars({ id: user.id, data });
@@ -97,6 +99,7 @@ export const ManageSidebars = ({
             <FormFields
               name="sidebarIds"
               control={form.control}
+              loading={adminSidebarsLoading}
               render={({ field }) => (
                 <Combobox
                   multiple

@@ -74,10 +74,10 @@ class SidebarService {
         id: sidebar.sidebarItem.id,
         labelEn: sidebar.sidebarItem.labelEn,
         labelRu: sidebar.sidebarItem.labelRu,
-        href: sidebar.sidebarItem.href,
-        icon: sidebar.sidebarItem.icon,
+        href: sidebar.sidebarItem.href ? sidebar.sidebarItem.href?.trim() : '',
+        icon: sidebar.sidebarItem.icon ? sidebar.sidebarItem.icon?.trim() : '',
         parentId: sidebar.sidebarItem.parentId,
-        order: sidebar.sidebarItem.order,
+        order: Number(sidebar.sidebarItem.order),
       };
     });
 

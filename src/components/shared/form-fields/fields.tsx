@@ -4,6 +4,7 @@ import { memo } from 'react';
 
 import { FieldValues } from 'react-hook-form';
 
+import FieldSkeleton from '@/components/skeletons/field-skeleton';
 import {
   FormControl,
   FormDescription,
@@ -28,9 +29,10 @@ export const FormFields = memo(
       labelClassName,
       message,
       messageClassName,
+      loading,
       render,
     } = props;
-
+    if (loading) return <FieldSkeleton />;
     return (
       <FormField
         control={control}

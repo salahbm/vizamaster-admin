@@ -8,7 +8,7 @@ const sidebarDto = z.object({
   parentId: z.string().nullable(),
   parent: z.string().optional(),
   children: z.array(z.string().optional()).optional(),
-  order: z.number(),
+  order: z.number().or(z.string()),
   createdAt: z.date().optional(),
   updatedAt: z.date().optional(),
   users: z.array(z.string().optional()).optional(),

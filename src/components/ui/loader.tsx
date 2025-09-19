@@ -1,7 +1,9 @@
 import { FC } from 'react';
 
-const Loader: FC = () => (
-  <div className="flex-center h-[100vh] w-full">
+import { cn } from '@/lib/utils';
+
+const Loader: FC = ({ className }: { className?: string }) => (
+  <div className={cn('flex-center h-[100vh] w-full', className)}>
     <span className="loader" />
   </div>
 );

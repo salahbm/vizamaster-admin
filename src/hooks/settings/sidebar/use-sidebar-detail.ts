@@ -1,5 +1,3 @@
-import { useRouter } from 'next/navigation';
-
 import {
   keepPreviousData,
   useQuery,
@@ -49,9 +47,6 @@ export const useCreateSidebar = () => {
     options: {
       onSuccess: () => {
         queryClient.invalidateQueries({
-          queryKey: QueryKeys.settings.sidebar.all,
-        });
-        queryClient.invalidateQueries({
           queryKey: QueryKeys.settings.sidebar.table,
         });
       },
@@ -68,19 +63,14 @@ export const updateSidebarById = async (sidebar: TUpdateSidebarDto) =>
 
 export const useUpdateSidebarById = () => {
   const queryClient = useQueryClient();
-  const router = useRouter();
 
   return useMutation({
     mutationFn: updateSidebarById,
     options: {
       onSuccess: () => {
         queryClient.invalidateQueries({
-          queryKey: QueryKeys.settings.sidebar.all,
-        });
-        queryClient.invalidateQueries({
           queryKey: QueryKeys.settings.sidebar.table,
         });
-        router.back();
       },
     },
   });

@@ -19,6 +19,7 @@ export interface IFormFields<T extends FieldValues> {
   labelClassName?: string;
   message?: string | ReactNode;
   messageClassName?: string;
+  loading?: boolean;
   render: (params: {
     field: ControllerRenderProps<T, Path<T>>;
     fieldState: ControllerFieldState;
