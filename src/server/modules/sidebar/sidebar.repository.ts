@@ -20,7 +20,15 @@ export class SidebarRepository {
 
   // Update sidebar by id
   async updateSidebarById(id: string, data: Sidebar) {
-    return await this.prisma.sidebar.update({ where: { id }, data });
+    const updateData = { ...data };
+    if (updateData.parentId === '') {
+      updateData.parentId = null;
+    }
+
+    return await this.prisma.sidebar.update({
+      where: { id },
+      data: updateData,
+    });
   }
 
   // Get user sidebars
@@ -33,7 +41,13 @@ export class SidebarRepository {
 
   // Create sidebar
   async createSidebar(data: Omit<Sidebar, 'id' | 'createdAt' | 'updatedAt'>) {
-    return await this.prisma.sidebar.create({ data });
+    const createData = { ...data };
+
+    if (createData.parentId === '') {
+      createData.parentId = null;
+    }
+
+    return await this.prisma.sidebar.create({ data: createData });
   }
 
   // Delete sidebar by id

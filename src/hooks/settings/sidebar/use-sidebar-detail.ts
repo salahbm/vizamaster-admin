@@ -48,6 +48,7 @@ export const useCreateSidebar = () => {
       onSuccess: () => {
         queryClient.invalidateQueries({
           queryKey: QueryKeys.settings.sidebar.table,
+          type: 'all',
         });
       },
     },
@@ -70,6 +71,7 @@ export const useUpdateSidebarById = () => {
       onSuccess: () => {
         queryClient.invalidateQueries({
           queryKey: QueryKeys.settings.sidebar.table,
+          type: 'all',
         });
       },
     },

@@ -1,18 +1,24 @@
+import { Sidebar } from '@/generated/prisma';
 import { BadRequestError, NotFoundError } from '@/server/common/errors';
 import { createResponse } from '@/server/common/utils';
 import { ISort } from '@/types/data-table';
 
-import { Sidebar } from '../../../../generated/prisma';
 import { SidebarRepository } from './sidebar.repository';
 
 class SidebarService {
-  constructor(private readonly repository: SidebarRepository) {}
+  constructor(
+    private readonly repository: SidebarRepository,
+    private readonly notFoundError: NotFoundError,
+  ) {
+    this.repository = repository;
+    this.notFoundError = notFoundError;
+  }
 
   async getAllSidebar(sort?: ISort) {
     const sidebars = await this.repository.getAllSidebar(sort);
 
     if (!sidebars || !Array.isArray(sidebars)) {
-      throw new NotFoundError('Sidebars not found');
+      throw this.notFoundError;
     }
 
     // Ensure we're returning an array of sidebar items
@@ -23,7 +29,7 @@ class SidebarService {
     const sidebar = await this.repository.getSidebarById(id);
 
     if (!sidebar) {
-      throw new NotFoundError('Sidebar not found');
+      throw this.notFoundError;
     }
 
     return createResponse(sidebar);
@@ -33,10 +39,16 @@ class SidebarService {
     if (!id) {
       throw new BadRequestError('Sidebar id is required');
     }
+
+    // Prevent an item from being its own parent
+    if (data.parentId && id === data.parentId) {
+      throw new BadRequestError('A sidebar item cannot be its own parent.');
+    }
+
     const sidebar = await this.repository.updateSidebarById(id, data);
 
     if (!sidebar) {
-      throw new NotFoundError('Sidebar not found');
+      throw this.notFoundError;
     }
 
     return createResponse(sidebar);
@@ -46,7 +58,7 @@ class SidebarService {
     const sidebar = await this.repository.createSidebar(data);
 
     if (!sidebar) {
-      throw new NotFoundError('Sidebar not found');
+      throw this.notFoundError;
     }
 
     return createResponse(sidebar);
@@ -56,7 +68,7 @@ class SidebarService {
     const sidebar = await this.repository.deleteSidebarById(id);
 
     if (!sidebar) {
-      throw new NotFoundError('Sidebar not found');
+      throw this.notFoundError;
     }
 
     return createResponse(sidebar);
@@ -66,7 +78,7 @@ class SidebarService {
     const sidebars = await this.repository.getUserSidebars(userId);
 
     if (!sidebars || !Array.isArray(sidebars)) {
-      throw new NotFoundError('Sidebars not found');
+      throw this.notFoundError;
     }
 
     const mappedSidebars = sidebars.map((sidebar) => {
@@ -96,4 +108,7 @@ class SidebarService {
   }
 }
 
-export const sidebarService = new SidebarService(new SidebarRepository());
+export const sidebarService = new SidebarService(
+  new SidebarRepository(),
+  new NotFoundError('Sidebar not found'),
+);

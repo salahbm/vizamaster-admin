@@ -3,7 +3,7 @@ import z from 'zod';
 const sidebarDto = z.object({
   labelEn: z.string().min(4).max(150),
   labelRu: z.string().min(4).max(150),
-  href: z.string().min(4).max(150),
+  href: z.string().min(1).max(50),
   icon: z.string().nullable(),
   parentId: z.string().nullable(),
   parent: z.string().optional(),

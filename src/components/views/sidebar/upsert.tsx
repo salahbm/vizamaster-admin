@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import { useRouter } from 'next/navigation';
 
@@ -10,9 +10,11 @@ import { useForm } from 'react-hook-form';
 
 import { FormFields } from '@/components/shared/form-fields';
 import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
 import { Combobox } from '@/components/ui/combobox';
 import { Form } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import Loader from '@/components/ui/loader';
 
 import { handleFormError } from '@/lib/utils';
@@ -34,6 +36,8 @@ interface IUpsertSidebarProps {
 const UpsertSidebar: React.FC<IUpsertSidebarProps> = ({ id }) => {
   const t = useTranslations('sidebar');
   const router = useRouter();
+
+  const [isChild, setIsChild] = useState(false);
 
   // ───────────────── QUERIES ────────────────── //
   const { data: sidebarData, isLoading: isLoadingDetail } =
@@ -146,21 +150,46 @@ const UpsertSidebar: React.FC<IUpsertSidebarProps> = ({ id }) => {
           />
         </div>
 
-        {/* Parent Sidebar */}
-        <FormFields
-          name="parentId"
-          label={t('form.parentId')}
-          control={form.control}
-          render={({ field }) => (
-            <Combobox
-              placeholder={t('form.parentIdPlaceholder')}
-              options={parentOptions}
-              value={field.value}
-              onValueChange={field.onChange}
-              searchable
-            />
-          )}
-        />
+        <div className="space-y-2">
+          <Label>{t('form.parentId')}</Label>
+          <div className="flex gap-6">
+            <div className="flex-center gap-4">
+              <Checkbox
+                id="child"
+                checked={isChild}
+                onChange={() => setIsChild(true)}
+              />
+              <label htmlFor="child" className="block">
+                Child Route
+              </label>
+            </div>
+            <div className="flex-center gap-4">
+              <Checkbox
+                id="parent"
+                checked={!isChild}
+                onChange={() => {
+                  form.setValue('parentId', '');
+                  setIsChild(false);
+                }}
+              />
+              <label htmlFor="parent">Parent Route</label>
+            </div>
+          </div>
+          {/* Parent Sidebar */}
+          <FormFields
+            name="parentId"
+            control={form.control}
+            render={({ field }) => (
+              <Combobox
+                placeholder={t('form.parentIdPlaceholder')}
+                options={parentOptions}
+                searchable
+                disabled={!isChild}
+                {...field}
+              />
+            )}
+          />
+        </div>
 
         <div className="flex justify-end space-x-4">
           <Button type="button" variant="outline" onClick={() => router.back()}>

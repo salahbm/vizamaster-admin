@@ -1,3 +1,5 @@
+import { Fragment } from 'react';
+
 import { redirect } from 'next/navigation';
 
 import { getTranslations } from 'next-intl/server';
@@ -30,7 +32,7 @@ export default async function AdminsPage() {
   const t = await getTranslations('admins');
 
   return (
-    <div className="main-container">
+    <Fragment>
       <div className="mb-8">
         <h1 className="font-header mb-2">{t('metadata.title')}</h1>
         <p className="font-body-2 text-muted-foreground">
@@ -39,6 +41,6 @@ export default async function AdminsPage() {
       </div>
 
       <AdminsTable />
-    </div>
+    </Fragment>
   );
 }

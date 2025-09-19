@@ -45,6 +45,7 @@ interface ComboboxProps
   searchable?: boolean;
   error?: FieldError;
   multiple?: boolean;
+  disabled?: boolean;
 }
 
 export const Combobox = React.forwardRef<HTMLButtonElement, ComboboxProps>(
@@ -60,7 +61,6 @@ export const Combobox = React.forwardRef<HTMLButtonElement, ComboboxProps>(
       className,
       error,
       multiple = false,
-      disabled,
       ...props
     },
     ref,

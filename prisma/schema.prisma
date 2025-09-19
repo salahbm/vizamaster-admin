@@ -134,5 +134,142 @@ model Codes {
   @@index([code])
   @@index([groupCodeId])
 }
+
+
   
 
+model Applicant {
+  id                  String   @id @default(cuid())
+  userId              String   @unique // Enforce 6-char format in app/migration
+
+  firstName           String   @map("first_name")
+  lastName            String   @map("last_name")
+  middleName          String?  @map("middle_name")
+
+  passportNumber      String   @map("passport_number") // Encrypt in DB/app
+  passportPhoto       String   // URL to secure storage (e.g., S3)
+
+  phoneNumber         String   @map("phone_number")
+  phoneNumberAdditional String? @map("phone_number_additional")
+  email               String   // Made required for contact
+
+  // Address structured for better querying
+  countryOfResidence  String   @map("country_of_residence") // Use enum if possible
+  addressLine1        String   @map("address_line_1") // Main street
+  addressLine2        String?  @map("address_line_2") // Details/apt
+  city                String?  @map("city")
+  state               String?  @map("state")
+  zipCode             String?  @map("zip_code")
+
+  countryOfEmployment String   @map("country_of_employment")
+  nationality         String?  // ISO code or full name
+  dateOfBirth         DateTime? // For age/eligibility checks
+  preferredJobTitle   String?  // Quick filter for matching
+
+  partner             String   // e.g., recruiting agency
+
+  // Relations
+  work                Work[]
+  files               File[]
+  visa                Visa[]
+
+  // Audit
+  createdBy           String   @default("System") // Ideally set to user ID
+  updatedBy           String   @default("System")
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+  isArchived          Boolean  @default(false) // For soft deletes
+
+  @@map("applicants")
+  @@index([userId])
+  @@index([countryOfEmployment])
+  @@index([partner])
+  @@index([nationality]) // New: for quick nationality filters
+  @@index([isArchived])    // New: for active applicant lists
+}
+
+enum VisaStatus {
+  STILL_WORKING
+  RETURNED
+  DEPARTED
+}
+
+model Visa {
+  id              String      @id @default(cuid())
+  applicantId     String      @map("applicant_id")
+  applicant       Applicant   @relation(fields: [applicantId], references: [id], onDelete: Cascade)
+  
+  issued          Boolean     @default(false)
+  issueDate       DateTime?   @map("issue_date") // When visa was issued
+  departureDate   DateTime?   @map("departure_date") // Only if issued
+  arrived         Boolean     @default(false)
+  status          VisaStatus  @default(STILL_WORKING) // still_working, returned, departed
+  flightDocuments String[]     @map("flight_documents") // URL to flight docs (e.g., S3)
+  
+  files           File[]      // Related uploaded files (e.g., visa copy)
+
+  createdBy       String      @default("System")
+  updatedBy       String      @default("System")
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+
+  @@map("visas")
+  @@index([applicantId])
+  @@index([status])
+}
+
+
+model Work {
+  id              String    @id @default(cuid())
+  applicantId     String    @map("applicant_id")
+  applicant       Applicant @relation(fields: [applicantId], references: [id], onDelete: Cascade)
+  
+  jobTitle        String    @map("job_title") // e.g., "Software Engineer"
+  company         String    @map("company") // e.g., "Tech Corp"
+  startDate       DateTime  @map("start_date")
+  endDate         DateTime? @map("end_date") // Null if current
+  responsibilities String    @map("responsibilities") // Text description
+  achievements    String?   @map("achievements") // Optional text for key wins
+  location        String?   @map("location") // e.g., "New York, NY"
+
+  createdBy       String    @default("System")
+  updatedBy       String    @default("System")
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  @@map("work_history")
+  @@index([applicantId])
+}
+
+enum FileType {
+  PASSPORT
+  VISA
+  CV
+  INSURANCE
+  FLIGHT_DOCUMENT
+  OTHER
+}
+
+model File {
+  id              String    @id @default(cuid())
+  applicantId     String    @map("applicant_id")
+  applicant       Applicant @relation(fields: [applicantId], references: [id], onDelete: Cascade)
+  visaId          String?   @map("visa_id")
+  visa            Visa?     @relation(fields: [visaId], references: [id], onDelete: SetNull)
+  
+  fileType        FileType  @map("file_type") // e.g., PASSPORT, VISA, CV
+  fileUrl         String    @map("file_url") // URL to file in storage (e.g., S3)
+  fileName        String    @map("file_name") // Original file name
+  fileSize        Int?      @map("file_size") // Size in bytes
+  mimeType        String?   @map("mime_type") // e.g., "application/pdf"
+
+  createdBy       String    @default("System")
+  updatedBy       String    @default("System")
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  @@map("files")
+  @@index([applicantId])
+  @@index([visaId])
+  @@index([fileType])
+}

@@ -154,6 +154,12 @@
     },
     "title": "Admins Management"
   },
+  "applicant": {
+    "metadata": {
+      "description": "Manage applicants",
+      "title": "Applicants"
+    }
+  },
   "sidebar": {
     "metadata": {
       "description": "Manage routes and sidebar items",
