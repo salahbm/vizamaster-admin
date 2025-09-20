@@ -40,4 +40,8 @@ export const useCodes = (params: TCodesParams) =>
     queryFn: () => getAllCodes(params),
     queryKey: [...QueryKeys.settings.codes.all, { ...params }],
     placeholderData: keepPreviousData,
+    staleTime: Infinity,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+    refetchOnMount: false,
   });

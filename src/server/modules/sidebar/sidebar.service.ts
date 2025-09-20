@@ -66,6 +66,7 @@ class SidebarService {
 
   async deleteSidebarById(id: string) {
     const sidebar = await this.repository.deleteSidebarById(id);
+    await this.repository.deleteUserSidebarBySidebarId(id);
 
     if (!sidebar) {
       throw this.notFoundError;

@@ -1,5 +1,6 @@
 import { useRouter } from 'next/navigation';
 
+import { useQueryClient } from '@tanstack/react-query';
 import Cookies from 'js-cookie';
 import { useLocale } from 'next-intl';
 
@@ -15,12 +16,18 @@ import { getErrorMessage } from '@/server/common/utils';
 const useLogout = () => {
   const router = useRouter();
   const locale = useLocale();
+  const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async () => {
       const { error } = await authClient.signOut(
         {
           fetchOptions: {
             onSuccess: () => {
+              // On login success:
+              queryClient.clear(); // wipes *all* cache
+
+              // Or, if you want more control:
+              queryClient.invalidateQueries(); // refetches all active queries
               router.push(routes.signIn);
             },
           },
@@ -28,6 +35,11 @@ const useLogout = () => {
         {
           onError: () => {
             Cookies.remove('better-auth.session_token');
+            // On login success:
+            queryClient.clear(); // wipes *all* cache
+
+            // Or, if you want more control:
+            queryClient.invalidateQueries(); // refetches all active queries
             router.push(routes.signIn);
           },
         },

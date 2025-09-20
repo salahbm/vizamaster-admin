@@ -39,4 +39,8 @@ export const useGroupCodes = (params: TGroupCodesParams) =>
     queryFn: () => getAllGroupCodes(params),
     queryKey: [...QueryKeys.settings.groupCodes.all, { ...params }],
     placeholderData: keepPreviousData,
+    staleTime: Infinity,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+    refetchOnMount: false,
   });

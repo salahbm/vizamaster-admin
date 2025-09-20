@@ -16,6 +16,7 @@ export const getAllSidebar = async (id?: string): Promise<Sidebar[]> => {
 
   const userRes = await agent.get<TResponse<User>>(
     `api/admins/find-user?id=${id}`,
+    { cache: 'force-cache' },
   );
 
   if (!userRes.data)
@@ -23,6 +24,7 @@ export const getAllSidebar = async (id?: string): Promise<Sidebar[]> => {
 
   const { data } = await agent.get<TResponse<Sidebar[]>>(
     `api/settings/sidebar/admin-sidebars?userId=${userRes.data.id}`,
+    { cache: 'force-cache' },
   );
 
   if (!data) throw new NotFoundError('Sidebar not found');
@@ -39,5 +41,9 @@ export const useSidebar = () => {
     queryFn: () => getAllSidebar(user?.id),
     queryKey: [...QueryKeys.settings.sidebar.all, { userId: user?.id }],
     placeholderData: keepPreviousData,
+    staleTime: Infinity, // trust cache until explicitly invalidated
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+    refetchOnMount: false,
   });
 };

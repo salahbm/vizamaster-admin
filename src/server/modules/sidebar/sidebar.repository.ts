@@ -82,4 +82,13 @@ export class SidebarRepository {
       return newSidebarEntries;
     });
   }
+
+  // Delete user sidebar by sidebar id
+  async deleteUserSidebarBySidebarId(sidebarId: string) {
+    return await this.prisma.sidebarUser.deleteMany({
+      where: {
+        sidebarItemId: sidebarId,
+      },
+    });
+  }
 }

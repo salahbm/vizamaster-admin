@@ -1,5 +1,6 @@
 import { useRouter } from 'next/navigation';
 
+import { useQueryClient } from '@tanstack/react-query';
 import { User } from 'better-auth';
 import { useLocale } from 'next-intl';
 
@@ -46,11 +47,19 @@ const useLogin = () => {
   const router = useRouter();
   const locale = useLocale();
   const { setUser } = useAuthStore();
+
+  const queryClient = useQueryClient();
+
   return useMutation({
     mutationFn: (data: SignInSchema) => login(data, locale as 'en' | 'ru'),
     options: {
       onSuccess: (data) => {
         setUser(data?.user as User);
+        // On login success:
+        queryClient.clear(); // wipes *all* cache
+
+        // Or, if you want more control:
+        queryClient.invalidateQueries(); // refetches all active queries
         router.push(routes.dashboard);
       },
       meta: {
