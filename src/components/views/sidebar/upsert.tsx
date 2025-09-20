@@ -1,13 +1,16 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo } from 'react';
 
 import { useRouter } from 'next/navigation';
 
+// Form and validation
 import { zodResolver } from '@hookform/resolvers/zod';
+// Internationalization
 import { useLocale, useTranslations } from 'next-intl';
 import { useForm } from 'react-hook-form';
 
+// UI Components
 import { FormFields } from '@/components/shared/form-fields';
 import { Button } from '@/components/ui/button';
 import { Combobox } from '@/components/ui/combobox';
@@ -18,8 +21,10 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Separator } from '@/components/ui/separator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
+// Utilities
 import { handleFormError } from '@/lib/utils';
 
+// Data fetching hooks
 import { useCodes } from '@/hooks/settings/codes';
 import {
   useCreateSidebar,
@@ -28,6 +33,7 @@ import {
   useUpdateSidebarById,
 } from '@/hooks/settings/sidebar';
 
+// Form schema and utilities
 import {
   TSidebarFormSchema,
   mapFormIntoSubmitData,
@@ -40,17 +46,15 @@ interface IUpsertSidebarProps {
 }
 
 const UpsertSidebar: React.FC<IUpsertSidebarProps> = ({ id }) => {
+  // ───────────────── HOOKS & STATE ────────────────── //
   const locale = useLocale();
   const router = useRouter();
   const t = useTranslations();
 
-  const [tab, setTab] = useState<'dependent' | 'independent'>('dependent');
-
-  // ───────────────── QUERIES ────────────────── //
+  // ───────────────── DATA FETCHING ────────────────── //
   const { data: sidebarData, isLoading: isLoadingDetail } =
     useSidebarDetail(id);
   const { data: allSidebars, isLoading: isLoadingSidebars } = useSidebar();
-
   const { data: partners, isLoading: isLoadingPartners } = useCodes({
     page: 1,
     size: 100,
@@ -61,24 +65,28 @@ const UpsertSidebar: React.FC<IUpsertSidebarProps> = ({ id }) => {
   const { mutateAsync: createSidebar } = useCreateSidebar();
   const { mutateAsync: updateSidebarById } = useUpdateSidebarById();
 
-  // Initialize form with default values
+  // ───────────────── FORM SETUP ────────────────── //
   const form = useForm<TSidebarFormSchema>({
     resolver: zodResolver(sidebarFormSchema),
     defaultValues: sidebarDefaultValues(),
   });
 
-  // Update form values when sidebar data is loaded (for edit mode)
+  // Load existing data when in edit mode
   useEffect(() => {
-    if (sidebarData) form.reset(sidebarDefaultValues(sidebarData));
+    if (sidebarData) {
+      form.reset(sidebarDefaultValues(sidebarData));
+    }
   }, [sidebarData, form]);
 
+  // ───────────────── DERIVED DATA ────────────────── //
+  // Options for parent sidebar selection
   const parentOptions = useMemo(() => {
     if (!allSidebars || isLoadingSidebars) return [];
 
     const sidebarItems = Array.isArray(allSidebars) ? allSidebars : [];
 
     return sidebarItems
-      .filter((item) => item.id !== id)
+      .filter((item) => item.id !== id) // Filter out current sidebar to prevent self-reference
       .map((item) => ({
         value: item.id,
         label: locale === 'en' ? item.labelEn : item.labelRu,
@@ -86,8 +94,7 @@ const UpsertSidebar: React.FC<IUpsertSidebarProps> = ({ id }) => {
       }));
   }, [allSidebars, id, isLoadingSidebars, locale]);
 
-  // ───────────────── HANDLERS ────────────────── //
-
+  // Options for partner selection
   const partnerOptions = useMemo(() => {
     if (!partners || isLoadingPartners) return [];
 
@@ -100,102 +107,123 @@ const UpsertSidebar: React.FC<IUpsertSidebarProps> = ({ id }) => {
     }));
   }, [partners, isLoadingPartners, locale]);
 
-  // Handle form submission
-  const onSubmit = async (values: TSidebarFormSchema) => {
-    const mapped = mapFormIntoSubmitData(values);
-    if (id) {
-      await updateSidebarById({ ...mapped, id, order: Number(values.order) });
-    } else {
-      await createSidebar({ ...mapped, order: Number(values.order) });
-    }
-    router.back();
+  const independent = form.watch('independent');
+  const currentTab = independent ? 'independent' : 'dependent';
+
+  // ───────────────── UTILITY FUNCTIONS ────────────────── //
+  /**
+   * Helper function to get href from sidebar ID
+   */
+  const getHrefFromId = (id: string) => {
+    return allSidebars?.find((item) => item.id === id)?.href;
   };
 
+  // ───────────────── EVENT HANDLERS ────────────────── //
+  /**
+   * Handles tab change between dependent and independent routes
+   * Resets relevant form fields based on selected tab
+   */
   const handleTab = (tab: string) => {
     if (tab === 'dependent') {
       form.setValue('independent', false);
       form.setValue('href', '');
       form.setValue('parentId', '');
-      setTab('dependent');
-      form.clearErrors();
+      form.setValue('independent', false);
     } else {
       form.setValue('independent', true);
       form.setValue('country', '');
       form.setValue('partner', '');
-      setTab('independent');
-      form.clearErrors();
+      form.setValue('independent', true);
     }
+    form.clearErrors();
   };
 
-  // Helper function to get ID from code
-  const getHrefFromId = (id: string) => {
-    return allSidebars?.find((item) => item.id === id)?.href;
+  /**
+   * Handles form submission
+   * Maps form data to API format and calls create/update mutation
+   */
+  const onSubmit = async (values: TSidebarFormSchema) => {
+    const mapped = mapFormIntoSubmitData(values);
+    const orderValue = Number(values.order);
+
+    if (id) {
+      await updateSidebarById({ ...mapped, id, order: orderValue });
+    } else {
+      await createSidebar({ ...mapped, order: orderValue });
+    }
+
+    router.back();
   };
 
+  // Show loader while fetching sidebar data in edit mode
   if (isLoadingDetail && id) return <Loader />;
-  console.log(form.getValues());
 
+  // ───────────────── RENDER ────────────────── //
   return (
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit, handleFormError)}
         className="space-y-8 py-6"
       >
-        <div className="grid gap-6 md:grid-cols-2">
-          {/* English Label */}
-          <FormFields
-            name="labelEn"
-            label={t('sidebar.form.labelEn')}
-            required
-            control={form.control}
-            render={({ field }) => (
-              <Input
-                placeholder={t('sidebar.form.labelEnPlaceholder')}
-                {...field}
-              />
-            )}
-          />
+        {/* Basic Information Section */}
+        <section aria-labelledby="basic-info-section">
+          {/* Labels (English/Russian) */}
+          <div className="grid gap-6 md:grid-cols-2">
+            <FormFields
+              name="labelEn"
+              label={t('sidebar.form.labelEn')}
+              required
+              control={form.control}
+              render={({ field }) => (
+                <Input
+                  placeholder={t('sidebar.form.labelEnPlaceholder')}
+                  {...field}
+                />
+              )}
+            />
 
-          {/* Russian Label */}
-          <FormFields
-            name="labelRu"
-            label={t('sidebar.form.labelRu')}
-            required
-            control={form.control}
-            render={({ field }) => (
-              <Input
-                placeholder={t('sidebar.form.labelRuPlaceholder')}
-                {...field}
-              />
-            )}
-          />
-        </div>
+            <FormFields
+              name="labelRu"
+              label={t('sidebar.form.labelRu')}
+              required
+              control={form.control}
+              render={({ field }) => (
+                <Input
+                  placeholder={t('sidebar.form.labelRuPlaceholder')}
+                  {...field}
+                />
+              )}
+            />
+          </div>
 
-        <div className="grid gap-6 md:grid-cols-2">
-          {/* Icon */}
-          <FormFields
-            name="icon"
-            label={t('sidebar.form.icon')}
-            control={form.control}
-            render={({ field }) => (
-              <Input placeholder="LayoutDashboard" {...field} />
-            )}
-          />
+          {/* Icon and Order */}
+          <div className="mt-6 grid gap-6 md:grid-cols-2">
+            <FormFields
+              name="icon"
+              label={t('sidebar.form.icon')}
+              control={form.control}
+              render={({ field }) => (
+                <Input placeholder="LayoutDashboard" {...field} />
+              )}
+            />
 
-          {/* Order */}
-          <FormFields
-            name="order"
-            label={t('sidebar.form.order')}
-            required
-            control={form.control}
-            render={({ field }) => (
-              <Input type="number" min={0} placeholder="0" {...field} />
-            )}
-          />
-        </div>
+            <FormFields
+              name="order"
+              label={t('sidebar.form.order')}
+              required
+              control={form.control}
+              render={({ field }) => (
+                <Input type="number" min={0} placeholder="0" {...field} />
+              )}
+            />
+          </div>
+        </section>
+
         <Separator />
-        <div className="space-y-4">
-          <Tabs value={tab} onValueChange={handleTab} className="w-full">
+
+        {/* Route Configuration Section */}
+        <section aria-labelledby="route-config-section" className="space-y-4">
+          <Tabs value={currentTab} onValueChange={handleTab} className="w-full">
             <TabsList className="mb-2">
               <TabsTrigger value="dependent" className="font-body-1">
                 {t('sidebar.form.dependent')}
@@ -205,10 +233,12 @@ const UpsertSidebar: React.FC<IUpsertSidebarProps> = ({ id }) => {
               </TabsTrigger>
             </TabsList>
 
+            {/* Dependent Route Tab */}
             <TabsContent value="dependent" className="space-y-6 pt-2">
+              {/* Route Type Selection */}
               <FormFields
                 name="child"
-                label={t('sidebar.form.routeType') || 'Route Type'}
+                label={t('sidebar.form.routeType')}
                 control={form.control}
                 render={({ field }) => (
                   <RadioGroup
@@ -235,6 +265,7 @@ const UpsertSidebar: React.FC<IUpsertSidebarProps> = ({ id }) => {
                 )}
               />
 
+              {/* Country Selection */}
               <FormFields
                 name="country"
                 label={t('sidebar.form.country')}
@@ -245,9 +276,11 @@ const UpsertSidebar: React.FC<IUpsertSidebarProps> = ({ id }) => {
                     options={parentOptions}
                     searchable
                     label={
-                      parentOptions.find(
-                        (item) => item.value === form.watch('parentId'),
-                      )?.label
+                      form.watch('country')
+                        ? parentOptions.find(
+                            (item) => item.value === form.watch('parentId'),
+                          )?.label
+                        : undefined
                     }
                     {...field}
                     onChange={(val) => {
@@ -261,6 +294,8 @@ const UpsertSidebar: React.FC<IUpsertSidebarProps> = ({ id }) => {
                   />
                 )}
               />
+
+              {/* Partner Selection */}
               <FormFields
                 name="partner"
                 label={t('sidebar.form.partner')}
@@ -278,6 +313,7 @@ const UpsertSidebar: React.FC<IUpsertSidebarProps> = ({ id }) => {
               />
             </TabsContent>
 
+            {/* Independent Route Tab */}
             <TabsContent value="independent" className="space-y-6 pt-2">
               {/* URL Path */}
               <FormFields
@@ -292,6 +328,7 @@ const UpsertSidebar: React.FC<IUpsertSidebarProps> = ({ id }) => {
               />
 
               <div className="space-y-4">
+                {/* Route Type Selection */}
                 <FormFields
                   name="child"
                   label={t('sidebar.form.routeType')}
@@ -327,7 +364,7 @@ const UpsertSidebar: React.FC<IUpsertSidebarProps> = ({ id }) => {
                   )}
                 />
 
-                {/* Parent Sidebar */}
+                {/* Parent Sidebar Selection */}
                 <FormFields
                   name="parentId"
                   label={t('sidebar.form.parentId')}
@@ -346,8 +383,9 @@ const UpsertSidebar: React.FC<IUpsertSidebarProps> = ({ id }) => {
               </div>
             </TabsContent>
           </Tabs>
-        </div>
+        </section>
 
+        {/* Form Actions */}
         <div className="flex justify-end space-x-4 pt-4">
           <Button type="button" variant="outline" onClick={() => router.back()}>
             {t('Common.cancel')}

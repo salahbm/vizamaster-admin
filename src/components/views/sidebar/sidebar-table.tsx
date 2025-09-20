@@ -19,7 +19,7 @@ export const SidebarTable = () => {
   const columns = useMemo(() => SIDEBAR_COLUMNS, []);
 
   const query = useQueryReader({
-    sort: { type: 'object', defaultValue: [{ id: 'createdAt', desc: true }] },
+    sort: { type: 'object', defaultValue: [{ id: 'updatedAt', desc: true }] },
   });
 
   const { data, isLoading, isFetching } = useSidebarTable({ sort: query.sort });

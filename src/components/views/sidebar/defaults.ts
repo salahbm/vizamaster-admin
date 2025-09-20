@@ -48,19 +48,18 @@ const mapHrefIntoFields = (href: string | null) => {
     };
 
   const segments = href.split('/');
-  const isIndependent = !segments.includes('applicant');
-  const removeApplicant = isIndependent ? href : href.replace('/applicant', '');
+  const isDependent = segments.includes('applicant');
 
-  const country = isIndependent ? '' : segments[2];
-  const partner = isIndependent ? '' : segments[3];
-  const isChild = segments.length > 3;
+  const country = isDependent ? segments[2] : '';
+  const partner = isDependent ? segments[3] : '';
+  const isChild = isDependent ? segments.length > 3 : segments.length > 2;
 
   return {
-    href: removeApplicant,
+    href,
     country,
     partner,
     child: isChild,
-    independent: isIndependent,
+    independent: !isDependent,
   };
 };
 
@@ -71,11 +70,9 @@ export const sidebarFormSchema = z
     href: z.string().optional(),
     icon: z.string().optional(),
     parentId: z.string().optional(),
-    // Make order required with a default value
     order: z.number().or(z.string()).optional(),
-    // form helpers - make these required with default values
-    independent: z.boolean().default(false),
-    child: z.string().default('false'),
+    independent: z.boolean(),
+    child: z.string(),
     country: z.string().optional(),
     partner: z.string().optional(),
   })

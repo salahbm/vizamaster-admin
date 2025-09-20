@@ -81,23 +81,22 @@ export const SIDEBAR_COLUMNS: ColumnDef<Sidebar>[] = [
     },
   },
   {
-    accessorKey: 'createdAt',
+    accessorKey: 'updatedAt',
     header: ({ column, table }) => (
       <DataTableColumnHeader
         column={column}
         title={
           table.options?.meta?.t
-            ? table.options.meta.t('sidebar.columns.createdAt')
-            : 'Created At'
+            ? table.options.meta.t('Common.updatedAt')
+            : 'Updated At'
         }
       />
     ),
     cell: ({ row }) => {
-      const date = new Date(row.getValue('createdAt'));
-      return <div>{format(date, 'dd.MM.yyyy')}</div>;
+      return <div>{format(row.original.updatedAt, 'dd.MM.yyyy')}</div>;
     },
     meta: {
-      label: 'sidebar.columns.createdAt',
+      label: 'Common.updatedAt',
     },
     enableSorting: false,
   },
