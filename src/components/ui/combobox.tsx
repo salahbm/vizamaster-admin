@@ -144,7 +144,7 @@ export const Combobox = React.forwardRef<HTMLButtonElement, ComboboxProps>(
           )}
           {...props}
         >
-          <span className="min-w-0 flex-1 truncate text-left">
+          <span className="min-w-0 flex-1 truncate text-left capitalize">
             {label ?? (localLabel as string)}
           </span>
 

@@ -15,7 +15,7 @@ export function handleFormError(error: unknown) {
   if (error instanceof Error) {
     return toast.error(error.message);
   }
-  return toast.error('Something went wrong');
+  return toast.error('Please fill in all required fields');
 }
 
 export function convertSidebarToNavItems(

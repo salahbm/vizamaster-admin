@@ -285,7 +285,17 @@
       "cancel": "Cancel",
       "create": "Create Item",
       "update": "Update Item",
-      "hrefMessage": "URL path must be unique"
+      "hrefMessage": "URL path must be unique",
+      "dependent": "Dependent",
+      "independent": "Independent",
+      "routeType": "Route Type",
+      "childRoute": "Child Route",
+      "parentRoute": "Parent Route",
+      "country": "Country",
+      "countryPlaceholder": "Select country",
+      "availableForChildOnly": "Available for child routes only",
+      "partner": "Partner",
+      "partnerPlaceholder": "Select partner"
     },
     "columns": {
       "order": "Order",

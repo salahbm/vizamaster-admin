@@ -10,7 +10,8 @@ export async function GET(request: NextRequest) {
     // Get all sidebars
     const searchParams = new URL(request.url).searchParams;
 
-    const search = searchParams.get('search');
+    const search = searchParams.get('search') as string;
+    const code = searchParams.get('code') as string;
 
     const { sort, page, size } = parsePaginationAndSortParams(searchParams);
 
@@ -18,7 +19,8 @@ export async function GET(request: NextRequest) {
       page,
       size,
       sort,
-      search ?? undefined,
+      search,
+      code,
     );
 
     return NextResponse.json(result);

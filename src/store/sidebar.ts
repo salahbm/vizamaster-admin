@@ -9,7 +9,7 @@ interface SidebarStore {
 export const useSidebar = create<SidebarStore>()(
   persist(
     (set) => ({
-      isMinimized: false,
+      isMinimized: true,
       toggle: () => set((state) => ({ isMinimized: !state.isMinimized })),
     }),
     {

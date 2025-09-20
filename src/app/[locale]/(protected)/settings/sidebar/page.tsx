@@ -1,3 +1,5 @@
+import { Fragment } from 'react';
+
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
 
@@ -32,7 +34,7 @@ export default async function SidebarPage() {
   const t = await getTranslations('sidebar');
 
   return (
-    <div className="main-container">
+    <Fragment>
       <div className="flex-between mb-8">
         <div>
           <h1 className="font-header mb-2">{t('metadata.title')}</h1>
@@ -47,6 +49,6 @@ export default async function SidebarPage() {
       </div>
 
       <SidebarTable />
-    </div>
+    </Fragment>
   );
 }

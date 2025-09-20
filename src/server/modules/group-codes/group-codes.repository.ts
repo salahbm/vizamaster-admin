@@ -16,6 +16,7 @@ export class GroupCodesRepository {
     search?: string,
     skip?: number,
     take?: number,
+    code?: string,
   ) {
     const orderBy = buildOrderBy(sort);
 
@@ -36,7 +37,13 @@ export class GroupCodesRepository {
             },
           ],
         }
-      : {};
+      : code
+        ? {
+            code: {
+              equals: code,
+            },
+          }
+        : {};
     return await this.prisma.findMany({
       where,
       skip,
@@ -45,7 +52,7 @@ export class GroupCodesRepository {
     });
   }
 
-  async countGroupCodes(search?: string) {
+  async countGroupCodes(search?: string, code?: string) {
     const where = search
       ? {
           OR: [
@@ -63,7 +70,13 @@ export class GroupCodesRepository {
             },
           ],
         }
-      : {};
+      : code
+        ? {
+            code: {
+              equals: code,
+            },
+          }
+        : {};
     return this.prisma.count({ where });
   }
 

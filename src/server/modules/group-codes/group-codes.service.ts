@@ -13,18 +13,19 @@ class GroupCodesService {
   constructor(private readonly repository: GroupCodesRepository) {}
 
   async getAllGroupCodes(
-    page: number,
-    size: number,
+    page: number = 1,
+    size: number = 50,
     sort?: ISort,
-    search?: string,
+    search: string = '',
+    code: string = '',
   ) {
     try {
       const skip = Math.max(0, (page - 1) * size);
       const take = size;
 
       const [groupCodes, total] = await Promise.all([
-        this.repository.getAllGroupCodes(sort, search, skip, take),
-        this.repository.countGroupCodes(search),
+        this.repository.getAllGroupCodes(sort, search, skip, take, code),
+        this.repository.countGroupCodes(search, code),
       ]);
 
       if (!groupCodes || !Array.isArray(groupCodes)) {

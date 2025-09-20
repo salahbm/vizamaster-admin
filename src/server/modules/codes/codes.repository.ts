@@ -13,31 +13,43 @@ export class CodesRepository {
     sort?: ISort,
     search?: string,
     groupCodeId?: string,
+    groupCode?: string,
   ) {
     const orderBy = buildOrderBy(sort);
 
-    const where = search
-      ? {
-          OR: [
-            {
-              labelEn: {
-                contains: search,
-                mode: 'insensitive' as Prisma.QueryMode,
-              },
-            },
-            {
-              labelRu: {
-                contains: search,
-                mode: 'insensitive' as Prisma.QueryMode,
-              },
-            },
-          ],
-        }
-      : groupCodeId
-        ? {
-            groupCodeId,
-          }
-        : {};
+    // Build where conditions
+    const where: Prisma.CodesWhereInput = {};
+
+    // Add search condition if provided
+    if (search) {
+      where.OR = [
+        {
+          labelEn: {
+            contains: search,
+            mode: 'insensitive' as Prisma.QueryMode,
+          },
+        },
+        {
+          labelRu: {
+            contains: search,
+            mode: 'insensitive' as Prisma.QueryMode,
+          },
+        },
+      ];
+    }
+
+    // Add groupCodeId condition if provided
+    if (groupCodeId) {
+      where.groupCodeId = groupCodeId;
+    }
+
+    // Add groupCode condition if provided
+    if (groupCode) {
+      where.groupCode = {
+        code: groupCode,
+      };
+    }
+
     return await this.prisma.codes.findMany({
       where,
       skip,
@@ -53,29 +65,40 @@ export class CodesRepository {
     });
   }
 
-  async countCodes(search?: string, groupCodeId?: string) {
-    const where = search
-      ? {
-          OR: [
-            {
-              labelEn: {
-                contains: search,
-                mode: 'insensitive' as Prisma.QueryMode,
-              },
-            },
-            {
-              labelRu: {
-                contains: search,
-                mode: 'insensitive' as Prisma.QueryMode,
-              },
-            },
-          ],
-        }
-      : groupCodeId
-        ? {
-            groupCodeId,
-          }
-        : {};
+  async countCodes(search?: string, groupCodeId?: string, groupCode?: string) {
+    // Build where conditions
+    const where: Prisma.CodesWhereInput = {};
+
+    // Add search condition if provided
+    if (search) {
+      where.OR = [
+        {
+          labelEn: {
+            contains: search,
+            mode: 'insensitive' as Prisma.QueryMode,
+          },
+        },
+        {
+          labelRu: {
+            contains: search,
+            mode: 'insensitive' as Prisma.QueryMode,
+          },
+        },
+      ];
+    }
+
+    // Add groupCodeId condition if provided
+    if (groupCodeId) {
+      where.groupCodeId = groupCodeId;
+    }
+
+    // Add groupCode condition if provided
+    if (groupCode) {
+      where.groupCode = {
+        code: groupCode,
+      };
+    }
+
     return this.prisma.codes.count({ where });
   }
 

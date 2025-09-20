@@ -16,6 +16,7 @@ type TCodesParams = {
   search?: string;
   sort?: ColumnSort[];
   groupCodeId?: string;
+  groupCode?: string;
 };
 
 export const getAllCodes = async (

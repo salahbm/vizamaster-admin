@@ -20,7 +20,7 @@ export default async function RootLayout({ children }: PropsWithChildren) {
             <QueryProvider>
               <NuqsAdapter>
                 {children}
-                <Toaster />
+                <Toaster position="top-center" />
               </NuqsAdapter>
             </QueryProvider>
             <ZodInitProvider />

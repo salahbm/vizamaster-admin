@@ -13,19 +13,27 @@ class CodesService {
   constructor(private readonly repository: CodesRepository) {}
 
   async getAllCodes(
-    page: number,
-    size: number,
+    page: number = 1,
+    size: number = 50,
     sort?: ISort,
     search?: string,
     groupCodeId?: string,
+    groupCode?: string,
   ) {
     try {
       const skip = Math.max(0, (page - 1) * size);
       const take = size;
 
       const [codes, total] = await Promise.all([
-        this.repository.getAllCodes(skip, take, sort, search, groupCodeId),
-        this.repository.countCodes(search, groupCodeId),
+        this.repository.getAllCodes(
+          skip,
+          take,
+          sort,
+          search,
+          groupCodeId,
+          groupCode,
+        ),
+        this.repository.countCodes(search, groupCodeId, groupCode),
       ]);
 
       if (!codes || !Array.isArray(codes)) {

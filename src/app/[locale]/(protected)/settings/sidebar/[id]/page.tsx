@@ -1,3 +1,5 @@
+import { Fragment } from 'react';
+
 import { getTranslations } from 'next-intl/server';
 
 import { Metadata } from 'next';
@@ -23,7 +25,7 @@ export default async function SidebarUpsertPage({
   const t = await getTranslations('sidebar');
 
   return (
-    <div className="main-container">
+    <Fragment>
       <div className="mb-8">
         <h1 className="font-header mb-2">{t('metadata.title')}</h1>
         <p className="font-body-2 text-muted-foreground">
@@ -32,6 +34,6 @@ export default async function SidebarUpsertPage({
       </div>
 
       <UpsertSidebar id={id} />
-    </div>
+    </Fragment>
   );
 }
