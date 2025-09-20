@@ -157,7 +157,114 @@
   "applicant": {
     "metadata": {
       "description": "Manage applicants",
-      "title": "Applicants"
+      "title": "Applicants",
+      "createTitle": "Create Applicant",
+      "createDescription": "Create a new applicant"
+    },
+    "form": {
+      "sections": {
+        "personalInfo": {
+          "title": "Personal Information",
+          "description": "Basic personal details of the applicant."
+        },
+        "contactInfo": {
+          "title": "Contact Information",
+          "description": "How to get in touch with the applicant."
+        },
+        "addressInfo": {
+          "title": "Address Information",
+          "description": "Applicant's residential address."
+        },
+        "employmentInfo": {
+          "title": "Employment & Nationality",
+          "description": "Details about employment and nationality."
+        }
+      },
+      "fields": {
+        "firstName": {
+          "label": "First Name",
+          "placeholder": "Enter first name"
+        },
+        "lastName": {
+          "label": "Last Name",
+          "placeholder": "Enter last name"
+        },
+        "middleName": {
+          "label": "Middle Name",
+          "placeholder": "Enter middle name"
+        },
+        "gender": {
+          "label": "Gender",
+          "placeholder": "Select gender"
+        },
+        "dateOfBirth": {
+          "label": "Date of Birth"
+        },
+        "passportNumber": {
+          "label": "Passport Number",
+          "placeholder": "Enter passport number"
+        },
+        "passportPhoto": {
+          "label": "Passport Photo",
+          "message": "Upload a clear photo of the passport."
+        },
+        "email": {
+          "label": "Email",
+          "placeholder": "Enter email address"
+        },
+        "phoneNumber": {
+          "label": "Phone Number",
+          "placeholder": "Enter phone number"
+        },
+        "phoneNumberAdditional": {
+          "label": "Additional Phone Number",
+          "placeholder": "Enter additional phone number"
+        },
+        "countryOfResidence": {
+          "label": "Country of Residence",
+          "placeholder": "Select country of residence"
+        },
+        "addressLine1": {
+          "label": "Address Line 1",
+          "placeholder": "Enter street address"
+        },
+        "addressLine2": {
+          "label": "Address Line 2",
+          "placeholder": "Enter apartment, suite, etc."
+        },
+        "city": {
+          "label": "City",
+          "placeholder": "Enter city"
+        },
+        "state": {
+          "label": "State/Province",
+          "placeholder": "Enter state or province"
+        },
+        "zipCode": {
+          "label": "ZIP/Postal Code",
+          "placeholder": "Enter ZIP or postal code"
+        },
+        "countryOfEmployment": {
+          "label": "Country of Employment",
+          "placeholder": "Select country of employment"
+        },
+        "nationality": {
+          "label": "Nationality",
+          "placeholder": "Select nationality"
+        },
+        "preferredJobTitle": {
+          "label": "Preferred Job Title",
+          "placeholder": "e.g., Software Engineer"
+        }
+      },
+      "buttons": {
+        "submit": "Submit Applicant",
+        "cancel": "Cancel"
+      }
+    },
+    "validation": {
+      "required": "This field is required",
+      "invalid_email": "Please enter a valid email address"
     }
   },
   "sidebar": {

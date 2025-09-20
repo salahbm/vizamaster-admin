@@ -2,11 +2,10 @@ import { NextRequest } from 'next/server';
 
 import { ColumnSort } from '@tanstack/react-table';
 
-import { API_CODES } from '@/server/common/codes';
 import { NotFoundError, UnauthorizedError } from '@/server/common/errors';
 import { createPaginatedResult, createResponse } from '@/server/common/utils';
 
-import { Prisma, Users } from '../../../../generated/prisma';
+import { Prisma } from '../../../../generated/prisma';
 import { auth } from './auth';
 import { AuthGuard } from './auth.guard';
 import { AuthRepository } from './auth.repository';
@@ -64,14 +63,5 @@ export class AuthService {
     await this.authGuard.requireRole({ role: user.role }, ['ADMIN', 'CREATOR']);
 
     return user;
-  }
-
-  requireRole(user: Users, allowedRoles: string[]) {
-    if (!allowedRoles.includes(user.role)) {
-      throw new UnauthorizedError(
-        'You are not authorized to perform this action',
-        API_CODES.NOT_AUTHORIZED_ROLE,
-      );
-    }
   }
 }

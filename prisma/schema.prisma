@@ -145,6 +145,7 @@ model Applicant {
   firstName           String   @map("first_name")
   lastName            String   @map("last_name")
   middleName          String?  @map("middle_name")
+  gender              String   @default("male")
 
   passportNumber      String   @map("passport_number") // Encrypt in DB/app
   passportPhoto       String   // URL to secure storage (e.g., S3)

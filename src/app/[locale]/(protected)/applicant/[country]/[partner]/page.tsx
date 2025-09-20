@@ -1,7 +1,10 @@
 import { Fragment } from 'react';
 
+import Link from 'next/link';
+
 import { getTranslations } from 'next-intl/server';
 
+import { Plus } from 'lucide-react';
 import { Metadata, NextPage } from 'next';
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -22,19 +25,25 @@ interface IApplicantPageProps {
 }
 
 const ApplicantPage: NextPage<IApplicantPageProps> = async ({ params }) => {
-  const { locale, country, partner } = await params;
+  const { country, partner } = await params;
 
-  const t = await getTranslations('applicant');
+  const t = await getTranslations();
   return (
     <Fragment>
-      <div className="mb-8">
-        <h1 className="font-header mb-2">{t('metadata.title')}</h1>
-        <p className="font-body-2 text-muted-foreground">
-          {t('metadata.description')}
-        </p>
-        {locale}
-        {country}
-        {partner}
+      <div className="flex-between mb-8">
+        <div className="lg:ml-4">
+          <h1 className="font-header mb-2">{t('applicant.metadata.title')}</h1>
+          <p className="font-body-2 text-muted-foreground">
+            {t('applicant.metadata.description')}
+          </p>
+        </div>
+        <Link
+          href={`/applicant/${country}/${partner}/create`}
+          className="create-btn"
+        >
+          <Plus className="size-6" />
+          {t('Common.create')}
+        </Link>
       </div>
     </Fragment>
   );

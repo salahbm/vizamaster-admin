@@ -187,8 +187,6 @@ export default function FormsPage() {
                       { value: '4', label: 'Prefer not to say' },
                     ]}
                     {...field}
-                    onValueChange={field.onChange}
-                    value={field.value}
                   />
                 )}
               />
@@ -208,6 +206,7 @@ export default function FormsPage() {
                   <Combobox
                     placeholder="Select interests"
                     searchable
+                    {...field}
                     multiple
                     options={[
                       { value: 'react', label: 'React' },
@@ -222,8 +221,6 @@ export default function FormsPage() {
                       { value: 'python', label: 'Python' },
                       { value: 'java', label: 'Java' },
                     ]}
-                    onValueChange={field.onChange}
-                    value={field.value}
                   />
                 )}
                 message="Select technologies you're interested in"
