@@ -7,18 +7,25 @@ import { getTranslations } from 'next-intl/server';
 import { Plus } from 'lucide-react';
 import { Metadata, NextPage } from 'next';
 
-export async function generateMetadata(): Promise<Metadata> {
+import { ApplicantTable } from '@/components/views/applicant/list/applicant-table';
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ country: string; partner: string }>;
+}): Promise<Metadata> {
   const t = await getTranslations('applicant');
+
+  const { country, partner } = await params;
 
   return {
     title: t('metadata.title'),
-    description: t('metadata.description'),
+    description: t('metadata.description', { country, partner }),
   };
 }
 
 interface IApplicantPageProps {
   params: Promise<{
-    locale: string;
     country: string;
     partner: string;
   }>;
@@ -33,8 +40,8 @@ const ApplicantPage: NextPage<IApplicantPageProps> = async ({ params }) => {
       <div className="flex-between mb-8">
         <div className="lg:ml-4">
           <h1 className="font-header mb-2">{t('applicant.metadata.title')}</h1>
-          <p className="font-body-2 text-muted-foreground">
-            {t('applicant.metadata.description')}
+          <p className="font-body-2 text-muted-foreground capitalize">
+            {t('applicant.metadata.description', { country, partner })}
           </p>
         </div>
         <Link
@@ -45,6 +52,7 @@ const ApplicantPage: NextPage<IApplicantPageProps> = async ({ params }) => {
           {t('Common.create')}
         </Link>
       </div>
+      <ApplicantTable country={country} partner={partner} />
     </Fragment>
   );
 };

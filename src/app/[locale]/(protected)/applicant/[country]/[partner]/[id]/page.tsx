@@ -6,21 +6,29 @@ import { Metadata } from 'next';
 
 import { UpsertApplicant } from '@/components/views/applicant';
 
-export async function generateMetadata(): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ id: string; country: string; partner: string }>;
+}): Promise<Metadata> {
+  const { country, partner } = await params;
   const t = await getTranslations('applicant');
 
   return {
     title: t('metadata.editTitle'),
-    description: t('metadata.editDescription'),
+    description: t('metadata.editDescription', {
+      country,
+      partner,
+    }),
   };
 }
 
 export default async function ApplicantEditPage({
   params,
 }: {
-  params: Promise<{ id: string }>;
+  params: Promise<{ id: string; country: string; partner: string }>;
 }) {
-  const { id } = await params;
+  const { id, country, partner } = await params;
   const t = await getTranslations('applicant');
 
   return (
@@ -28,10 +36,17 @@ export default async function ApplicantEditPage({
       <div className="mb-8 lg:ml-4">
         <h1 className="font-header mb-2">{t('metadata.editTitle')}</h1>
         <p className="font-body-2 text-muted-foreground">
-          {t('metadata.editDescription')}
+          {t('metadata.editDescription', {
+            country,
+            partner,
+          })}
         </p>
       </div>
-      <UpsertApplicant id={id} />
+      <UpsertApplicant
+        id={id}
+        countryOfEmployment={country}
+        partner={partner}
+      />
     </Fragment>
   );
 }

@@ -14,15 +14,25 @@ const badgeVariants = cva(
           'border-transparent bg-green-500 text-primary-foreground [a&]:hover:bg-green-500/90',
         secondary:
           'border-transparent bg-secondary text-secondary-foreground [a&]:hover:bg-secondary/90',
+        success:
+          'border-transparent bg-green-400 text-white [a&]:hover:bg-green-500',
+        successAlt:
+          'border-transparent bg-green-600 text-white [a&]:hover:bg-green-700',
         destructive:
-          'border-transparent bg-destructive text-white [a&]:hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/60',
-        outline:
-          'text-foreground [a&]:hover:bg-accent [a&]:hover:text-accent-foreground',
+          'border-transparent bg-red-400 text-white [a&]:hover:bg-red-500',
+        destructiveAlt:
+          'border-transparent bg-red-600 text-white [a&]:hover:bg-red-700',
+        destructiveAlt2:
+          'border-transparent bg-red-800 text-white [a&]:hover:bg-red-900',
+        info: 'border-transparent bg-blue-500 text-white [a&]:hover:bg-blue-600',
         pending:
-          'border-transparent bg-gray-500 text-white [a&]:hover:bg-gray-500/90',
+          'border-transparent bg-gray-500 text-white [a&]:hover:bg-gray-600',
+        muted:
+          'border-transparent bg-gray-200 text-gray-700 [a&]:hover:bg-gray-300',
+        outline:
+          'border border-gray-300 text-foreground [a&]:hover:bg-accent [a&]:hover:text-accent-foreground',
         warning:
-          'border-transparent bg-yellow-500 text-white [a&]:hover:bg-yellow-500/90',
-        info: 'border-transparent bg-blue-500 text-white [a&]:hover:bg-blue-500/90',
+          'border-transparent bg-yellow-500 text-black [a&]:hover:bg-yellow-600',
       },
     },
     defaultVariants: {
@@ -30,6 +40,29 @@ const badgeVariants = cva(
     },
   },
 );
+
+const getStatusVariant = (status: string) => {
+  switch (status) {
+    case 'NEW':
+      return 'info'; // blue
+    case 'IN_PROGRESS':
+      return 'pending'; // gray
+    case 'CONFIRMED_PROGRAM':
+      return 'success'; // bright green
+    case 'HIRED':
+      return 'successAlt'; // darker green to differentiate
+    case 'HOTEL_REJECTED':
+      return 'destructive'; // red
+    case 'APPLICANT_REJECTED':
+      return 'destructiveAlt'; // darker red
+    case 'FIRED':
+      return 'destructiveAlt2'; // another red shade
+    case 'ARCHIVED':
+      return 'muted'; // light gray
+    default:
+      return 'outline';
+  }
+};
 
 function Badge({
   className,
@@ -49,4 +82,4 @@ function Badge({
   );
 }
 
-export { Badge, badgeVariants };
+export { Badge, badgeVariants, getStatusVariant };

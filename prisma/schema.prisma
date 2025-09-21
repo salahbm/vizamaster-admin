@@ -188,7 +188,6 @@ model Applicant {
   @@index([userId])
   @@index([countryOfEmployment])
   @@index([partner])
-  @@index([nationality]) // New: for quick nationality filters
   @@index([isArchived])    // New: for active applicant lists
 }
 

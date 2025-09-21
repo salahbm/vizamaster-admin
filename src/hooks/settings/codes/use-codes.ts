@@ -1,3 +1,5 @@
+import { useEffect } from 'react';
+
 import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import { ColumnSort } from '@tanstack/react-table';
 
@@ -9,6 +11,7 @@ import { QueryKeys } from '@/constants/query-keys';
 import { Codes } from '@/generated/prisma';
 import { NotFoundError } from '@/server/common/errors';
 import { PaginatedResult, TResponse } from '@/server/common/types';
+import { useCodesStore } from '@/store/use-codes-store';
 
 type TCodesParams = {
   page: number;
@@ -35,8 +38,9 @@ export const getAllCodes = async (
 /**
  * Hook for fetching all  codes
  */
-export const useCodes = (params: TCodesParams) =>
-  useQuery({
+export const useCodes = (params: TCodesParams) => {
+  const { setCodes } = useCodesStore();
+  const codes = useQuery({
     queryFn: () => getAllCodes(params),
     queryKey: [...QueryKeys.settings.codes.all, { ...params }],
     placeholderData: keepPreviousData,
@@ -45,3 +49,12 @@ export const useCodes = (params: TCodesParams) =>
     refetchOnReconnect: false,
     refetchOnMount: false,
   });
+
+  // Use useEffect to update the store state to avoid React state updates during render
+  useEffect(() => {
+    if (codes.data?.data && !codes.isFetching && !codes.isLoading)
+      setCodes(codes.data.data);
+  }, [codes.data, codes.isFetching, codes.isLoading, setCodes]);
+
+  return codes;
+};
