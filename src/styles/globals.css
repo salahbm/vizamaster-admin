@@ -136,11 +136,11 @@
   }
 
   .filter-label {
-    @apply text-muted-foreground w-36 text-left font-sans font-semibold whitespace-nowrap;
+    @apply text-foreground w-18 text-left font-sans font-semibold whitespace-nowrap lg:w-36;
   }
 
   .filter-box {
-    @apply flex min-h-10 items-center justify-normal gap-5;
+    @apply flex min-h-10 w-full items-center justify-normal gap-5;
   }
 
   .card {

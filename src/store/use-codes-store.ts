@@ -17,12 +17,10 @@ export const useCodesStore = create<CodesStore>()(
     (set, get) => ({
       codes: [],
       setCodes: (codes: Codes[]) => set({ codes }),
-      getLabel: (prop: string) => {
+      getLabel: (prop: string): string => {
         const locale = Cookies.get(COOKIE_KEYS.LANGUAGE) ?? 'ru';
         const code = get().codes.find((item) => item.code === prop);
-        return locale === 'ru'
-          ? code?.labelRu || code?.code || '-'
-          : code?.labelEn || code?.code || '-';
+        return code ? (locale === 'ru' ? code?.labelRu : code?.labelEn) : '-';
       },
     }),
     {

@@ -38,6 +38,8 @@ class ApplicantService {
     country?: string,
     partner?: string,
     isArchived?: boolean,
+    status?: string,
+    jobTitle?: string,
   ) {
     try {
       const skip = Math.max(0, (page - 1) * size);
@@ -52,6 +54,8 @@ class ApplicantService {
           country,
           partner,
           isArchived,
+          status,
+          jobTitle,
         ),
         this.repository.countApplicants(search, country, partner, isArchived),
       ]);

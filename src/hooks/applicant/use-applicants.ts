@@ -80,6 +80,8 @@ export interface IGetAllApplicantsParams {
   country?: string;
   partner?: string;
   isArchived?: boolean;
+  status?: string;
+  jobTitle?: string;
 }
 
 const getAllApplicants = async (

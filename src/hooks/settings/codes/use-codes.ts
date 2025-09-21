@@ -38,7 +38,7 @@ export const getAllCodes = async (
 /**
  * Hook for fetching all  codes
  */
-export const useCodes = (params: TCodesParams) => {
+export const useCodes = (params: TCodesParams, enabled?: boolean) => {
   const { setCodes } = useCodesStore();
   const codes = useQuery({
     queryFn: () => getAllCodes(params),
@@ -48,12 +48,12 @@ export const useCodes = (params: TCodesParams) => {
     refetchOnWindowFocus: false,
     refetchOnReconnect: false,
     refetchOnMount: false,
+    enabled,
   });
 
   // Use useEffect to update the store state to avoid React state updates during render
   useEffect(() => {
-    if (codes.data?.data && !codes.isFetching && !codes.isLoading)
-      setCodes(codes.data.data);
+    if (codes.data?.data) setCodes(codes.data.data);
   }, [codes.data, codes.isFetching, codes.isLoading, setCodes]);
 
   return codes;

@@ -5,7 +5,7 @@ import { Fragment } from 'react';
 import { useRouter } from 'next/navigation';
 
 import { DropdownMenu } from '@radix-ui/react-dropdown-menu';
-import { ColumnDef, Row } from '@tanstack/react-table';
+import { Column, ColumnDef, Row, Table } from '@tanstack/react-table';
 import { format } from 'date-fns';
 import { Archive, EllipsisVertical, Pencil, Trash } from 'lucide-react';
 import { useTranslations } from 'next-intl';
@@ -25,190 +25,232 @@ import { Applicant } from '@/generated/prisma';
 import { useAlert } from '@/providers/alert';
 import { useCodesStore } from '@/store/use-codes-store';
 
-export const APPLICANT_COLUMNS: ColumnDef<Applicant>[] = [
-  {
-    id: 'select',
-    header: ({ table }) => (
-      <span className="flex-center w-full">
+export const APPLICANT_COLUMNS = (country?: string): ColumnDef<Applicant>[] => {
+  const columns: ColumnDef<Applicant>[] = [
+    {
+      id: 'select',
+      header: ({ table }) => (
+        <span className="flex-center w-full">
+          <Checkbox
+            checked={
+              table.getIsAllPageRowsSelected() ||
+              (table.getIsSomePageRowsSelected() && 'indeterminate')
+            }
+            onCheckedChange={(value) =>
+              table.toggleAllPageRowsSelected(!!value)
+            }
+            aria-label="Select all"
+          />
+        </span>
+      ),
+      cell: ({ row }) => (
         <Checkbox
-          checked={
-            table.getIsAllPageRowsSelected() ||
-            (table.getIsSomePageRowsSelected() && 'indeterminate')
-          }
-          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-          aria-label="Select all"
+          checked={row.getIsSelected()}
+          onCheckedChange={(value) => row.toggleSelected(!!value)}
+          aria-label="Select row"
+          className="translate-y-0.5"
         />
-      </span>
-    ),
-    cell: ({ row }) => (
-      <Checkbox
-        checked={row.getIsSelected()}
-        onCheckedChange={(value) => row.toggleSelected(!!value)}
-        aria-label="Select row"
-        className="translate-y-0.5"
-      />
-    ),
-    enableSorting: false,
-    enableHiding: false,
-    size: 40,
-  },
-  {
-    accessorKey: 'userId',
-    header: ({ column, table }) => (
-      <DataTableColumnHeader
-        column={column}
-        title={
-          table.options?.meta?.t
-            ? table.options.meta.t('applicant.columns.userId')
-            : 'User ID'
-        }
-      />
-    ),
-    meta: {
-      label: 'applicant.columns.userId',
+      ),
+      enableSorting: false,
+      enableHiding: false,
+      size: 40,
     },
-  },
-  {
-    accessorKey: 'name',
-    header: ({ column, table }) => (
-      <DataTableColumnHeader
-        column={column}
-        title={
-          table.options?.meta?.t ? table.options.meta.t('Common.name') : 'Name'
-        }
-      />
-    ),
-    cell: ({ row }) => (
-      <p className="flex flex-col">
-        <span>{row.original.firstName}</span>
-        <span>{row.original.lastName}</span>
-      </p>
-    ),
-    meta: {
-      label: 'Common.name',
+    {
+      accessorKey: 'userId',
+      header: ({ column, table }) => (
+        <DataTableColumnHeader
+          column={column}
+          title={
+            table.options?.meta?.t
+              ? table.options.meta.t('applicant.columns.userId')
+              : 'User ID'
+          }
+        />
+      ),
+      meta: {
+        label: 'applicant.columns.userId',
+      },
+      enableSorting: false,
     },
-  },
-  {
-    accessorKey: 'phoneNumber',
-    header: ({ column, table }) => (
-      <DataTableColumnHeader
-        column={column}
-        title={
-          table.options?.meta?.t
-            ? table.options.meta.t('Common.contact')
-            : 'Contact'
-        }
-      />
-    ),
-    cell: ({ row }) => (
-      <p className="flex flex-col">
-        <span>{row.original.phoneNumber}</span>
-        <span>{row.original.email}</span>
-      </p>
-    ),
-    meta: {
-      label: 'Common.contact',
+    {
+      accessorKey: 'firstName',
+      header: ({ column, table }) => (
+        <DataTableColumnHeader
+          column={column}
+          title={
+            table.options?.meta?.t
+              ? table.options.meta.t('Common.name')
+              : 'Name'
+          }
+        />
+      ),
+      cell: ({ row }) => (
+        <p className="flex flex-col">
+          <span>{row.original.firstName}</span>
+          <span>{row.original.lastName}</span>
+        </p>
+      ),
+      meta: {
+        label: 'Common.name',
+      },
     },
-    enableSorting: false,
-  },
-  {
-    accessorKey: 'preferredJobTitle',
-    header: ({ column, table }) => (
-      <DataTableColumnHeader
-        column={column}
-        title={
-          table.options?.meta?.t
-            ? table.options.meta.t('applicant.columns.preferredJobTitle')
-            : 'Preferred Job Title'
-        }
-      />
-    ),
-    cell: ({ row }) => <CellJobTitle row={row} />,
-    meta: {
-      label: 'applicant.columns.preferredJobTitle',
+    {
+      accessorKey: 'phoneNumber',
+      header: ({ column, table }) => (
+        <DataTableColumnHeader
+          column={column}
+          title={
+            table.options?.meta?.t
+              ? table.options.meta.t('Common.contact')
+              : 'Contact'
+          }
+        />
+      ),
+      cell: ({ row }) => (
+        <p className="flex flex-col">
+          <span>{row.original.phoneNumber}</span>
+          <span>{row.original.email}</span>
+        </p>
+      ),
+      meta: {
+        label: 'Common.contact',
+      },
+      enableSorting: false,
     },
-  },
-  {
-    accessorKey: 'status',
-    header: ({ column, table }) => (
-      <DataTableColumnHeader
-        column={column}
-        title={
-          table.options?.meta?.t
-            ? table.options.meta.t('Common.status')
-            : 'Status'
-        }
-      />
-    ),
-    cell: ({ row }) => <CellStatus row={row} />,
-    meta: {
-      label: 'Common.status',
-    },
-  },
 
-  {
-    accessorKey: 'createdAt',
-    header: ({ column, table }) => (
-      <DataTableColumnHeader
-        column={column}
-        title={
-          table.options?.meta?.t
-            ? table.options.meta.t('Common.createdAt')
-            : 'Created At'
-        }
-      />
-    ),
-    cell: ({ row }) => {
-      const date = new Date(row.getValue('createdAt'));
-      return <div>{format(date, 'dd.MM.yyyy')}</div>;
+    {
+      accessorKey: 'preferredJobTitle',
+      header: ({ column, table }) => (
+        <DataTableColumnHeader
+          column={column}
+          title={
+            table.options?.meta?.t
+              ? table.options.meta.t('applicant.columns.preferredJobTitle')
+              : 'Preferred Job Title'
+          }
+        />
+      ),
+      cell: ({ row }) => <CellJobTitle row={row} />,
+      meta: {
+        label: 'applicant.columns.preferredJobTitle',
+      },
     },
-    meta: {
-      label: 'Common.createdAt',
+    {
+      accessorKey: 'status',
+      header: ({ column, table }) => (
+        <DataTableColumnHeader
+          column={column}
+          title={
+            table.options?.meta?.t
+              ? table.options.meta.t('Common.status')
+              : 'Status'
+          }
+        />
+      ),
+      cell: ({ row }) => <CellStatus row={row} />,
+      meta: {
+        label: 'Common.status',
+      },
     },
-  },
-  {
-    accessorKey: 'updatedAt',
-    header: ({ column, table }) => (
-      <DataTableColumnHeader
-        column={column}
-        title={
-          table.options?.meta?.t
-            ? table.options.meta.t('Common.updatedAt')
-            : 'Updated At'
-        }
-      />
-    ),
-    cell: ({ row }) => {
-      const date = new Date(row.getValue('updatedAt'));
-      return (
-        <div>
-          <p>{format(date, 'dd.MM.yyyy')}</p>
-          <p className="font-caption-2">{row.original.updatedBy}</p>
-        </div>
-      );
+
+    {
+      accessorKey: 'createdAt',
+      header: ({ column, table }) => (
+        <DataTableColumnHeader
+          column={column}
+          title={
+            table.options?.meta?.t
+              ? table.options.meta.t('Common.createdAt')
+              : 'Created At'
+          }
+        />
+      ),
+      cell: ({ row }) => {
+        const date = new Date(row.getValue('createdAt'));
+        return <div>{format(date, 'dd.MM.yyyy')}</div>;
+      },
+      meta: {
+        label: 'Common.createdAt',
+      },
     },
-    meta: {
-      label: 'Common.updatedAt',
+    {
+      accessorKey: 'updatedAt',
+      header: ({ column, table }) => (
+        <DataTableColumnHeader
+          column={column}
+          title={
+            table.options?.meta?.t
+              ? table.options.meta.t('Common.updatedAt')
+              : 'Updated At'
+          }
+        />
+      ),
+      cell: ({ row }) => {
+        const date = new Date(row.getValue('updatedAt'));
+        return (
+          <div>
+            <p>{format(date, 'dd.MM.yyyy')}</p>
+            <p className="font-caption-2">{row.original.updatedBy}</p>
+          </div>
+        );
+      },
+      meta: {
+        label: 'Common.updatedAt',
+      },
     },
-  },
-  {
-    id: 'actions',
-    header: ({ column, table }) => (
-      <DataTableColumnHeader
-        column={column}
-        title={
-          table.options?.meta?.t
-            ? table.options.meta.t('Common.actions')
-            : 'Actions'
-        }
-      />
-    ),
-    cell: ({ row }) => <ActionsCell row={row} />,
-    meta: {
-      label: 'Common.actions',
+    {
+      id: 'actions',
+      header: ({ column, table }) => (
+        <DataTableColumnHeader
+          column={column}
+          title={
+            table.options?.meta?.t
+              ? table.options.meta.t('Common.actions')
+              : 'Actions'
+          }
+        />
+      ),
+      cell: ({ row }) => <ActionsCell row={row} />,
+      meta: {
+        label: 'Common.actions',
+      },
     },
-  },
-];
+  ];
+
+  // Insert countryOfEmployment column after phoneNumber and before preferredJobTitle when country === 'all'
+  if (country === 'all') {
+    const countryColumn: ColumnDef<Applicant> = {
+      accessorKey: 'countryOfEmployment',
+      header: ({
+        column,
+        table,
+      }: {
+        column: Column<Applicant>;
+        table: Table<Applicant>;
+      }) => (
+        <DataTableColumnHeader
+          column={column}
+          title={
+            table.options?.meta?.t
+              ? `${table.options.meta.t('Common.country')}/${table.options.meta.t('Common.partner')}`
+              : 'Country of Employment'
+          }
+        />
+      ),
+      cell: ({ row }: { row: Row<Applicant> }) => (
+        <CellCountryOfEmployment row={row} />
+      ),
+      meta: {
+        label: 'Common.country',
+      },
+    };
+
+    // Insert countryColumn after phoneNumber
+    columns.splice(3 + 1, 0, countryColumn);
+  }
+
+  return columns;
+};
 
 const CellStatus = ({ row }: { row: Row<Applicant> }) => {
   const t = useTranslations('applicant');
@@ -227,6 +269,16 @@ const CellJobTitle = ({ row }: { row: Row<Applicant> }) => {
   const { getLabel } = useCodesStore();
 
   return <span>{getLabel(row.original.preferredJobTitle as string)}</span>;
+};
+
+const CellCountryOfEmployment = ({ row }: { row: Row<Applicant> }) => {
+  const { getLabel } = useCodesStore();
+  return (
+    <div className="flex flex-col">
+      <span>{getLabel(row.original.countryOfEmployment as string)}</span>
+      <span>{getLabel(row.original.partner as string)}</span>
+    </div>
+  );
 };
 
 const ActionsCell = ({ row }: { row: Row<Applicant> }) => {

@@ -3,11 +3,15 @@ import { buildOrderBy } from '@/server/common/utils';
 import prisma from '@/server/db/prisma';
 import { ISort } from '@/types/data-table';
 
+import { ApplicantHelper } from './applicant.helper';
+
 export class ApplicantRepository {
   private readonly prismaApplicant: PrismaClient['applicant'];
+  private readonly applicantHelper: ApplicantHelper;
 
   constructor() {
     this.prismaApplicant = prisma.applicant;
+    this.applicantHelper = new ApplicantHelper();
   }
 
   // Create sidebar
@@ -26,44 +30,21 @@ export class ApplicantRepository {
     country?: string,
     partner?: string,
     isArchived?: boolean,
+    status?: string,
+    jobTitle?: string,
   ) {
     const orderBy = buildOrderBy(sort);
 
     // Build where conditions
-    const where: Prisma.ApplicantWhereInput = {};
-
-    // Add country condition if provided
-    if (country) {
-      where.countryOfEmployment = country;
-    }
-
-    // Add partner condition if provided
-    if (partner) {
-      where.partner = partner;
-    }
-
-    // Add isArchived condition if provided
-    if (isArchived !== undefined) {
-      where.isArchived = isArchived;
-    }
-
-    // Add search condition if provided
-    if (search) {
-      where.OR = [
-        {
-          firstName: {
-            contains: search,
-            mode: 'insensitive' as Prisma.QueryMode,
-          },
-        },
-        {
-          lastName: {
-            contains: search,
-            mode: 'insensitive' as Prisma.QueryMode,
-          },
-        },
-      ];
-    }
+    const where: Prisma.ApplicantWhereInput =
+      this.applicantHelper.buildWhereClause({
+        search,
+        country,
+        partner,
+        isArchived,
+        status,
+        jobTitle,
+      });
 
     return await this.prismaApplicant.findMany({
       where,
@@ -78,42 +59,19 @@ export class ApplicantRepository {
     country?: string,
     partner?: string,
     isArchived?: boolean,
+    status?: string,
+    jobTitle?: string,
   ) {
     // Build where conditions
-    const where: Prisma.ApplicantWhereInput = {};
-
-    // Add country condition if provided
-    if (country) {
-      where.countryOfEmployment = country;
-    }
-
-    // Add partner condition if provided
-    if (partner) {
-      where.partner = partner;
-    }
-
-    // Add isArchived condition if provided
-    if (isArchived !== undefined) {
-      where.isArchived = isArchived;
-    }
-
-    // Add search condition if provided
-    if (search) {
-      where.OR = [
-        {
-          firstName: {
-            contains: search,
-            mode: 'insensitive' as Prisma.QueryMode,
-          },
-        },
-        {
-          lastName: {
-            contains: search,
-            mode: 'insensitive' as Prisma.QueryMode,
-          },
-        },
-      ];
-    }
+    const where: Prisma.ApplicantWhereInput =
+      this.applicantHelper.buildWhereClause({
+        search,
+        country,
+        partner,
+        isArchived,
+        status,
+        jobTitle,
+      });
 
     return this.prismaApplicant.count({ where });
   }

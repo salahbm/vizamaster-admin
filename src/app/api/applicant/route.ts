@@ -25,6 +25,8 @@ export async function GET(request: NextRequest) {
     const country = searchParams.get('country') || undefined;
     const partner = searchParams.get('partner') || undefined;
     const isArchived = searchParams.get('isArchived') === 'true';
+    const status = searchParams.get('status') || undefined;
+    const jobTitle = searchParams.get('jobTitle') || undefined;
 
     const { page, size, sort } = parsePaginationAndSortParams(searchParams);
 
@@ -37,6 +39,8 @@ export async function GET(request: NextRequest) {
       country,
       partner,
       isArchived,
+      status,
+      jobTitle,
     );
     return NextResponse.json(result);
   } catch (error: unknown) {

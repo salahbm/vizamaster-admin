@@ -46,7 +46,7 @@ const login = async (body: SignInSchema, locale: 'en' | 'ru') => {
 const useLogin = () => {
   const router = useRouter();
   const locale = useLocale();
-  const { setUser } = useAuthStore();
+  const { setUser, setAuthenticated } = useAuthStore();
 
   const queryClient = useQueryClient();
 
@@ -55,6 +55,7 @@ const useLogin = () => {
     options: {
       onSuccess: (data) => {
         setUser(data?.user as User);
+        setAuthenticated(true);
         // On login success:
         queryClient.clear(); // wipes *all* cache
 

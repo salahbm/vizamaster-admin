@@ -56,10 +56,12 @@ export function DataTable<TData>({
         {children}
         <div className="flex w-full items-center gap-2">
           <DataTableViewOptions table={table} />
-          <DataTableResetSortings
-            table={table}
-            includePagination={table.options.meta?.includePaginationReset}
-          />
+          {table.options.meta?.includeResetSortings && (
+            <DataTableResetSortings
+              table={table}
+              includePagination={table.options.meta?.includePaginationReset}
+            />
+          )}
         </div>
       </div>
       <div className={cn('overflow-hidden rounded-md border', className)}>
