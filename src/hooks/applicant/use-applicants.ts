@@ -53,9 +53,16 @@ export const useCreateApplicant = () => {
   return useMutation({
     mutationFn: (data: TApplicantDto) => createApplicant(data, user?.email!),
     options: {
-      onSuccess: () => {
+      onSuccess: (data, variables) => {
         queryClient.invalidateQueries({
-          queryKey: QueryKeys.applicants.all,
+          queryKey: [
+            ...QueryKeys.applicants.all,
+            {
+              country: variables.countryOfEmployment,
+              partner: variables.partner,
+            },
+          ],
+          type: 'all',
         });
         router.back();
       },

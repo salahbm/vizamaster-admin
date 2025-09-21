@@ -1,13 +1,15 @@
 'use client';
 
-import { useMemo } from 'react';
+import { Fragment, useMemo } from 'react';
 
 import { useTranslations } from 'next-intl';
-import { parseAsString as n, useQueryState } from 'nuqs';
+import * as nuqs from 'nuqs';
+import { useQueryState } from 'nuqs';
 
 import { DataTable } from '@/components/shared/data-table';
 import { DataTableSkeleton } from '@/components/skeletons/data-table-skeleton';
 import { Input } from '@/components/ui/input';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 import { Applicant } from '@/generated/prisma';
 import { useGetAllApplicants } from '@/hooks/applicant';
@@ -25,10 +27,17 @@ export const ApplicantTable = ({
   partner?: string;
 }) => {
   const t = useTranslations();
+  const [isArchived, setIsArchived] = useQueryState(
+    'isArchived',
+    nuqs.parseAsBoolean.withDefault(false),
+  );
   const columns = useMemo(() => APPLICANT_COLUMNS, []);
 
   // Use the improved query reader hook to get URL parameters
-  const [search, setSearch] = useQueryState('search', n.withDefault(''));
+  const [search, setSearch] = useQueryState(
+    'search',
+    nuqs.parseAsString.withDefault(''),
+  );
 
   const debounced = useDebounceValue(search, 500);
 
@@ -75,14 +84,39 @@ export const ApplicantTable = ({
   if (isLoading) return <DataTableSkeleton columnCount={columns.length} />;
 
   return (
-    <DataTable table={table} isLoading={isLoading || isFetching}>
-      <Input
-        value={search}
-        type="search"
-        placeholder={t('Common.search')}
-        className="shrink-0 md:w-[30rem]"
-        onChange={(e) => setSearch(e.target.value)}
-      />
-    </DataTable>
+    <Fragment>
+      <Tabs
+        defaultValue="false"
+        className="mb-4 md:mb-6"
+        value={isArchived.toString()}
+        onValueChange={(value) => setIsArchived(value === 'true')}
+      >
+        <TabsList variant="outline" className="justify-start">
+          <TabsTrigger
+            value="false"
+            variant="outline"
+            className="w-32 max-w-fit"
+          >
+            {t('Common.active')}
+          </TabsTrigger>
+          <TabsTrigger
+            value="true"
+            variant="outline"
+            className="w-32 max-w-fit"
+          >
+            {t('Common.archived')}
+          </TabsTrigger>
+        </TabsList>
+      </Tabs>
+      <DataTable table={table} isLoading={isLoading || isFetching}>
+        <Input
+          value={search}
+          type="search"
+          placeholder={t('Common.search')}
+          className="shrink-0 md:w-[30rem]"
+          onChange={(e) => setSearch(e.target.value)}
+        />
+      </DataTable>
+    </Fragment>
   );
 };

@@ -50,6 +50,8 @@
     "contact": "Contact",
     "status": "Status",
     "archive": "Archive",
+    "active": "Active",
+    "archived": "Archived",
     "placeholder": {
       "date": "Select date",
       "time": "Select time",
@@ -163,12 +165,12 @@
   },
   "applicant": {
     "metadata": {
-      "description": "Manage applicants in {country} and {partner}",
+      "description": "Manage applicants: ",
       "title": "Applicants",
       "createTitle": "Create Applicant",
-      "createDescription": "Create a new applicant in {country} and {partner}",
+      "createDescription": "Create a new applicant: ",
       "editTitle": "Edit Applicant",
-      "editDescription": "Edit an existing applicant in {country} and {partner}"
+      "editDescription": "Edit an existing applicant: "
     },
     "columns": {
       "userId": "User ID",

@@ -7,7 +7,9 @@ import { getTranslations } from 'next-intl/server';
 import { Plus } from 'lucide-react';
 import { Metadata, NextPage } from 'next';
 
-import { ApplicantTable } from '@/components/views/applicant/list/applicant-table';
+import { ApplicantTable } from '@/components/views/applicant';
+
+import { capitalizeFirstLetter } from '@/lib/utils';
 
 export async function generateMetadata({
   params,
@@ -20,7 +22,7 @@ export async function generateMetadata({
 
   return {
     title: t('metadata.title'),
-    description: t('metadata.description', { country, partner }),
+    description: `${t('metadata.description')} ${country} & ${partner}`,
   };
 }
 
@@ -40,8 +42,14 @@ const ApplicantPage: NextPage<IApplicantPageProps> = async ({ params }) => {
       <div className="flex-between mb-8">
         <div className="lg:ml-4">
           <h1 className="font-header mb-2">{t('applicant.metadata.title')}</h1>
-          <p className="font-body-2 text-muted-foreground capitalize">
-            {t('applicant.metadata.description', { country, partner })}
+          <p className="font-body-2 text-muted-foreground">
+            {t('applicant.metadata.description')}
+            {country !== 'all' ? (
+              <>
+                <strong>{capitalizeFirstLetter(country)}</strong> &{' '}
+                <strong>{capitalizeFirstLetter(partner)}</strong>
+              </>
+            ) : null}
           </p>
         </div>
         <Link

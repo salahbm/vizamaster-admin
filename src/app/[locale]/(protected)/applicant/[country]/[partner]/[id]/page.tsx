@@ -6,6 +6,8 @@ import { Metadata } from 'next';
 
 import { UpsertApplicant } from '@/components/views/applicant';
 
+import { capitalizeFirstLetter } from '@/lib/utils';
+
 export async function generateMetadata({
   params,
 }: {
@@ -16,10 +18,7 @@ export async function generateMetadata({
 
   return {
     title: t('metadata.editTitle'),
-    description: t('metadata.editDescription', {
-      country,
-      partner,
-    }),
+    description: `${t('metadata.editDescription')} ${country} & ${partner}`,
   };
 }
 
@@ -36,10 +35,13 @@ export default async function ApplicantEditPage({
       <div className="mb-8 lg:ml-4">
         <h1 className="font-header mb-2">{t('metadata.editTitle')}</h1>
         <p className="font-body-2 text-muted-foreground">
-          {t('metadata.editDescription', {
-            country,
-            partner,
-          })}
+          {t('metadata.editDescription')}
+          {country !== 'all' ? (
+            <>
+              <strong>{capitalizeFirstLetter(country)}</strong> &{' '}
+              <strong>{capitalizeFirstLetter(partner)}</strong>
+            </>
+          ) : null}
         </p>
       </div>
       <UpsertApplicant

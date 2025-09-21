@@ -21,8 +21,8 @@ export const useCodesStore = create<CodesStore>()(
         const locale = Cookies.get(COOKIE_KEYS.LANGUAGE) ?? 'ru';
         const code = get().codes.find((item) => item.code === prop);
         return locale === 'ru'
-          ? code?.labelRu || code?.code || ''
-          : code?.labelEn || code?.code || '';
+          ? code?.labelRu || code?.code || '-'
+          : code?.labelEn || code?.code || '-';
       },
     }),
     {

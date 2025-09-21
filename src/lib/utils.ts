@@ -62,3 +62,6 @@ export const mapOptions = (
 
 export const mapFilesIntoUrl = (files: FileMetadata[] | null): string =>
   files?.[0]?.url || '';
+
+export const capitalizeFirstLetter = (str: string): string =>
+  str.charAt(0).toUpperCase() + str.slice(1);

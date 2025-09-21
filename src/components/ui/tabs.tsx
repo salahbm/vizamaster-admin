@@ -13,7 +13,7 @@ const tabsListVariants = cva(
     variants: {
       variant: {
         default: 'bg-muted text-muted-foreground p-[3px]',
-        outline: 'border-b border-border',
+        outline: 'border-b border-border w-full',
       },
     },
     defaultVariants: {
@@ -30,7 +30,7 @@ const tabsTriggerVariants = cva(
         default:
           'data-[state=active]:bg-background dark:data-[state=active]:text-foreground  px-4 py-3  data-[state=active]:text-primary focus-visible:border-ring focus-visible:ring-ring/50 dark:data-[state=active]:border-input dark:data-[state=active]:bg-input/30 h-[calc(100%-1px)] rounded border border-transparent focus-visible:ring-[3px] data-[state=active]:shadow-sm',
         outline:
-          'border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:text-primary -mb-2',
+          'border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:text-primary -mb-2 px-4 md:px-6 w-fit',
       },
     },
     defaultVariants: {

@@ -158,6 +158,8 @@ export function useDataTable<TData>(props: UseDataTableProps<TData>) {
     manualSorting: true,
     manualFiltering: true,
 
+    renderFallbackValue: '-',
+
     onRowSelectionChange: setRowSelection,
     onPaginationChange,
     onSortingChange,

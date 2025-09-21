@@ -314,7 +314,7 @@ export const UpsertApplicant: React.FC<IUpsertApplicantProps> = ({
               render={({ field }) => (
                 <Combobox
                   searchable
-                  disabled={!id}
+                  disabled={!id && countryOfEmployment !== 'all'}
                   options={memoCountries}
                   placeholder={t('fields.countryOfEmployment.placeholder')}
                   {...field}
@@ -330,7 +330,7 @@ export const UpsertApplicant: React.FC<IUpsertApplicantProps> = ({
               render={({ field }) => (
                 <Combobox
                   searchable
-                  disabled={!id}
+                  disabled={!id && partner !== 'all'}
                   options={memoPartners}
                   placeholder={t('fields.partner.placeholder')}
                   {...field}
