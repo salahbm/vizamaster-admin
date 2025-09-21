@@ -45,6 +45,8 @@
     "groupCode": "Group Code",
     "createdAt": "Created At",
     "updatedAt": "Updated At",
+    "profile": "Profile",
+    "logout": "Logout",
     "placeholder": {
       "date": "Select date",
       "time": "Select time",
@@ -160,7 +162,9 @@
       "description": "Manage applicants",
       "title": "Applicants",
       "createTitle": "Create Applicant",
-      "createDescription": "Create a new applicant"
+      "createDescription": "Create a new applicant",
+      "editTitle": "Edit Applicant",
+      "editDescription": "Edit an existing applicant"
     },
     "form": {
       "sections": {
@@ -196,7 +200,11 @@
         },
         "gender": {
           "label": "Gender",
-          "placeholder": "Select gender"
+          "placeholder": "Select gender",
+          "options": {
+            "male": "Male",
+            "female": "Female"
+          }
         },
         "dateOfBirth": {
           "label": "Date of Birth"
@@ -256,6 +264,14 @@
         "preferredJobTitle": {
           "label": "Preferred Job Title",
           "placeholder": "e.g., Software Engineer"
+        },
+        "partner": {
+          "label": "Partner",
+          "placeholder": "Select partner"
+        },
+        "languages": {
+          "label": "Languages",
+          "placeholder": "Select languages"
         }
       },
       "buttons": {

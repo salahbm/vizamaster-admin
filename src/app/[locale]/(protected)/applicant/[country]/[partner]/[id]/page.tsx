@@ -10,28 +10,28 @@ export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations('applicant');
 
   return {
-    title: t('metadata.createTitle'),
-    description: t('metadata.createDescription'),
+    title: t('metadata.editTitle'),
+    description: t('metadata.editDescription'),
   };
 }
 
-export default async function ApplicantCreatePage({
+export default async function ApplicantEditPage({
   params,
 }: {
-  params: Promise<{ country: string; partner: string }>;
+  params: Promise<{ id: string }>;
 }) {
-  const { country, partner } = await params;
+  const { id } = await params;
   const t = await getTranslations('applicant');
 
   return (
     <Fragment>
       <div className="mb-8 lg:ml-4">
-        <h1 className="font-header mb-2">{t('metadata.createTitle')}</h1>
+        <h1 className="font-header mb-2">{t('metadata.editTitle')}</h1>
         <p className="font-body-2 text-muted-foreground">
-          {t('metadata.createDescription')}
+          {t('metadata.editDescription')}
         </p>
       </div>
-      <UpsertApplicant countryOfEmployment={country} partner={partner} />
+      <UpsertApplicant id={id} />
     </Fragment>
   );
 }

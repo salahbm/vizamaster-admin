@@ -224,7 +224,7 @@ function Calendar({
               <Combobox
                 modalPopover
                 value={value as string}
-                onValueChange={handleChange}
+                onChange={handleChange}
                 options={formattedOptions?.map((option) => ({
                   ...option,
                   value: String(option.value),

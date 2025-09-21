@@ -2,9 +2,12 @@ import { type ClassValue, clsx } from 'clsx';
 import { toast } from 'sonner';
 import { twMerge } from 'tailwind-merge';
 
+import { IComboboxOption } from '@/components/ui/combobox';
+
 import { SideNavItem } from '@/constants/routes';
 
-import { Sidebar } from '@/generated/prisma';
+import { Codes, Sidebar } from '@/generated/prisma';
+import { FileMetadata } from '@/hooks/common/use-file-upload';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -47,3 +50,15 @@ export function convertSidebarToNavItems(
     .sort((a, b) => a.order - b.order)
     .map((item) => buildNavItem(item, sidebarData));
 }
+
+export const mapOptions = (
+  options?: Codes[],
+  locale?: string,
+): Array<IComboboxOption> =>
+  options?.map((option) => ({
+    value: option.code,
+    label: locale === 'ru' ? option.labelRu : option.labelEn,
+  })) || [];
+
+export const mapFilesIntoUrl = (files: FileMetadata[] | null): string =>
+  files?.[0]?.url || '';

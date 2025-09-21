@@ -104,7 +104,7 @@ export default function Pagination<TData>({
     >
       <Combobox
         value={`${table.getState().pagination.pageSize}`}
-        onValueChange={(val) => table.setPageSize(Number(val))}
+        onChange={(val) => table.setPageSize(Number(val))}
         className="font-body-2 h-8 w-fit gap-2 rounded py-0 pr-1 pl-2 [&>div>svg]:size-4.5"
         options={sizesArray.map((size) => ({
           label: size.toString(),

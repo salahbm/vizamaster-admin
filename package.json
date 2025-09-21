@@ -21,6 +21,7 @@
     "seed:sidebar": "ts-node prisma/seed.ts"
   },
   "dependencies": {
+    "@cospired/i18n-iso-languages": "4.2.0",
     "@hookform/resolvers": "5.2.2",
     "@neondatabase/serverless": "1.0.1",
     "@prisma/adapter-neon": "6.16.2",
@@ -49,6 +50,7 @@
     "cmdk": "1.1.1",
     "date-fns": "4.1.0",
     "dotenv": "17.2.2",
+    "i18n-iso-countries": "7.14.0",
     "js-cookie": "3.0.5",
     "jsonwebtoken": "9.0.2",
     "libphonenumber-js": "1.12.17",

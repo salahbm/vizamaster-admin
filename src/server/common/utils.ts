@@ -113,9 +113,9 @@ export function buildOrderBy<T extends string = string>(
   return { [defaultKey]: defaultDir };
 }
 
-// /**
-//  * Get error message based on code and language
-//  */
+/**
+ * Get error message based on code and language
+ */
 export const getErrorMessage = (code: string, lang: 'en' | 'ru') => {
   if (code in BETTER_AUTH_CODES) {
     return BETTER_AUTH_ERROR_MESSAGES[
@@ -123,4 +123,17 @@ export const getErrorMessage = (code: string, lang: 'en' | 'ru') => {
     ][lang];
   }
   return '';
+};
+
+/**
+ * Generate 6 character string containing numbers and letters for userId
+ */
+export const generateUserId = () => {
+  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+  let userId = '';
+  for (let i = 0; i < 6; i++) {
+    const randomIndex = Math.floor(Math.random() * characters.length);
+    userId += characters.charAt(randomIndex);
+  }
+  return userId;
 };

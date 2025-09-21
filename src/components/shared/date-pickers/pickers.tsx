@@ -85,7 +85,7 @@ export const DatePicker: React.FC<DatePickerProps> = ({
 
   React.useEffect(() => {
     // Only update if selectedTime changed but value didn't change
-    // This prevents infinite loops when value changes due to onValueChange
+    // This prevents infinite loops when value changes due to onChange
     if (
       value &&
       onChange &&
@@ -136,7 +136,7 @@ export const DatePicker: React.FC<DatePickerProps> = ({
         return (
           <div className="min-w-[320px] p-3">
             <Tabs defaultValue="date">
-              <TabsList className="grid w-full grid-cols-2">
+              <TabsList className="w-full">
                 <TabsTrigger value="date">{t('date')}</TabsTrigger>
                 <TabsTrigger value="time">{t('time')}</TabsTrigger>
               </TabsList>
@@ -183,7 +183,7 @@ export const DatePicker: React.FC<DatePickerProps> = ({
         return (
           <MonthPicker
             value={value as Date}
-            onValueChange={onChange}
+            onChange={onChange}
             minDate={minDate}
             maxDate={maxDate}
           />
@@ -192,7 +192,7 @@ export const DatePicker: React.FC<DatePickerProps> = ({
         return (
           <YearPicker
             value={value as Date}
-            onValueChange={onChange}
+            onChange={onChange}
             minDate={minDate}
             maxDate={maxDate}
           />

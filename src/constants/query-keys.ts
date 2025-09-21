@@ -4,6 +4,11 @@ export const QueryKeys = {
     details: ['admins', 'details'],
   },
 
+  applicants: {
+    all: ['applicants'],
+    details: ['applicants', 'details'],
+  },
+
   settings: {
     sidebar: {
       all: ['settings', 'sidebar'],

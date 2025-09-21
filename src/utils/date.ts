@@ -1,4 +1,4 @@
-import { Locale, format, formatDistance, formatRelative } from 'date-fns';
+import { Locale, format } from 'date-fns';
 import { enUS, ru } from 'date-fns/locale';
 
 type SupportedLocale = 'en' | 'ru';
@@ -19,39 +19,9 @@ const dateLocales: Record<SupportedLocale, Locale> = {
 export function formatDate(
   date: Date | number,
   formatStr: string,
-  locale: SupportedLocale,
+  locale?: SupportedLocale,
 ): string {
-  return format(date, formatStr, { locale: dateLocales[locale] });
-}
-
-/**
- * Format the distance between two dates with the appropriate locale
- * @param date The date to compare to baseDate
- * @param baseDate The base date to compare from
- * @param locale The locale code (e.g., 'en', 'ru')
- * @returns The formatted distance string
- */
-export function formatDateDistance(
-  date: Date | number,
-  baseDate: Date | number,
-  locale: SupportedLocale,
-): string {
-  return formatDistance(date, baseDate, { locale: dateLocales[locale] });
-}
-
-/**
- * Format a date relative to the current date with the appropriate locale
- * @param date The date to format
- * @param baseDate The base date to compare from
- * @param locale The locale code (e.g., 'en', 'ru')
- * @returns The formatted relative date string
- */
-export function formatDateRelative(
-  date: Date | number,
-  baseDate: Date | number,
-  locale: SupportedLocale,
-): string {
-  return formatRelative(date, baseDate, { locale: dateLocales[locale] });
+  return format(date, formatStr, { locale: dateLocales[locale ?? 'ru'] });
 }
 
 /**
@@ -59,14 +29,28 @@ export function formatDateRelative(
  * @param date The date to convert
  * @returns The ISO string representation of the date
  */
-export const dateToISOString = (date?: Date) => date?.toISOString() ?? '';
+export const normalizeToUTC = (date: Date): string => {
+  const utc = new Date(
+    Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()),
+  );
+  return utc.toISOString(); // e.g., "2000-05-10T00:00:00.000Z"
+};
+
 /**
  * Convert an ISO string to a date
  * @param isoString The ISO string to convert
  * @returns The date representation of the ISO string
  */
-export const isoStringToDate = (iso?: string) =>
-  iso ? new Date(iso) : new Date();
+export const isoToLocalDate = (iso?: string): Date =>
+  iso
+    ? new Date(
+        Date.UTC(
+          new Date(iso).getUTCFullYear(),
+          new Date(iso).getUTCMonth(),
+          new Date(iso).getUTCDate(),
+        ),
+      )
+    : new Date();
 
 /**
  * Get the year from a date

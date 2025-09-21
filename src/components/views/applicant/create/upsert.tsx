@@ -1,9 +1,10 @@
 'use client';
 
+import { useMemo } from 'react';
+
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import { useForm } from 'react-hook-form';
-import { z } from 'zod';
 
 import { DatePicker } from '@/components/shared/date-pickers';
 import { FormFields } from '@/components/shared/form-fields';
@@ -14,69 +15,67 @@ import { Input, TelephoneInput } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
 import { Uploader } from '@/components/ui/uploader';
 
-import { FileMetadataSchema } from '@/hooks/common/use-file-upload';
+import { mapOptions } from '@/lib/utils';
 
-const applicantSchema = z.object({
-  // Personal Information
-  firstName: z.string().min(1, { message: 'required' }),
-  lastName: z.string().min(1, { message: 'required' }),
-  middleName: z.string().optional(),
-  gender: z.string().optional(),
-  dateOfBirth: z.date().optional(),
-  passportNumber: z.string().min(1, { message: 'required' }),
-  passportPhoto: z.array(FileMetadataSchema).optional(),
+import { getCountries, getLanguages } from '@/utils/intl';
 
-  // Contact Information
-  email: z.email({ message: 'invalid_email' }),
-  phoneNumber: z.string().min(1, { message: 'required' }),
-  phoneNumberAdditional: z.string().optional(),
+import { useCreateApplicant } from '@/hooks/applicant';
+import { useCodes } from '@/hooks/settings/codes';
+import { ApplicantDto, TApplicantDto } from '@/server/common/dto/applicant.dto';
 
-  // Address Information
-  countryOfResidence: z.string().min(1, { message: 'required' }),
-  addressLine1: z.string().min(1, { message: 'required' }),
-  addressLine2: z.string().optional(),
-  city: z.string().optional(),
-  state: z.string().optional(),
-  zipCode: z.string().optional(),
+import { applicantDefaults, applicantQueries } from './applicant.helpers';
 
-  // Employment & Nationality
-  countryOfEmployment: z.string().min(1, { message: 'required' }),
-  nationality: z.string().optional(),
-  preferredJobTitle: z.string().optional(),
-});
+interface IUpsertApplicantProps {
+  id?: string;
+  countryOfEmployment: string;
+  partner: string;
+}
 
-interface IUpsertApplicantProps {}
-
-const UpsertApplicant: React.FC<IUpsertApplicantProps> = () => {
+export const UpsertApplicant: React.FC<IUpsertApplicantProps> = ({
+  id,
+  countryOfEmployment,
+  partner,
+}) => {
+  const locale = useLocale();
   const t = useTranslations('applicant.form');
 
-  const form = useForm<z.infer<typeof applicantSchema>>({
-    resolver: zodResolver(applicantSchema),
-    defaultValues: {
-      firstName: '',
-      lastName: '',
-      middleName: '',
-      gender: '',
-      dateOfBirth: undefined,
-      passportNumber: '',
-      passportPhoto: [],
-      email: '',
-      phoneNumber: '',
-      phoneNumberAdditional: '',
-      countryOfResidence: '',
-      addressLine1: '',
-      addressLine2: '',
-      city: '',
-      state: '',
-      zipCode: '',
-      countryOfEmployment: '',
-      nationality: '',
-      preferredJobTitle: '',
-    },
+  const form = useForm<TApplicantDto>({
+    resolver: zodResolver(ApplicantDto),
+    defaultValues: applicantDefaults(countryOfEmployment, partner),
   });
 
-  const onSubmit = (data: z.infer<typeof applicantSchema>) => {
-    console.info(data);
+  // QUERIES
+  const { data: countries, isLoading: isLoadingCountries } = useCodes(
+    applicantQueries('group-countries'),
+  );
+  const { data: partners, isLoading: isLoadingPartners } = useCodes(
+    applicantQueries('group-partners'),
+  );
+  const { data: vacancies, isLoading: isLoadingVacancies } = useCodes(
+    applicantQueries('group-vacancies'),
+  );
+
+  // MUTATIONS
+  const { mutateAsync: createApplicant, isPending: isPendingCreateApplicant } =
+    useCreateApplicant();
+
+  // MEMOS
+  const countryOfResidenceOptions = useMemo(() => getCountries(), []);
+  const languagesOptions = useMemo(() => getLanguages(), []);
+  const { memoCountries, memoPartners, memoVacancies } = useMemo(() => {
+    return {
+      memoCountries: mapOptions(countries?.data, locale),
+      memoPartners: mapOptions(partners?.data, locale),
+      memoVacancies: mapOptions(vacancies?.data, locale),
+    };
+  }, [countries, partners, vacancies, locale]);
+
+  const onSubmit = (data: TApplicantDto) => {
+    if (id) {
+      // updateApplicant(id, data);
+    } else {
+      createApplicant(data);
+    }
   };
 
   return (
@@ -130,13 +129,17 @@ const UpsertApplicant: React.FC<IUpsertApplicantProps> = () => {
             <FormFields
               name="gender"
               label={t('fields.gender.label')}
+              required
               control={form.control}
               render={({ field }) => (
                 <Combobox
                   placeholder={t('fields.gender.placeholder')}
                   options={[
-                    { value: 'male', label: 'Male' },
-                    { value: 'female', label: 'Female' },
+                    { value: 'MALE', label: t('fields.gender.options.male') },
+                    {
+                      value: 'FEMALE',
+                      label: t('fields.gender.options.female'),
+                    },
                   ]}
                   {...field}
                 />
@@ -233,6 +236,8 @@ const UpsertApplicant: React.FC<IUpsertApplicantProps> = () => {
               control={form.control}
               render={({ field }) => (
                 <Combobox
+                  searchable
+                  options={countryOfResidenceOptions}
                   placeholder={t('fields.countryOfResidence.placeholder')}
                   {...field}
                 />
@@ -299,15 +304,35 @@ const UpsertApplicant: React.FC<IUpsertApplicantProps> = () => {
           <p className="font-body-2 text-muted-foreground mb-6">
             {t('sections.employmentInfo.description')}
           </p>
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
             <FormFields
               name="countryOfEmployment"
               label={t('fields.countryOfEmployment.label')}
               required
               control={form.control}
+              loading={isLoadingCountries}
               render={({ field }) => (
                 <Combobox
+                  searchable
+                  disabled={!id}
+                  options={memoCountries}
                   placeholder={t('fields.countryOfEmployment.placeholder')}
+                  {...field}
+                />
+              )}
+            />
+            <FormFields
+              name="partner"
+              label={t('fields.partner.label')}
+              required
+              control={form.control}
+              loading={isLoadingPartners}
+              render={({ field }) => (
+                <Combobox
+                  searchable
+                  disabled={!id}
+                  options={memoPartners}
+                  placeholder={t('fields.partner.placeholder')}
                   {...field}
                 />
               )}
@@ -318,6 +343,8 @@ const UpsertApplicant: React.FC<IUpsertApplicantProps> = () => {
               control={form.control}
               render={({ field }) => (
                 <Combobox
+                  searchable
+                  options={countryOfResidenceOptions}
                   placeholder={t('fields.nationality.placeholder')}
                   {...field}
                 />
@@ -327,9 +354,26 @@ const UpsertApplicant: React.FC<IUpsertApplicantProps> = () => {
               name="preferredJobTitle"
               label={t('fields.preferredJobTitle.label')}
               control={form.control}
+              loading={isLoadingVacancies}
               render={({ field }) => (
-                <Input
+                <Combobox
+                  searchable
+                  options={memoVacancies}
                   placeholder={t('fields.preferredJobTitle.placeholder')}
+                  {...field}
+                />
+              )}
+            />
+            <FormFields
+              name="languages"
+              label={t('fields.languages.label')}
+              control={form.control}
+              render={({ field }) => (
+                <Combobox
+                  multiple
+                  searchable
+                  options={languagesOptions}
+                  placeholder={t('fields.languages.placeholder')}
                   {...field}
                 />
               )}
@@ -341,7 +385,9 @@ const UpsertApplicant: React.FC<IUpsertApplicantProps> = () => {
           <Button variant="outline" type="button">
             {t('buttons.cancel')}
           </Button>
-          <Button type="submit">{t('buttons.submit')}</Button>
+          <Button type="submit" disabled={isPendingCreateApplicant}>
+            {t('buttons.submit')}
+          </Button>
         </div>
       </form>
     </Form>

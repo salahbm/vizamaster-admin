@@ -1,6 +1,9 @@
 'use client';
 
+import { useRouter } from 'next/navigation';
+
 import { User } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -13,6 +16,8 @@ import {
 import { useLogout } from '@/hooks/auth/use-logout';
 
 const Avatar = () => {
+  const router = useRouter();
+  const t = useTranslations('Common');
   const { mutateAsync: logout } = useLogout();
 
   return (
@@ -24,11 +29,11 @@ const Avatar = () => {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" forceMount className="w-40">
-        <DropdownMenuItem>
-          <button type="button">Profile</button>
+        <DropdownMenuItem onClick={() => router.push('/settings/preferences')}>
+          <button type="button">{t('profile')}</button>
         </DropdownMenuItem>
         <DropdownMenuItem onClick={async () => await logout()}>
-          Logout
+          {t('logout')}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

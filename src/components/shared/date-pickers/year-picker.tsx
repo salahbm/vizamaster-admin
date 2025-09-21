@@ -6,7 +6,7 @@ import { cn } from '@/lib/utils';
 
 interface YearPickerProps {
   value?: Date;
-  onValueChange?: (date: Date) => void;
+  onChange?: (date: Date) => void;
   minDate?: Date;
   maxDate?: Date;
   className?: string;
@@ -15,7 +15,7 @@ interface YearPickerProps {
 
 export function YearPicker({
   value,
-  onValueChange,
+  onChange,
   minDate = new Date('1900-01-01'),
   maxDate = new Date('2100-12-31'),
   className,
@@ -56,21 +56,21 @@ export function YearPicker({
   // Select a year
   const handleSelectYear = React.useCallback(
     (year: number) => {
-      if (!onValueChange) return;
+      if (!onChange) return;
 
       const newDate = new Date(currentDate);
       newDate.setFullYear(year);
 
       // Ensure date is within min/max range
       if (newDate < minDate) {
-        onValueChange(new Date(minDate));
+        onChange(new Date(minDate));
       } else if (newDate > maxDate) {
-        onValueChange(new Date(maxDate));
+        onChange(new Date(maxDate));
       } else {
-        onValueChange(newDate);
+        onChange(newDate);
       }
     },
-    [currentDate, onValueChange, minDate, maxDate],
+    [currentDate, onChange, minDate, maxDate],
   );
 
   // Calculate end year for display

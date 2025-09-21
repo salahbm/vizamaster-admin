@@ -5,42 +5,21 @@ import { cn } from '@/lib/utils';
 interface TimeInputProps
   extends Omit<
     React.InputHTMLAttributes<HTMLInputElement>,
-    'type' | 'onChange'
+    'type' | 'onChange' | 'value'
   > {
-  value?: string;
+  value?: string; // "HH:mm"
   onChange?: (value: string) => void;
-  onValueChange?: (value: Date) => void;
 }
 
 const TimeInput = React.forwardRef<HTMLInputElement, TimeInputProps>(
-  ({ className, value, onChange, onValueChange, ...props }, ref) => {
-    // Prevent infinite loops by using a ref to track if we're handling a time button click
-    const isTimeButtonClick = React.useRef(false);
-
+  ({ className, value, onChange, ...props }, ref) => {
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-      if (isTimeButtonClick.current) {
-        isTimeButtonClick.current = false;
-        return;
-      }
-
-      const newValue = e.target.value;
-      onChange?.(newValue);
+      onChange?.(e.target.value);
     };
 
-    const handleTimeButtonClick = React.useCallback(
-      (time: string) => {
-        isTimeButtonClick.current = true;
-        onChange?.(time);
-
-        if (onValueChange) {
-          const newDate = new Date();
-          const [hours, minutes] = time.split(':').map(Number);
-          newDate.setHours(hours || 0, minutes || 0);
-          onValueChange(newDate);
-        }
-      },
-      [onChange, onValueChange],
-    );
+    const handleTimeButtonClick = (time: string) => {
+      onChange?.(time);
+    };
 
     return (
       <div>
@@ -48,7 +27,7 @@ const TimeInput = React.forwardRef<HTMLInputElement, TimeInputProps>(
           type="time"
           value={value}
           onChange={handleChange}
-          step={60} // seconds step: 60 = 1 minute increments
+          step={60} // 1 minute increments
           className={cn(
             'border-input placeholder:text-muted-foreground focus-visible:ring-ring font-caption-1 w-full rounded border bg-transparent px-3 py-2 text-sm shadow-sm transition-colors focus-visible:ring-1 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50',
             className,

@@ -24,18 +24,20 @@ import { cn } from '@/lib/utils';
 
 import { FieldValueTypes } from '@/types/global';
 
+export interface IComboboxOption {
+  value: string;
+  label: string;
+  disabled?: boolean;
+  className?: string;
+  id?: string;
+}
+
 interface ComboboxProps
   extends Omit<
     React.ButtonHTMLAttributes<HTMLButtonElement>,
     'value' | 'onChange'
   > {
-  options?: Array<{
-    value: string;
-    label: string;
-    disabled?: boolean;
-    className?: string;
-    id?: string;
-  }>;
+  options?: Array<IComboboxOption>;
   label?: string | React.ReactNode;
   onChange: (value: string | string[]) => void;
   value: FieldValueTypes;

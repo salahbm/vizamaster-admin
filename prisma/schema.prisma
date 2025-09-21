@@ -145,7 +145,7 @@ model Applicant {
   firstName           String   @map("first_name")
   lastName            String   @map("last_name")
   middleName          String?  @map("middle_name")
-  gender              String   @default("male")
+  gender              Gender   @default(MALE)
 
   passportNumber      String   @map("passport_number") // Encrypt in DB/app
   passportPhoto       String   // URL to secure storage (e.g., S3)
@@ -162,12 +162,15 @@ model Applicant {
   state               String?  @map("state")
   zipCode             String?  @map("zip_code")
 
-  countryOfEmployment String   @map("country_of_employment")
   nationality         String?  // ISO code or full name
   dateOfBirth         DateTime? // For age/eligibility checks
-  preferredJobTitle   String?  // Quick filter for matching
+  preferredJobTitle   String?  @default("Worker")  // Quick filter for matching
 
+  countryOfEmployment String   @map("country_of_employment")
   partner             String   // e.g., recruiting agency
+
+  status              ApplicantStatus @default(NEW)
+  languages           String[] @map("languages")
 
   // Relations
   work                Work[]
@@ -189,10 +192,32 @@ model Applicant {
   @@index([isArchived])    // New: for active applicant lists
 }
 
+
+enum ApplicantStatus {
+  NEW                  // Just applied 
+  IN_PROGRESS  // Currently being processed
+  CONFIRMED_PROGRAM // Accepted into internship/training program
+
+  // Outcomes
+  HIRED              // Hired by hotel
+  HOTEL_REJECTED   // Refused by hotel
+  APPLICANT_REJECTED // Applicant refused/withdrews
+  FIRED              // Hired but later fired
+
+  // System/Meta
+  ARCHIVED        // Archived for record keeping
+}
+
+
 enum VisaStatus {
   STILL_WORKING
   RETURNED
   DEPARTED
+}
+
+enum Gender {
+  MALE
+  FEMALE
 }
 
 model Visa {

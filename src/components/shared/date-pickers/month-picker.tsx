@@ -9,7 +9,7 @@ import { cn } from '@/lib/utils';
 
 interface MonthPickerProps {
   value?: Date;
-  onValueChange?: (date: Date) => void;
+  onChange?: (date: Date) => void;
   minDate?: Date;
   maxDate?: Date;
   className?: string;
@@ -17,7 +17,7 @@ interface MonthPickerProps {
 
 export function MonthPicker({
   value,
-  onValueChange,
+  onChange,
   minDate = new Date('1900-01-01'),
   maxDate = new Date('2100-12-31'),
   className,
@@ -50,7 +50,7 @@ export function MonthPicker({
   // Select a month
   const handleSelectMonth = React.useCallback(
     (monthIndex: number) => {
-      if (!onValueChange) return;
+      if (!onChange) return;
 
       const newDate = new Date(currentDate);
       newDate.setFullYear(year);
@@ -58,14 +58,14 @@ export function MonthPicker({
 
       // Ensure date is within min/max range
       if (newDate < minDate) {
-        onValueChange(new Date(minDate));
+        onChange(new Date(minDate));
       } else if (newDate > maxDate) {
-        onValueChange(new Date(maxDate));
+        onChange(new Date(maxDate));
       } else {
-        onValueChange(newDate);
+        onChange(newDate);
       }
     },
-    [currentDate, year, onValueChange, minDate, maxDate],
+    [currentDate, year, onChange, minDate, maxDate],
   );
 
   return (
