@@ -6,6 +6,7 @@ import { parseAsString, useQueryState } from 'nuqs';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 import ApplicantUserInfo from './user-info';
+import ApplicantWorkInfo from './work-info';
 
 interface IUpsertApplicantProps {
   id?: string;
@@ -68,6 +69,9 @@ export const UpsertApplicant: React.FC<IUpsertApplicantProps> = ({
           countryOfEmployment={countryOfEmployment}
           partner={partner}
         />
+      </TabsContent>
+      <TabsContent value="professional-info">
+        <ApplicantWorkInfo id={id} />
       </TabsContent>
     </Tabs>
   );

@@ -206,23 +206,10 @@
       "archived": "Archived"
     },
     "form": {
-      "sections": {
-        "personalInfo": {
-          "title": "Personal Information",
-          "description": "Basic personal details of the applicant."
-        },
-        "contactInfo": {
-          "title": "Contact Information",
-          "description": "How to get in touch with the applicant."
-        },
-        "addressInfo": {
-          "title": "Address Information",
-          "description": "Applicant's residential address."
-        },
-        "employmentInfo": {
-          "title": "Employment & Nationality",
-          "description": "Details about employment and nationality."
-        }
+      "buttons": {
+        "submit": "Submit Applicant",
+        "cancel": "Cancel",
+        "addWork": "Add Work Experience"
       },
       "fields": {
         "firstName": {
@@ -300,10 +287,6 @@
           "label": "Nationality",
           "placeholder": "Select nationality"
         },
-        "preferredJobTitle": {
-          "label": "Preferred Job Title",
-          "placeholder": "e.g., Software Engineer"
-        },
         "partner": {
           "label": "Partner",
           "placeholder": "Select partner"
@@ -311,11 +294,59 @@
         "languages": {
           "label": "Languages",
           "placeholder": "Select languages"
+        },
+        "jobTitle": {
+          "label": "Job Title",
+          "placeholder": "e.g., Software Engineer"
+        },
+        "company": {
+          "label": "Company",
+          "placeholder": "e.g., Tech Corp"
+        },
+        "startDate": {
+          "label": "Start Date"
+        },
+        "endDate": {
+          "label": "End Date"
+        },
+        "location": {
+          "label": "Location",
+          "placeholder": "e.g., New York, NY"
+        },
+        "responsibilities": {
+          "label": "Responsibilities",
+          "placeholder": "Describe your key responsibilities"
+        },
+        "achievements": {
+          "label": "Achievements",
+          "placeholder": "List your key achievements (optional)"
         }
       },
-      "buttons": {
-        "submit": "Submit Applicant",
-        "cancel": "Cancel"
+      "sections": {
+        "personalInfo": {
+          "title": "Personal Information",
+          "description": "Basic personal details of the applicant."
+        },
+        "contactInfo": {
+          "title": "Contact Information",
+          "description": "How to get in touch with the applicant."
+        },
+        "addressInfo": {
+          "title": "Address Information",
+          "description": "Applicant's residential address."
+        },
+        "employmentInfo": {
+          "title": "Employment & Nationality",
+          "description": "Details about employment and nationality."
+        },
+        "workInfo": {
+          "title": "Work Experience",
+          "description": "Previous work experience and employment history.",
+          "empty": {
+            "title": "No work experience added",
+            "description": "Add your previous work experience to help us better understand your background."
+          }
+        }
       }
     },
     "validation": {
