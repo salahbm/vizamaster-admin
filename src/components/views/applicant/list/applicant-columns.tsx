@@ -285,7 +285,7 @@ const CellJobTitle = ({ row }: { row: Row<Applicant> }) => {
 const CellCountryOfEmployment = ({ row }: { row: Row<Applicant> }) => {
   const { getLabel } = useCodesStore();
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col capitalize">
       <span>{getLabel(row.original.countryOfEmployment as string)}</span>
       <span>{getLabel(row.original.partner as string)}</span>
     </div>

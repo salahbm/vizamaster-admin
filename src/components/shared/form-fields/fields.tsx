@@ -32,7 +32,7 @@ export const FormFields = memo(
       loading,
       render,
     } = props;
-    if (loading) return <FieldSkeleton />;
+    if (loading) return <FieldSkeleton className={className} />;
     return (
       <FormField
         control={control}

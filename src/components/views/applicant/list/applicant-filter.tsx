@@ -35,6 +35,29 @@ interface IApplicantFilterProps {
   country?: string;
 }
 
+const statusOptions = [
+  { value: 'all', label: 'Common.all' },
+  { value: 'NEW', label: 'Common.statuses.new' },
+  {
+    value: 'IN_PROGRESS',
+    label: 'Common.statuses.inProgress',
+  },
+  {
+    value: 'CONFIRMED_PROGRAM',
+    label: 'Common.statuses.confirmedProgram',
+  },
+  { value: 'HIRED', label: 'Common.statuses.hired' },
+  {
+    value: 'HOTEL_REJECTED',
+    label: 'Common.statuses.hotelRejected',
+  },
+  { value: 'FIRED', label: 'Common.statuses.fired' },
+  {
+    value: 'APPLICANT_REJECTED',
+    label: 'Common.statuses.applicantRejected',
+  },
+];
+
 const ApplicantFilter: React.FC<IApplicantFilterProps> = ({
   form,
   onSubmit,
@@ -75,13 +98,12 @@ const ApplicantFilter: React.FC<IApplicantFilterProps> = ({
           <FormFields
             name="search"
             control={form.control}
-            className="w-full"
+            className="shrink-0 md:w-[30rem]"
             render={({ field }) => (
               <Input
                 id="search"
                 type="search"
                 placeholder={t('Common.searchIdName')}
-                className="shrink-0 md:w-[30rem]"
                 maxLength={100}
                 value={field.value || ''}
                 onChange={field.onChange}
@@ -99,13 +121,12 @@ const ApplicantFilter: React.FC<IApplicantFilterProps> = ({
               <FormFields
                 name="country"
                 control={form.control}
-                className="w-full"
+                className="shrink-0 md:w-[30rem]"
                 loading={isLoadingCountries}
                 render={({ field }) => (
                   <Combobox
                     id="country"
                     placeholder={t('Common.country')}
-                    className="shrink-0 md:w-[30rem]"
                     options={memoCountries}
                     value={field.value}
                     onChange={field.onChange}
@@ -121,13 +142,12 @@ const ApplicantFilter: React.FC<IApplicantFilterProps> = ({
               <FormFields
                 name="partner"
                 control={form.control}
-                className="w-full"
+                className="shrink-0 md:w-[30rem]"
                 loading={isLoadingPartners}
                 render={({ field }) => (
                   <Combobox
                     id="partner"
                     placeholder={t('Common.partner')}
-                    className="shrink-0 md:w-[30rem]"
                     options={memoPartners}
                     value={field.value}
                     onChange={field.onChange}
@@ -144,14 +164,13 @@ const ApplicantFilter: React.FC<IApplicantFilterProps> = ({
           </label>
           <FormFields
             name="jobTitle"
-            className="w-full"
+            className="shrink-0 md:w-[30rem]"
             control={form.control}
             loading={isLoadingVacancies}
             render={({ field }) => (
               <Combobox
                 id="jobTitle"
                 placeholder={t('Common.jobTitle')}
-                className="shrink-0 md:w-[30rem]"
                 options={memoVacancies}
                 value={field.value}
                 onChange={field.onChange}
@@ -167,39 +186,17 @@ const ApplicantFilter: React.FC<IApplicantFilterProps> = ({
           <FormFields
             name="status"
             control={form.control}
-            className="w-full"
             render={({ field }) => (
               <RadioGroup
                 {...field}
                 defaultValue="all"
                 className="font-body-2 flex flex-wrap items-center justify-start gap-4"
               >
-                {[
-                  { value: 'all', label: t('Common.all') },
-                  { value: 'NEW', label: t('Common.statuses.new') },
-                  {
-                    value: 'IN_PROGRESS',
-                    label: t('Common.statuses.inProgress'),
-                  },
-                  {
-                    value: 'CONFIRMED_PROGRAM',
-                    label: t('Common.statuses.confirmedProgram'),
-                  },
-                  { value: 'HIRED', label: t('Common.statuses.hired') },
-                  {
-                    value: 'HOTEL_REJECTED',
-                    label: t('Common.statuses.hotelRejected'),
-                  },
-                  { value: 'FIRED', label: t('Common.statuses.fired') },
-                  {
-                    value: 'APPLICANT_REJECTED',
-                    label: t('Common.statuses.applicantRejected'),
-                  },
-                ].map((option) => (
+                {statusOptions.map((option) => (
                   <div key={option.value} className="flex items-center gap-2">
                     <RadioGroupItem id={option.value} value={option.value} />
                     <Label className="font-body-2" htmlFor={option.value}>
-                      {option.label}
+                      {t(option.label)}
                     </Label>
                   </div>
                 ))}
