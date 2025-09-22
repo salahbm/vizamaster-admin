@@ -28,7 +28,10 @@ export const UpsertApplicant: React.FC<IUpsertApplicantProps> = ({
   return (
     <Tabs defaultValue="user-info" value={step} onValueChange={setStep}>
       {id && (
-        <TabsList variant="outline" className="mb-10 justify-start">
+        <TabsList
+          variant="outline"
+          className="no-scrollbar mb-10 justify-start overflow-x-auto"
+        >
           <TabsTrigger
             value="user-info"
             variant="outline"

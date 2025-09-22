@@ -75,6 +75,58 @@ class ApplicantService {
       throw handlePrismaError(error, 'Applicants');
     }
   }
+
+  // ───────────────── GET APPLICANT BY ID ────────────────── //
+  async getApplicantById(id: string) {
+    try {
+      const applicant = await this.repository.getApplicantById(id);
+
+      if (!applicant) throw new NotFoundError('Applicant not found');
+
+      return createResponse(applicant);
+    } catch (error) {
+      throw handlePrismaError(error, 'Applicant');
+    }
+  }
+
+  // ───────────────── GET APPLICANT WORK ────────────────── //
+  async getApplicantWork(applicantId: string) {
+    try {
+      const work = await this.repository.getApplicantWork(applicantId);
+
+      if (!work) throw new NotFoundError('Work not found');
+
+      return createResponse(work);
+    } catch (error) {
+      throw handlePrismaError(error, 'Work');
+    }
+  }
+
+  // ───────────────── GET APPLICANT FILES ────────────────── //
+  async getApplicantFiles(applicantId: string) {
+    try {
+      const files = await this.repository.getApplicantFiles(applicantId);
+
+      if (!files) throw new NotFoundError('Files not found');
+
+      return createResponse(files);
+    } catch (error) {
+      throw handlePrismaError(error, 'Files');
+    }
+  }
+
+  // ───────────────── GET APPLICANT VISA ────────────────── //
+  async getApplicantVisa(applicantId: string) {
+    try {
+      const visa = await this.repository.getApplicantVisa(applicantId);
+
+      if (!visa) throw new NotFoundError('Visa not found');
+
+      return createResponse(visa);
+    } catch (error) {
+      throw handlePrismaError(error, 'Visa');
+    }
+  }
 }
 
 export const applicantService = new ApplicantService(new ApplicantRepository());

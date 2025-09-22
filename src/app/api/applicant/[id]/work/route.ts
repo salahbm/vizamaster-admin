@@ -10,8 +10,8 @@ export const GET = async (
   const { id } = await params;
   if (!id) throw new UnauthorizedError('Unauthorized');
   try {
-    const applicant = await applicantService.getApplicantById(id);
-    return NextResponse.json(applicant);
+    const work = await applicantService.getApplicantWork(id);
+    return NextResponse.json(work);
   } catch (error) {
     return handleApiError(error);
   }

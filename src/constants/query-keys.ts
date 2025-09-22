@@ -7,6 +7,9 @@ export const QueryKeys = {
   applicants: {
     all: ['applicants'],
     details: ['applicants', 'details'],
+    work: ['applicants', 'work'],
+    visa: ['applicants', 'visa'],
+    files: ['applicants', 'files'],
   },
 
   settings: {

@@ -8,6 +8,7 @@ import { useForm } from 'react-hook-form';
 
 import { DatePicker } from '@/components/shared/date-pickers';
 import { FormFields } from '@/components/shared/form-fields';
+import { FormSkeleton } from '@/components/skeletons';
 import { Button } from '@/components/ui/button';
 import { Combobox } from '@/components/ui/combobox';
 import { Form } from '@/components/ui/form';
@@ -19,7 +20,7 @@ import { mapOptions } from '@/lib/utils';
 
 import { getCountries, getLanguages } from '@/utils/intl';
 
-import { useCreateApplicant } from '@/hooks/applicant';
+import { useApplicantDetail, useCreateApplicant } from '@/hooks/applicant';
 import { useCodes } from '@/hooks/settings/codes';
 import { ApplicantDto, TApplicantDto } from '@/server/common/dto/applicant.dto';
 
@@ -38,6 +39,8 @@ const ApplicantUserInfo: React.FC<IApplicantUserInfoProps> = ({
 }) => {
   const locale = useLocale();
   const t = useTranslations('applicant.form');
+
+  const { data: applicant, isLoading } = useApplicantDetail(id);
 
   // QUERIES
   const { data: countries, isLoading: isLoadingCountries } = useCodes(
@@ -69,6 +72,8 @@ const ApplicantUserInfo: React.FC<IApplicantUserInfoProps> = ({
     resolver: zodResolver(ApplicantDto),
     defaultValues: applicantDefaults(countryOfEmployment, partner),
   });
+
+  if (isLoading) return <FormSkeleton />;
 
   const onSubmit = (data: TApplicantDto) => {
     if (id) {

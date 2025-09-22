@@ -7,10 +7,16 @@ import { ApplicantHelper } from './applicant.helper';
 
 export class ApplicantRepository {
   private readonly prismaApplicant: PrismaClient['applicant'];
+  private readonly prismaWork: PrismaClient['work'];
+  private readonly prismaFile: PrismaClient['file'];
+  private readonly prismaVisa: PrismaClient['visa'];
   private readonly applicantHelper: ApplicantHelper;
 
   constructor() {
     this.prismaApplicant = prisma.applicant;
+    this.prismaWork = prisma.work;
+    this.prismaFile = prisma.file;
+    this.prismaVisa = prisma.visa;
     this.applicantHelper = new ApplicantHelper();
   }
 
@@ -74,5 +80,22 @@ export class ApplicantRepository {
       });
 
     return this.prismaApplicant.count({ where });
+  }
+
+  // ───────────────── GET APPLICANT BY ID ────────────────── //
+  async getApplicantById(id: string) {
+    return await this.prismaApplicant.findUnique({ where: { id } });
+  }
+
+  async getApplicantWork(applicantId: string) {
+    return await this.prismaWork.findMany({ where: { applicantId } });
+  }
+
+  async getApplicantFiles(applicantId: string) {
+    return await this.prismaFile.findMany({ where: { applicantId } });
+  }
+
+  async getApplicantVisa(applicantId: string) {
+    return await this.prismaVisa.findMany({ where: { applicantId } });
   }
 }
