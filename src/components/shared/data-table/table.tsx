@@ -4,6 +4,7 @@ import { flexRender } from '@tanstack/react-table';
 import { useTranslations } from 'next-intl';
 
 import { DataTableSkeleton } from '@/components/skeletons/data-table-skeleton';
+import { Button } from '@/components/ui/button';
 import {
   Table,
   TableBody,
@@ -18,6 +19,7 @@ import { cn } from '@/lib/utils';
 
 import { DataTableProps } from '@/types/data-table';
 
+import { Excel } from '../icons';
 import Pagination from './pagination';
 import { DataTableResetSortings } from './reset-sortings';
 import { DataTableViewOptions } from './view-options';
@@ -55,6 +57,17 @@ export function DataTable<TData>({
       >
         {children}
         <div className="flex w-full items-center gap-2">
+          {table.options.meta?.includeDownload && (
+            <Button
+              aria-label="Download CSV"
+              role="button"
+              variant="ghost"
+              size="sm"
+            >
+              <Excel className="size-4" />
+              {t('Common.download')}
+            </Button>
+          )}
           <DataTableViewOptions table={table} />
           {table.options.meta?.includeResetSortings && (
             <DataTableResetSortings

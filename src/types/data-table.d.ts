@@ -37,6 +37,7 @@ declare module '@tanstack/table-core' {
     form?: UseFormReturn<TData, unknown, undefined>;
     includePaginationReset?: boolean;
     includeResetSortings?: boolean;
+    includeDownload?: boolean;
   }
 }
 
@@ -48,6 +49,7 @@ declare module '@tanstack/react-table' {
     form?: UseFormReturn<TData, unknown, undefined>;
     label?: string;
     includeResetSortings?: boolean;
+    includeDownload?: boolean;
   }
 }
 

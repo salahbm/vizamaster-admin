@@ -195,7 +195,6 @@ const ApplicantFilter: React.FC<IApplicantFilterProps> = ({
                     value: 'APPLICANT_REJECTED',
                     label: t('Common.statuses.applicantRejected'),
                   },
-                  { value: 'ARCHIVED', label: t('Common.statuses.archived') },
                 ].map((option) => (
                   <div key={option.value} className="flex items-center gap-2">
                     <RadioGroupItem id={option.value} value={option.value} />

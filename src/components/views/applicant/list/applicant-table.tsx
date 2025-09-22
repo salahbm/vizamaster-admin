@@ -104,7 +104,7 @@ export const ApplicantTable = ({
         right: ['actions'],
       },
     },
-    meta: { t, includeResetSortings: false },
+    meta: { t, includeResetSortings: false, includeDownload: true },
   });
 
   const onSubmit = async (data: TApplicantFilter) => {
