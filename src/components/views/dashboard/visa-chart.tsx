@@ -73,18 +73,18 @@ const VisaStatusChart: React.FC<IVisaStatusChartProps> = () => {
   };
 
   return (
-    <Card className="col-span-2">
-      <CardHeader>
+    <Card className="border-0 p-0 md:border md:p-0">
+      <CardHeader className="px-2 pt-2 pb-0 md:px-6 md:pt-6 md:pb-2">
         <CardTitle className="text-base font-medium">
           {t('dashboard.charts.visa.title')}
         </CardTitle>
       </CardHeader>
-      <CardContent>
+      <CardContent className="p-2 md:p-6">
         <div className="h-[350px]">
           <ResponsiveContainer width="100%" height="100%">
             <BarChart
               data={data}
-              margin={{ top: 10, right: 10, left: 10, bottom: 20 }}
+              margin={{ top: 10, right: 10, left: 10, bottom: -30 }}
             >
               <CartesianGrid
                 strokeDasharray="3 3"
@@ -100,6 +100,7 @@ const VisaStatusChart: React.FC<IVisaStatusChartProps> = () => {
                 interval={0}
                 angle={-45}
                 textAnchor="end"
+                height={60}
               />
               <YAxis
                 tickLine={false}
@@ -113,7 +114,7 @@ const VisaStatusChart: React.FC<IVisaStatusChartProps> = () => {
                   if (active && payload && payload.length) {
                     const data = payload[0].payload as VisaData;
                     return (
-                      <div className="bg-background rounded-lg border p-2 shadow-sm">
+                      <div className="bg-background rounded-lg border p-2 shadow-md">
                         <div className="grid gap-2">
                           <div className="font-medium">{data.partner}</div>
                           {payload.map((entry) => (
@@ -149,8 +150,11 @@ const VisaStatusChart: React.FC<IVisaStatusChartProps> = () => {
                 }}
               />
               <Legend
+                verticalAlign="bottom"
+                align="center"
+                wrapperStyle={{ bottom: -10, left: 0, right: 0 }}
                 content={({ payload }) => (
-                  <div className="flex justify-center gap-4 pt-4">
+                  <div className="mt-8 flex justify-center gap-4">
                     {payload?.map((entry) => (
                       <div
                         key={entry.value}

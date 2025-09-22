@@ -41,13 +41,13 @@ const ApplicantStatusChart: React.FC<IApplicantStatusChartProps> = () => {
   const t = useTranslations();
 
   const statusColors = {
-    NEW: 'rgb(59 130 246)', // info blue
-    IN_PROGRESS: 'rgb(234 179 8)', // warning yellow
-    CONFIRMED_PROGRAM: 'rgb(34 197 94)', // success green
-    HIRED: 'rgb(22 163 74)', // darker success
-    HOTEL_REJECTED: 'rgb(239 68 68)', // destructive red
-    APPLICANT_REJECTED: 'rgb(220 38 38)', // darker destructive
-    FIRED: 'rgb(185 28 28)', // darkest destructive
+    NEW: '#0079BE', // info blue
+    IN_PROGRESS: '#F7D800', // warning yellow
+    CONFIRMED_PROGRAM: '#00B359', // success green
+    HIRED: '#009543', // darker success
+    HOTEL_REJECTED: '#FF5151', // destructive red
+    APPLICANT_REJECTED: '#FF3333', // darker destructive
+    FIRED: '#BA000D', // darkest destructive
   };
 
   // Mock data - replace with real data later
@@ -62,19 +62,19 @@ const ApplicantStatusChart: React.FC<IApplicantStatusChartProps> = () => {
       id: 'IN_PROGRESS',
       name: t('Common.statuses.inProgress'),
       value: 145,
-      color: '#eab308', // yellow-500
+      color: statusColors.IN_PROGRESS,
     },
     {
       id: 'CONFIRMED_PROGRAM',
       name: t('Common.statuses.confirmedProgram'),
       value: 65,
-      color: '#22c55e', // green-500
+      color: statusColors.CONFIRMED_PROGRAM,
     },
     {
       id: 'HIRED',
       name: t('Common.statuses.hired'),
       value: 89,
-      color: '#10b981', // emerald-500
+      color: statusColors.HIRED,
     },
     {
       id: 'HOTEL_REJECTED',
@@ -103,13 +103,13 @@ const ApplicantStatusChart: React.FC<IApplicantStatusChartProps> = () => {
   const total = calculateTotal(data);
 
   return (
-    <Card>
-      <CardHeader>
+    <Card className="border-0 p-0 md:border md:p-0">
+      <CardHeader className="px-2 pt-2 pb-0 md:px-6 md:pt-6 md:pb-2">
         <CardTitle className="text-base font-medium">
           {t('dashboard.charts.status.title')}
         </CardTitle>
       </CardHeader>
-      <CardContent>
+      <CardContent className="p-2 md:p-6">
         <div className="h-[350px]">
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>
@@ -117,8 +117,8 @@ const ApplicantStatusChart: React.FC<IApplicantStatusChartProps> = () => {
                 data={data}
                 cx="50%"
                 cy="50%"
-                innerRadius={50}
-                outerRadius={100}
+                innerRadius={70}
+                outerRadius={140}
                 paddingAngle={2}
                 dataKey="value"
               >
@@ -131,7 +131,7 @@ const ApplicantStatusChart: React.FC<IApplicantStatusChartProps> = () => {
                   if (active && payload && payload.length) {
                     const data = payload[0].payload;
                     return (
-                      <div className="bg-background rounded-lg border p-2 shadow-sm">
+                      <div className="bg-background rounded-lg border p-2 shadow-md">
                         <div className="grid grid-cols-2 gap-2">
                           <div className="flex items-center gap-2">
                             <div
