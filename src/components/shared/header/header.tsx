@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button';
 import { BRAND } from '@/constants/brand';
 import { IMAGES } from '@/constants/images';
 
+import { useAllCodes } from '@/hooks/settings/codes';
 import { Link } from '@/i18n/routing';
 import { useSidebar } from '@/store/sidebar';
 
@@ -18,6 +19,9 @@ import { ThemeToggle } from './theme-toggle';
 
 export default function Header() {
   const { toggle } = useSidebar();
+
+  // included here as header is rendered on every page
+  useAllCodes();
 
   return (
     <header className="bg-background sticky top-0 z-40 w-full border-b">
