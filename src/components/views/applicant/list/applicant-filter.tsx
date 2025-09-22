@@ -18,7 +18,7 @@ import { mapOptions } from '@/lib/utils';
 
 import { useCodes } from '@/hooks/settings/codes';
 
-import { applicantQueries } from '../create/applicant.helpers';
+import { applicantQueries } from '../upsert/applicant.helpers';
 
 export type TApplicantFilter = {
   search: string;

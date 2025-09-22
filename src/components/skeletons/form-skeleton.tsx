@@ -27,23 +27,16 @@ export const FormSkeleton = ({
     );
   };
 
-  const renderSection = (index: number) => {
-    return (
-      <div key={index}>
-        <Skeleton className="mb-2 h-7 w-[200px]" /> {/* Section Title */}
-        <Skeleton className="mb-6 h-4 w-[300px]" /> {/* Section Description */}
-        {renderFields(fieldsPerSection)}
-      </div>
-    );
-  };
-
   return (
     <div className="animate-pulse space-y-8">
       {Array.from({ length: sections }).map((_, index) => (
-        <>
-          {renderSection(index)}
+        <div key={index}>
+          <Skeleton className="mb-2 h-7 w-[200px]" /> {/* Section Title */}
+          <Skeleton className="mb-6 h-4 w-[300px]" />
+          {/* Section Description */}
+          {renderFields(fieldsPerSection)}
           <Separator className="my-8" />
-        </>
+        </div>
       ))}
 
       {showActions && (

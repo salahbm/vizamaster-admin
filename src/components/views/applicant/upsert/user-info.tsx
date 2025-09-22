@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useLocale, useTranslations } from 'next-intl';
@@ -72,6 +72,14 @@ const ApplicantUserInfo: React.FC<IApplicantUserInfoProps> = ({
     resolver: zodResolver(ApplicantDto),
     defaultValues: applicantDefaults(countryOfEmployment, partner),
   });
+
+  useEffect(() => {
+    if (applicant)
+      form.reset({
+        ...applicant,
+        passportPhoto: null,
+      });
+  }, [applicant, form]);
 
   if (isLoading) return <FormSkeleton />;
 
