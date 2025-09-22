@@ -41,13 +41,13 @@ const ApplicantStatusChart: React.FC<IApplicantStatusChartProps> = () => {
   const t = useTranslations();
 
   const statusColors = {
-    NEW: '#0079BE', // info blue
-    IN_PROGRESS: '#F7D800', // warning yellow
-    CONFIRMED_PROGRAM: '#00B359', // success green
-    HIRED: '#009543', // darker success
-    HOTEL_REJECTED: '#FF5151', // destructive red
-    APPLICANT_REJECTED: '#FF3333', // darker destructive
-    FIRED: '#BA000D', // darkest destructive
+    NEW: '#6BB8E5', // soft sky blue
+    IN_PROGRESS: '#FFE066', // warm pastel yellow
+    CONFIRMED_PROGRAM: '#7DDBA1', // minty soft green
+    HIRED: '#4CAF7D', // muted medium green
+    HOTEL_REJECTED: '#FF8A80', // soft coral red
+    APPLICANT_REJECTED: '#FF6B6B', // warm strawberry red
+    FIRED: '#D9534F', // softer brick red
   };
 
   // Mock data - replace with real data later

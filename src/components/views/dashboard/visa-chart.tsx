@@ -67,9 +67,9 @@ const VisaStatusChart: React.FC<IVisaStatusChartProps> = () => {
   ].sort((a, b) => b.total - a.total); // Sort by total count descending
 
   const statusColors = {
-    stillWorking: 'oklch(0.78 0.18 145)', // fresh green, positive & ongoing
-    returned: 'oklch(0.63 0.16 250)', // cool blue for neutral/complete
-    departed: 'oklch(0.72 0.2 35.5)', // warm orange (matches primary) for departures
+    stillWorking: 'oklch(0.82 0.14 150)', // softer fresh green (minty, calm positive)
+    returned: 'oklch(0.75 0.12 250)', // softer lavender-blue (peaceful neutral)
+    departed: 'oklch(0.78 0.15 40)', // warm pastel orange (gentle departure)
   };
 
   return (

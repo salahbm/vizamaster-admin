@@ -59,8 +59,9 @@ const ApplicantTrendChart: React.FC<IApplicantTrendChartProps> = () => {
             >
               <defs>
                 <linearGradient id="colorCount" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.8} />
-                  <stop offset="95%" stopColor="#3b82f6" stopOpacity={0} />
+                  <stop offset="5%" stopColor="#38bdf8" stopOpacity={0.8} />{' '}
+                  {/* cyan-400 */}
+                  <stop offset="95%" stopColor="#38bdf8" stopOpacity={0} />
                 </linearGradient>
               </defs>
               <XAxis
@@ -106,7 +107,7 @@ const ApplicantTrendChart: React.FC<IApplicantTrendChartProps> = () => {
               <Area
                 type="monotone"
                 dataKey="count"
-                stroke="#3b82f6"
+                stroke="oklch(0.80 0.13 220)"
                 fillOpacity={1}
                 fill="url(#colorCount)"
               />
