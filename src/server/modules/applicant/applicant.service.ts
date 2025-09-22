@@ -89,6 +89,9 @@ class ApplicantService {
     }
   }
 
+  /* *****************************************************************
+   * GET
+   * ***************************************************************** */
   // ───────────────── GET APPLICANT WORK ────────────────── //
   async getApplicantWork(applicantId: string) {
     try {
@@ -125,6 +128,22 @@ class ApplicantService {
       return createResponse(visa);
     } catch (error) {
       throw handlePrismaError(error, 'Visa');
+    }
+  }
+
+  /* *****************************************************************
+   * PUT
+   * ***************************************************************** */
+  // ───────────────── PUT APPLICANT ────────────────── //
+  async updateApplicant(id: string, data: Applicant) {
+    try {
+      const applicant = await this.repository.updateApplicant(id, data);
+
+      if (!applicant) throw new NotFoundError('Applicant not found');
+
+      return createResponse(applicant);
+    } catch (error) {
+      throw handlePrismaError(error, 'Applicant');
     }
   }
 }

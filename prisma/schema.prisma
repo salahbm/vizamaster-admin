@@ -202,9 +202,6 @@ enum ApplicantStatus {
   HOTEL_REJECTED   // Refused by hotel
   APPLICANT_REJECTED // Applicant refused/withdrews
   FIRED              // Hired but later fired
-
-  // System/Meta
-  ARCHIVED        // Archived for record keeping
 }
 
 

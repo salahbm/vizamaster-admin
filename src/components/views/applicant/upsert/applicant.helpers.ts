@@ -1,3 +1,4 @@
+import { ApplicantStatus } from '@/generated/prisma';
 import { TApplicantDto } from '@/server/common/dto/applicant.dto';
 
 export function applicantQueries(group: string) {
@@ -34,6 +35,7 @@ export const applicantDefaults = (
     nationality: '',
     languages: [],
     preferredJobTitle: '',
+    status: 'NEW' as ApplicantStatus,
   };
 };
 

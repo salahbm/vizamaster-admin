@@ -31,6 +31,18 @@ export const ApplicantDto = z.object({
   nationality: z.string().nullable(),
   languages: z.array(z.string()),
   preferredJobTitle: z.string().nullable(),
+  status: z
+    .enum([
+      'NEW',
+      'IN_PROGRESS',
+      'CONFIRMED_PROGRAM',
+      'HIRED',
+      'HOTEL_REJECTED',
+      'APPLICANT_REJECTED',
+      'FIRED',
+    ])
+    .default('NEW')
+    .optional(),
 });
 
 export type TApplicantDto = z.infer<typeof ApplicantDto>;

@@ -67,6 +67,7 @@ const QueryProvider = ({ children }: PropsWithChildren) => {
             _context: unknown,
             mutation: { meta?: { toast?: boolean } },
           ) => {
+            console.log(`🚀 ~ data:`, data);
             console.info('Mutation success:', data);
             // pass toast: false to disable toast default behavior is true
             if (data && mutation.meta?.toast !== false)

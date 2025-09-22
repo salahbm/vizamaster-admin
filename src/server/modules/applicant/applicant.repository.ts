@@ -98,4 +98,9 @@ export class ApplicantRepository {
   async getApplicantVisa(applicantId: string) {
     return await this.prismaVisa.findMany({ where: { applicantId } });
   }
+
+  // ───────────────── UPDATE APPLICANT ────────────────── //
+  async updateApplicant(id: string, data: Applicant) {
+    return await this.prismaApplicant.update({ where: { id }, data });
+  }
 }
