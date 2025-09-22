@@ -111,6 +111,13 @@ export const sidebarFormSchema = z
           message: 'Partner is required for dependent routes',
         });
       }
+      if (data.child === 'true' && !data.parentId) {
+        ctx.addIssue({
+          path: ['country'],
+          code: 'custom',
+          message: 'Parent is required for child routes',
+        });
+      }
     }
   });
 
@@ -121,7 +128,11 @@ export const mapFormIntoSubmitData = (
 ): TCreateSidebarDto => {
   const mapHrefIntoSubmitData = (): string => {
     if (data.independent) return data.href!;
-    return `${data.country}${data.partner ? `/${data.partner}` : ''}`;
+    const doesApplicantExist = data.href?.includes('applicant');
+    if (doesApplicantExist) {
+      return `${data.country}${data.partner ? `/${data.partner}` : ''}`;
+    }
+    return `/applicant/${data.country}${data.partner ? `/${data.partner}` : ''}`;
   };
   return {
     labelEn: data.labelEn,

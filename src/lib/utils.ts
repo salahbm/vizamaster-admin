@@ -56,8 +56,10 @@ export const mapOptions = (
   locale?: string,
 ): Array<IComboboxOption> =>
   options?.map((option) => ({
+    id: option.id,
     value: option.code,
     label: locale === 'ru' ? option.labelRu : option.labelEn,
+    className: 'capitalize',
   })) || [];
 
 export const mapFilesIntoUrl = (files: FileMetadata[] | null): string =>

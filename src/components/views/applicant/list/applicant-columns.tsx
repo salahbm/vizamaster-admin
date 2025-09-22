@@ -22,6 +22,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 
 import { Applicant } from '@/generated/prisma';
+import { useDeleteApplicant } from '@/hooks/applicant';
 import { useAlert } from '@/providers/alert';
 import { useCodesStore } from '@/store/use-codes-store';
 
@@ -285,6 +286,8 @@ const ActionsCell = ({ row }: { row: Row<Applicant> }) => {
   const alert = useAlert();
   const router = useRouter();
   const t = useTranslations();
+
+  const { mutateAsync: deleteApplicants } = useDeleteApplicant();
   return (
     <Fragment>
       <DropdownMenu>
@@ -310,7 +313,8 @@ const ActionsCell = ({ row }: { row: Row<Applicant> }) => {
               alert({
                 title: t('Common.delete'),
                 description: t('Common.messages.deleteDescription'),
-                //   onConfirm: async () => await deleteAdmin(row.original.id),
+                onConfirm: async () =>
+                  await deleteApplicants([row.original.id]),
                 confirmText: t('Common.delete'),
               })
             }

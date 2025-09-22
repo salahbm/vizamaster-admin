@@ -103,4 +103,11 @@ export class ApplicantRepository {
   async updateApplicant(id: string, data: Applicant) {
     return await this.prismaApplicant.update({ where: { id }, data });
   }
+
+  // ───────────────── DELETE APPLICANTS ────────────────── //
+  async deleteApplicants(ids: string[]) {
+    return await this.prismaApplicant.deleteMany({
+      where: { id: { in: ids } },
+    });
+  }
 }

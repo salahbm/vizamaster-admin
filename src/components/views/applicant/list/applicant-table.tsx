@@ -2,6 +2,7 @@
 
 import { Fragment, useMemo } from 'react';
 
+import { Archive, Trash2 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import * as nuqs from 'nuqs';
 import { useQueryState } from 'nuqs';
@@ -9,12 +10,14 @@ import { useForm } from 'react-hook-form';
 
 import { DataTable } from '@/components/shared/data-table';
 import { DataTableSkeleton } from '@/components/skeletons/data-table-skeleton';
+import { Button } from '@/components/ui/button';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 import { Applicant } from '@/generated/prisma';
-import { useGetAllApplicants } from '@/hooks/applicant';
+import { useDeleteApplicant, useGetAllApplicants } from '@/hooks/applicant';
 import { useDataTable } from '@/hooks/common/use-data-table';
 import { useQueryReader } from '@/hooks/common/use-query-reader';
+import { useAlert } from '@/providers/alert';
 
 import { APPLICANT_COLUMNS } from './applicant-columns';
 import ApplicantFilter, { TApplicantFilter } from './applicant-filter';
@@ -26,22 +29,28 @@ export const ApplicantTable = ({
   country?: string;
   partner?: string;
 }) => {
+  const alert = useAlert();
   const t = useTranslations();
-  // Using instantQuery.isArchived directly since it's an instant filter
   const columns = useMemo(() => APPLICANT_COLUMNS(country), [country]);
+
+  const { mutateAsync: deleteApplicants, isPending: isDeleting } =
+    useDeleteApplicant();
 
   // Instant filters - these update immediately
   const instantQuery = useQueryReader({
     page: { type: 'number', defaultValue: 1 },
     size: { type: 'number', defaultValue: 50 },
     sort: { type: 'object', defaultValue: { id: 'createdAt', desc: true } },
-    isArchived: { type: 'boolean', defaultValue: false },
   });
 
   const countryDefault = country === 'all' ? '' : country || '';
   const partnerDefault = partner === 'all' ? '' : partner || '';
 
   // Form filters - these update only on form submission
+  const [tabParam, setTabParam] = useQueryState(
+    'tab',
+    nuqs.parseAsString.withDefault('false'),
+  );
   const [searchParam, setSearchParam] = useQueryState(
     'search',
     nuqs.parseAsString.withDefault(''),
@@ -82,7 +91,7 @@ export const ApplicantTable = ({
     page: instantQuery.page,
     size: instantQuery.size,
     sort: instantQuery.sort,
-    isArchived: instantQuery.isArchived,
+    isArchived: tabParam === 'true',
     // Form filters
     search: searchParam,
     country: countryParam,
@@ -145,19 +154,8 @@ export const ApplicantTable = ({
       <Tabs
         defaultValue="false"
         className="mb-5 md:mb-10"
-        value={instantQuery.isArchived.toString()}
-        onValueChange={(value) => {
-          // Update isArchived and reset page to 1
-          const params = new URLSearchParams(window.location.search);
-          params.set('isArchived', value);
-          params.set('page', '1'); // Reset to page 1 when changing archive status
-          window.history.pushState(
-            {},
-            '',
-            `${window.location.pathname}?${params.toString()}`,
-          );
-          window.dispatchEvent(new Event('popstate')); // Trigger URL change detection
-        }}
+        value={tabParam}
+        onValueChange={(value) => setTabParam(value)}
       >
         <TabsList variant="outline" className="justify-start">
           <TabsTrigger
@@ -182,7 +180,38 @@ export const ApplicantTable = ({
         handleReset={handleReset}
         country={country}
       />
-      <DataTable table={table} isLoading={isLoading || isFetching} />
+      <DataTable table={table} isLoading={isLoading || isFetching}>
+        {table.getFilteredSelectedRowModel()?.rows?.length > 0 && (
+          <div className="flex gap-2">
+            <Button
+              variant="destructive"
+              type="button"
+              size="sm"
+              onClick={() =>
+                alert({
+                  title: t('Common.delete'),
+                  description: t('Common.messages.deleteDescription'),
+                  onConfirm: async () =>
+                    deleteApplicants(
+                      table
+                        .getFilteredSelectedRowModel()
+                        .rows.map((row) => row.original.id),
+                    ),
+                  confirmText: t('Common.delete'),
+                })
+              }
+              disabled={isDeleting}
+            >
+              <Trash2 className="mr-2 h-4 w-4" />
+              {t('Common.delete')}
+            </Button>
+            <Button type="button" size="sm" variant="outline">
+              <Archive className="mr-2 h-4 w-4" />
+              {t('Common.archive')}
+            </Button>
+          </div>
+        )}
+      </DataTable>
     </Fragment>
   );
 };

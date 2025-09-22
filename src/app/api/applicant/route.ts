@@ -47,3 +47,19 @@ export async function GET(request: NextRequest) {
     return handleApiError(error);
   }
 }
+
+export async function DELETE(request: NextRequest) {
+  try {
+    const searchParams = new URL(request.url).searchParams;
+
+    const ids = searchParams.get('ids') || '';
+
+    const idsArray = ids.split(',');
+
+    const result = await applicantService.deleteApplicants(idsArray);
+
+    return NextResponse.json(result);
+  } catch (error: unknown) {
+    return handleApiError(error);
+  }
+}

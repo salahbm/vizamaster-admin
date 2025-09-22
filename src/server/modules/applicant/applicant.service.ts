@@ -146,6 +146,22 @@ class ApplicantService {
       throw handlePrismaError(error, 'Applicant');
     }
   }
+
+  /* *****************************************************************
+   * DELETE
+   * ***************************************************************** */
+  // ───────────────── DELETE APPLICANTS ────────────────── //
+  async deleteApplicants(ids: string[]) {
+    try {
+      const applicant = await this.repository.deleteApplicants(ids);
+
+      if (!applicant) throw new NotFoundError('Applicant not found');
+
+      return createResponse(applicant);
+    } catch (error) {
+      throw handlePrismaError(error, 'Applicant');
+    }
+  }
 }
 
 export const applicantService = new ApplicantService(new ApplicantRepository());

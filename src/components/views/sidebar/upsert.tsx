@@ -22,14 +22,14 @@ import { Separator } from '@/components/ui/separator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 // Utilities
-import { handleFormError } from '@/lib/utils';
+import { handleFormError, mapOptions } from '@/lib/utils';
 
 // Data fetching hooks
 import { useCodes } from '@/hooks/settings/codes';
 import {
   useCreateSidebar,
-  useSidebar,
   useSidebarDetail,
+  useSidebarTable,
   useUpdateSidebarById,
 } from '@/hooks/settings/sidebar';
 
@@ -52,14 +52,22 @@ const UpsertSidebar: React.FC<IUpsertSidebarProps> = ({ id }) => {
   const t = useTranslations();
 
   // ───────────────── DATA FETCHING ────────────────── //
-  const { data: sidebarData, isLoading: isLoadingDetail } =
-    useSidebarDetail(id);
-  const { data: allSidebars, isLoading: isLoadingSidebars } = useSidebar();
-  const { data: partners, isLoading: isLoadingPartners } = useCodes({
+
+  const { data: countries } = useCodes({
+    page: 1,
+    size: 100,
+    groupCode: 'group-countries',
+  });
+  const { data: partners } = useCodes({
     page: 1,
     size: 100,
     groupCode: 'group-partners',
   });
+  const { data: allSidebars } = useSidebarTable({
+    sort: [{ id: 'createdAt', desc: true }],
+  });
+  const { data: sidebarData, isLoading: isLoadingDetail } =
+    useSidebarDetail(id);
 
   // ───────────────── MUTATIONS ────────────────── //
   const { mutateAsync: createSidebar } = useCreateSidebar();
@@ -79,44 +87,29 @@ const UpsertSidebar: React.FC<IUpsertSidebarProps> = ({ id }) => {
   }, [sidebarData, form]);
 
   // ───────────────── DERIVED DATA ────────────────── //
-  // Options for parent sidebar selection
   const parentOptions = useMemo(() => {
-    if (!allSidebars || isLoadingSidebars) return [];
+    return (
+      allSidebars
+        ?.filter((item) => item.id !== id) // Filter out current sidebar to prevent self-reference
+        ?.filter((item) => !item.parentId) // Filter out child sidebars
+        ?.map((item) => ({
+          id: item.href,
+          value: item.id,
+          label: locale === 'en' ? item.labelEn : item.labelRu,
+          className: 'capitalize',
+        })) ?? []
+    );
+  }, [allSidebars, id, locale]);
 
-    const sidebarItems = Array.isArray(allSidebars) ? allSidebars : [];
-
-    return sidebarItems
-      .filter((item) => item.id !== id) // Filter out current sidebar to prevent self-reference
-      .map((item) => ({
-        value: item.id,
-        label: locale === 'en' ? item.labelEn : item.labelRu,
-        className: 'capitalize',
-      }));
-  }, [allSidebars, id, isLoadingSidebars, locale]);
-
-  // Options for partner selection
-  const partnerOptions = useMemo(() => {
-    if (!partners || isLoadingPartners) return [];
-
-    const partnerItems = Array.isArray(partners?.data) ? partners.data : [];
-
-    return partnerItems.map((item) => ({
-      value: item.code,
-      label: locale === 'en' ? item.labelEn : item.labelRu,
-      className: 'capitalize',
-    }));
-  }, [partners, isLoadingPartners, locale]);
+  const { memoCountries, memoPartners } = useMemo(() => {
+    return {
+      memoCountries: mapOptions(countries?.data, locale),
+      memoPartners: mapOptions(partners?.data, locale),
+    };
+  }, [countries, partners, locale]);
 
   const independent = form.watch('independent');
   const currentTab = independent ? 'independent' : 'dependent';
-
-  // ───────────────── UTILITY FUNCTIONS ────────────────── //
-  /**
-   * Helper function to get href from sidebar ID
-   */
-  const getHrefFromId = (id: string) => {
-    return allSidebars?.find((item) => item.id === id)?.href;
-  };
 
   // ───────────────── EVENT HANDLERS ────────────────── //
   /**
@@ -273,22 +266,18 @@ const UpsertSidebar: React.FC<IUpsertSidebarProps> = ({ id }) => {
                 render={({ field }) => (
                   <Combobox
                     placeholder={t('sidebar.form.countryPlaceholder')}
-                    options={parentOptions}
+                    options={memoCountries}
                     searchable
-                    label={
-                      form.watch('country')
-                        ? parentOptions.find(
-                            (item) => item.value === form.watch('parentId'),
-                          )?.label
-                        : undefined
-                    }
                     {...field}
                     onChange={(val) => {
                       field.onChange(val);
-                      form.setValue('parentId', val as string);
-                      const country = getHrefFromId(val as string);
-                      if (country) {
-                        form.setValue('country', country);
+                      const findParentId = parentOptions?.find((item) => {
+                        const segments = item.id.split('/');
+                        const country = segments[2];
+                        return country === val;
+                      })?.value;
+                      if (findParentId && form.watch('child') === 'true') {
+                        form.setValue('parentId', findParentId);
                       }
                     }}
                   />
@@ -303,7 +292,7 @@ const UpsertSidebar: React.FC<IUpsertSidebarProps> = ({ id }) => {
                 render={({ field }) => (
                   <Combobox
                     placeholder={t('sidebar.form.partnerPlaceholder')}
-                    options={partnerOptions}
+                    options={memoPartners}
                     searchable
                     disabled={form.watch('child') === 'false'}
                     {...field}
