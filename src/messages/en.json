@@ -212,6 +212,45 @@
         "addWork": "Add Work Experience"
       },
       "fields": {
+        "issued": {
+          "label": "Visa Issued",
+          "options": {
+            "yes": "Yes",
+            "no": "No"
+          },
+          "message": "Select whether the visa has been issued. If yes, you'll need to provide issue and departure dates."
+        },
+        "issueDate": {
+          "label": "Issue Date"
+        },
+        "departureDate": {
+          "label": "Departure Date"
+        },
+        "arrived": {
+          "label": "Has Arrived",
+          "options": {
+            "yes": "Yes",
+            "no": "No"
+          },
+          "message": "Indicate if the applicant has arrived at their destination."
+        },
+        "status": {
+          "label": "Visa Status",
+          "options": {
+            "still_working": "Still Working",
+            "returned": "Returned",
+            "departed": "Departed"
+          },
+          "message": "Current status of the visa and applicant's work situation."
+        },
+        "flightDocuments": {
+          "label": "Flight Documents",
+          "message": "Upload flight tickets, itinerary, etc."
+        },
+        "files": {
+          "label": "Visa Documents",
+          "message": "Upload visa copy and related documents."
+        },
         "firstName": {
           "label": "First Name",
           "placeholder": "Enter first name"
@@ -323,6 +362,14 @@
         }
       },
       "sections": {
+        "visaInfo": {
+          "title": "Visa Information",
+          "description": "Manage visa and travel details.",
+          "empty": {
+            "title": "No visa information added",
+            "description": "Add visa details and travel documents."
+          }
+        },
         "personalInfo": {
           "title": "Personal Information",
           "description": "Basic personal details of the applicant."
