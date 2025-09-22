@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useLocale, useTranslations } from 'next-intl';
@@ -8,10 +8,13 @@ import { useForm } from 'react-hook-form';
 
 import { DatePicker } from '@/components/shared/date-pickers';
 import { FormFields } from '@/components/shared/form-fields';
+import { FormSkeleton } from '@/components/skeletons';
 import { Button } from '@/components/ui/button';
 import { Combobox } from '@/components/ui/combobox';
 import { Form } from '@/components/ui/form';
 import { Input, TelephoneInput } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Separator } from '@/components/ui/separator';
 import { Uploader } from '@/components/ui/uploader';
 
@@ -19,7 +22,11 @@ import { mapOptions } from '@/lib/utils';
 
 import { getCountries, getLanguages } from '@/utils/intl';
 
-import { useCreateApplicant } from '@/hooks/applicant';
+import {
+  useApplicantDetail,
+  useCreateApplicant,
+  useUpdateApplicant,
+} from '@/hooks/applicant';
 import { useCodes } from '@/hooks/settings/codes';
 import { ApplicantDto, TApplicantDto } from '@/server/common/dto/applicant.dto';
 
@@ -37,7 +44,9 @@ const ApplicantUserInfo: React.FC<IApplicantUserInfoProps> = ({
   partner,
 }) => {
   const locale = useLocale();
-  const t = useTranslations('applicant.form');
+  const t = useTranslations();
+
+  const { data: applicant, isLoading } = useApplicantDetail(id);
 
   // QUERIES
   const { data: countries, isLoading: isLoadingCountries } = useCodes(
@@ -53,6 +62,8 @@ const ApplicantUserInfo: React.FC<IApplicantUserInfoProps> = ({
   // MUTATIONS
   const { mutateAsync: createApplicant, isPending: isPendingCreateApplicant } =
     useCreateApplicant();
+  const { mutateAsync: updateApplicant, isPending: isPendingUpdateApplicant } =
+    useUpdateApplicant();
 
   // MEMOS
   const countryOfResidenceOptions = useMemo(() => getCountries(), []);
@@ -70,9 +81,22 @@ const ApplicantUserInfo: React.FC<IApplicantUserInfoProps> = ({
     defaultValues: applicantDefaults(countryOfEmployment, partner),
   });
 
+  useEffect(() => {
+    if (applicant)
+      form.reset({
+        ...applicant,
+        passportPhoto: [],
+        dateOfBirth: applicant.dateOfBirth
+          ? new Date(applicant.dateOfBirth)
+          : undefined,
+      });
+  }, [applicant, form]);
+
+  if (isLoading || isPendingUpdateApplicant) return <FormSkeleton />;
+
   const onSubmit = (data: TApplicantDto) => {
     if (id) {
-      // updateApplicant(id, data);
+      updateApplicant({ ...data, id });
     } else {
       createApplicant(data);
     }
@@ -85,60 +109,65 @@ const ApplicantUserInfo: React.FC<IApplicantUserInfoProps> = ({
         {/* Personal Information */}
         <div>
           <h2 className="font-header text-xl">
-            {t('sections.personalInfo.title')}
+            {t('applicant.form.sections.personalInfo.title')}
           </h2>
           <p className="font-body-2 text-muted-foreground mb-6">
-            {t('sections.personalInfo.description')}
+            {t('applicant.form.sections.personalInfo.description')}
           </p>
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
             <FormFields
               name="firstName"
-              label={t('fields.firstName.label')}
+              label={t('applicant.form.fields.firstName.label')}
               required
               control={form.control}
               render={({ field }) => (
                 <Input
-                  placeholder={t('fields.firstName.placeholder')}
+                  placeholder={t('applicant.form.fields.firstName.placeholder')}
                   {...field}
                 />
               )}
             />
             <FormFields
               name="lastName"
-              label={t('fields.lastName.label')}
+              label={t('applicant.form.fields.lastName.label')}
               required
               control={form.control}
               render={({ field }) => (
                 <Input
-                  placeholder={t('fields.lastName.placeholder')}
+                  placeholder={t('applicant.form.fields.lastName.placeholder')}
                   {...field}
                 />
               )}
             />
             <FormFields
               name="middleName"
-              label={t('fields.middleName.label')}
+              label={t('applicant.form.fields.middleName.label')}
               control={form.control}
               render={({ field }) => (
                 <Input
-                  placeholder={t('fields.middleName.placeholder')}
+                  placeholder={t(
+                    'applicant.form.fields.middleName.placeholder',
+                  )}
                   {...field}
                 />
               )}
             />
             <FormFields
               name="gender"
-              label={t('fields.gender.label')}
+              label={t('applicant.form.fields.gender.label')}
               required
               control={form.control}
               render={({ field }) => (
                 <Combobox
-                  placeholder={t('fields.gender.placeholder')}
+                  placeholder={t('applicant.form.fields.gender.placeholder')}
                   options={[
-                    { value: 'MALE', label: t('fields.gender.options.male') },
+                    {
+                      value: 'MALE',
+                      label: t('applicant.form.fields.gender.options.male'),
+                    },
                     {
                       value: 'FEMALE',
-                      label: t('fields.gender.options.female'),
+                      label: t('applicant.form.fields.gender.options.female'),
                     },
                   ]}
                   {...field}
@@ -147,18 +176,20 @@ const ApplicantUserInfo: React.FC<IApplicantUserInfoProps> = ({
             />
             <FormFields
               name="dateOfBirth"
-              label={t('fields.dateOfBirth.label')}
+              label={t('applicant.form.fields.dateOfBirth.label')}
               control={form.control}
               render={({ field }) => <DatePicker {...field} />}
             />
             <FormFields
               name="passportNumber"
-              label={t('fields.passportNumber.label')}
+              label={t('applicant.form.fields.passportNumber.label')}
               required
               control={form.control}
               render={({ field }) => (
                 <Input
-                  placeholder={t('fields.passportNumber.placeholder')}
+                  placeholder={t(
+                    'applicant.form.fields.passportNumber.placeholder',
+                  )}
                   {...field}
                 />
               )}
@@ -167,10 +198,10 @@ const ApplicantUserInfo: React.FC<IApplicantUserInfoProps> = ({
           <div className="mt-6">
             <FormFields
               name="passportPhoto"
-              label={t('fields.passportPhoto.label')}
+              label={t('applicant.form.fields.passportPhoto.label')}
               control={form.control}
               render={({ field }) => <Uploader {...field} maxFiles={1} />}
-              message={t('fields.passportPhoto.message')}
+              message={t('applicant.form.fields.passportPhoto.message')}
               messageClassName="text-muted-foreground text-xs"
             />
           </div>
@@ -179,40 +210,47 @@ const ApplicantUserInfo: React.FC<IApplicantUserInfoProps> = ({
         {/* Contact Information */}
         <div>
           <h2 className="font-header text-xl">
-            {t('sections.contactInfo.title')}
+            {t('applicant.form.sections.contactInfo.title')}
           </h2>
           <p className="font-body-2 text-muted-foreground mb-6">
-            {t('sections.contactInfo.description')}
+            {t('applicant.form.sections.contactInfo.description')}
           </p>
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
             <FormFields
               name="email"
-              label={t('fields.email.label')}
+              label={t('applicant.form.fields.email.label')}
               required
               control={form.control}
               render={({ field }) => (
-                <Input placeholder={t('fields.email.placeholder')} {...field} />
+                <Input
+                  placeholder={t('applicant.form.fields.email.placeholder')}
+                  {...field}
+                />
               )}
             />
             <FormFields
               name="phoneNumber"
-              label={t('fields.phoneNumber.label')}
+              label={t('applicant.form.fields.phoneNumber.label')}
               required
               control={form.control}
               render={({ field }) => (
                 <TelephoneInput
-                  placeholder={t('fields.phoneNumber.placeholder')}
+                  placeholder={t(
+                    'applicant.form.fields.phoneNumber.placeholder',
+                  )}
                   {...field}
                 />
               )}
             />
             <FormFields
               name="phoneNumberAdditional"
-              label={t('fields.phoneNumberAdditional.label')}
+              label={t('applicant.form.fields.phoneNumberAdditional.label')}
               control={form.control}
               render={({ field }) => (
                 <TelephoneInput
-                  placeholder={t('fields.phoneNumberAdditional.placeholder')}
+                  placeholder={t(
+                    'applicant.form.fields.phoneNumberAdditional.placeholder',
+                  )}
                   {...field}
                 />
               )}
@@ -223,72 +261,84 @@ const ApplicantUserInfo: React.FC<IApplicantUserInfoProps> = ({
         {/* Address Information */}
         <div>
           <h2 className="font-header text-xl">
-            {t('sections.addressInfo.title')}
+            {t('applicant.form.sections.addressInfo.title')}
           </h2>
           <p className="font-body-2 text-muted-foreground mb-6">
-            {t('sections.addressInfo.description')}
+            {t('applicant.form.sections.addressInfo.description')}
           </p>
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
             <FormFields
               name="countryOfResidence"
-              label={t('fields.countryOfResidence.label')}
+              label={t('applicant.form.fields.countryOfResidence.label')}
               required
               control={form.control}
               render={({ field }) => (
                 <Combobox
                   searchable
                   options={countryOfResidenceOptions}
-                  placeholder={t('fields.countryOfResidence.placeholder')}
+                  placeholder={t(
+                    'applicant.form.fields.countryOfResidence.placeholder',
+                  )}
                   {...field}
                 />
               )}
             />
             <FormFields
               name="addressLine1"
-              label={t('fields.addressLine1.label')}
+              label={t('applicant.form.fields.addressLine1.label')}
               required
               control={form.control}
               render={({ field }) => (
                 <Input
-                  placeholder={t('fields.addressLine1.placeholder')}
+                  placeholder={t(
+                    'applicant.form.fields.addressLine1.placeholder',
+                  )}
                   {...field}
                 />
               )}
             />
             <FormFields
               name="addressLine2"
-              label={t('fields.addressLine2.label')}
+              label={t('applicant.form.fields.addressLine2.label')}
               control={form.control}
               render={({ field }) => (
                 <Input
-                  placeholder={t('fields.addressLine2.placeholder')}
+                  placeholder={t(
+                    'applicant.form.fields.addressLine2.placeholder',
+                  )}
                   {...field}
                 />
               )}
             />
             <FormFields
               name="city"
-              label={t('fields.city.label')}
+              label={t('applicant.form.fields.city.label')}
               control={form.control}
               render={({ field }) => (
-                <Input placeholder={t('fields.city.placeholder')} {...field} />
+                <Input
+                  placeholder={t('applicant.form.fields.city.placeholder')}
+                  {...field}
+                />
               )}
             />
             <FormFields
               name="state"
-              label={t('fields.state.label')}
+              label={t('applicant.form.fields.state.label')}
               control={form.control}
               render={({ field }) => (
-                <Input placeholder={t('fields.state.placeholder')} {...field} />
+                <Input
+                  placeholder={t('applicant.form.fields.state.placeholder')}
+                  {...field}
+                />
               )}
             />
             <FormFields
               name="zipCode"
-              label={t('fields.zipCode.label')}
+              label={t('applicant.form.fields.zipCode.label')}
               control={form.control}
               render={({ field }) => (
                 <Input
-                  placeholder={t('fields.zipCode.placeholder')}
+                  placeholder={t('applicant.form.fields.zipCode.placeholder')}
                   {...field}
                 />
               )}
@@ -299,15 +349,59 @@ const ApplicantUserInfo: React.FC<IApplicantUserInfoProps> = ({
         {/* Employment & Nationality */}
         <div>
           <h2 className="font-header text-xl">
-            {t('sections.employmentInfo.title')}
+            {t('applicant.form.sections.employmentInfo.title')}
           </h2>
           <p className="font-body-2 text-muted-foreground mb-6">
-            {t('sections.employmentInfo.description')}
+            {t('applicant.form.sections.employmentInfo.description')}
           </p>
+          {id && (
+            <FormFields
+              name="status"
+              control={form.control}
+              label={t('Common.status')}
+              className="my-6"
+              render={({ field }) => (
+                <RadioGroup
+                  {...field}
+                  defaultValue="all"
+                  className="font-body-2 flex flex-wrap items-center justify-start gap-4"
+                >
+                  {[
+                    { value: 'NEW', label: t('Common.statuses.new') },
+                    {
+                      value: 'IN_PROGRESS',
+                      label: t('Common.statuses.inProgress'),
+                    },
+                    {
+                      value: 'CONFIRMED_PROGRAM',
+                      label: t('Common.statuses.confirmedProgram'),
+                    },
+                    { value: 'HIRED', label: t('Common.statuses.hired') },
+                    {
+                      value: 'HOTEL_REJECTED',
+                      label: t('Common.statuses.hotelRejected'),
+                    },
+                    { value: 'FIRED', label: t('Common.statuses.fired') },
+                    {
+                      value: 'APPLICANT_REJECTED',
+                      label: t('Common.statuses.applicantRejected'),
+                    },
+                  ].map((option) => (
+                    <div key={option.value} className="flex items-center gap-2">
+                      <RadioGroupItem id={option.value} value={option.value} />
+                      <Label className="font-body-2" htmlFor={option.value}>
+                        {option.label}
+                      </Label>
+                    </div>
+                  ))}
+                </RadioGroup>
+              )}
+            />
+          )}
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
             <FormFields
               name="countryOfEmployment"
-              label={t('fields.countryOfEmployment.label')}
+              label={t('applicant.form.fields.countryOfEmployment.label')}
               required
               control={form.control}
               loading={isLoadingCountries}
@@ -316,14 +410,16 @@ const ApplicantUserInfo: React.FC<IApplicantUserInfoProps> = ({
                   searchable
                   disabled={!id && countryOfEmployment !== 'all'}
                   options={memoCountries}
-                  placeholder={t('fields.countryOfEmployment.placeholder')}
+                  placeholder={t(
+                    'applicant.form.fields.countryOfEmployment.placeholder',
+                  )}
                   {...field}
                 />
               )}
             />
             <FormFields
               name="partner"
-              label={t('fields.partner.label')}
+              label={t('applicant.form.fields.partner.label')}
               required
               control={form.control}
               loading={isLoadingPartners}
@@ -332,48 +428,52 @@ const ApplicantUserInfo: React.FC<IApplicantUserInfoProps> = ({
                   searchable
                   disabled={!id && partner !== 'all'}
                   options={memoPartners}
-                  placeholder={t('fields.partner.placeholder')}
+                  placeholder={t('applicant.form.fields.partner.placeholder')}
                   {...field}
                 />
               )}
             />
             <FormFields
               name="nationality"
-              label={t('fields.nationality.label')}
+              label={t('applicant.form.fields.nationality.label')}
               control={form.control}
               render={({ field }) => (
                 <Combobox
                   searchable
                   options={countryOfResidenceOptions}
-                  placeholder={t('fields.nationality.placeholder')}
+                  placeholder={t(
+                    'applicant.form.fields.nationality.placeholder',
+                  )}
                   {...field}
                 />
               )}
             />
             <FormFields
               name="preferredJobTitle"
-              label={t('fields.preferredJobTitle.label')}
+              label={t('applicant.form.fields.preferredJobTitle.label')}
               control={form.control}
               loading={isLoadingVacancies}
               render={({ field }) => (
                 <Combobox
                   searchable
                   options={memoVacancies}
-                  placeholder={t('fields.preferredJobTitle.placeholder')}
+                  placeholder={t(
+                    'applicant.form.fields.preferredJobTitle.placeholder',
+                  )}
                   {...field}
                 />
               )}
             />
             <FormFields
               name="languages"
-              label={t('fields.languages.label')}
+              label={t('applicant.form.fields.languages.label')}
               control={form.control}
               render={({ field }) => (
                 <Combobox
                   multiple
                   searchable
                   options={languagesOptions}
-                  placeholder={t('fields.languages.placeholder')}
+                  placeholder={t('applicant.form.fields.languages.placeholder')}
                   {...field}
                 />
               )}
@@ -383,10 +483,13 @@ const ApplicantUserInfo: React.FC<IApplicantUserInfoProps> = ({
         <Separator />
         <div className="flex justify-end space-x-4">
           <Button variant="outline" type="button">
-            {t('buttons.cancel')}
+            {t('Common.cancel')}
           </Button>
-          <Button type="submit" disabled={isPendingCreateApplicant}>
-            {t('buttons.submit')}
+          <Button
+            type="submit"
+            disabled={isPendingCreateApplicant || !form.formState.isDirty}
+          >
+            {t('applicant.form.buttons.submit')}
           </Button>
         </div>
       </form>

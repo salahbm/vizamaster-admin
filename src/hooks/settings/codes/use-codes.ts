@@ -38,9 +38,8 @@ export const getAllCodes = async (
 /**
  * Hook for fetching all  codes
  */
-export const useCodes = (params: TCodesParams, enabled?: boolean) => {
-  const { setCodes } = useCodesStore();
-  const codes = useQuery({
+export const useCodes = (params: TCodesParams) =>
+  useQuery({
     queryFn: () => getAllCodes(params),
     queryKey: [...QueryKeys.settings.codes.all, { ...params }],
     placeholderData: keepPreviousData,
@@ -48,13 +47,52 @@ export const useCodes = (params: TCodesParams, enabled?: boolean) => {
     refetchOnWindowFocus: false,
     refetchOnReconnect: false,
     refetchOnMount: false,
-    enabled,
   });
 
-  // Use useEffect to update the store state to avoid React state updates during render
-  useEffect(() => {
-    if (codes.data?.data) setCodes(codes.data.data);
-  }, [codes.data, codes.isFetching, codes.isLoading, setCodes]);
+// New function to fetch ALL codes by looping through pages
+export const fetchAllCodes = async (): Promise<Codes[]> => {
+  let allCodes: Codes[] = [];
+  let page = 1;
+  const size = 100; // Adjust based on your API limits; keeps requests efficient
 
-  return codes;
+  while (true) {
+    const params: TCodesParams = { page, size };
+    const response = await getAllCodes(params);
+    allCodes = [...allCodes, ...response.data];
+
+    // Assuming PaginatedResult has a 'data' array; stop if incomplete page
+    if (response.data.length < size) {
+      break;
+    }
+
+    page++;
+  }
+
+  return allCodes;
+};
+
+/**
+ * New hook for fetching ALL codes upfront and storing them
+ */
+export const useAllCodes = () => {
+  const { setCodes } = useCodesStore();
+
+  const query = useQuery({
+    queryFn: fetchAllCodes,
+    queryKey: [QueryKeys.settings.codes.all], // Use a distinct key if needed
+    placeholderData: keepPreviousData,
+    staleTime: Infinity,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+    refetchOnMount: false,
+  });
+
+  // Update store with all codes
+  useEffect(() => {
+    if (query.data) {
+      setCodes(query.data);
+    }
+  }, [query.data, setCodes]);
+
+  return query;
 };

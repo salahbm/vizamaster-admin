@@ -1,6 +1,6 @@
 import { redirect } from 'next/navigation';
 
-import { DashboardComponents } from '@/components/views/dashboard';
+import { DashboardView } from '@/components/views/dashboard';
 
 import { routes } from '@/constants/routes';
 
@@ -13,5 +13,5 @@ export default function DashboardPage() {
 
   if (!session) return redirect(routes.signIn);
 
-  return <DashboardComponents />;
+  return <DashboardView />;
 }

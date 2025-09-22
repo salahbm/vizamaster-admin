@@ -18,7 +18,7 @@ import { mapOptions } from '@/lib/utils';
 
 import { useCodes } from '@/hooks/settings/codes';
 
-import { applicantQueries } from '../create/applicant.helpers';
+import { applicantQueries } from '../upsert/applicant.helpers';
 
 export type TApplicantFilter = {
   search: string;
@@ -207,7 +207,7 @@ const ApplicantFilter: React.FC<IApplicantFilterProps> = ({
             )}
           />
         </fieldset>
-        <div className="flex flex-wrap justify-end gap-2">
+        <div className="border-border flex flex-wrap justify-end gap-2 border-t pt-4">
           <Button
             variant="outline"
             className="w-32 max-w-fit"

@@ -37,7 +37,7 @@ export type FileUploadOptions = {
   maxSize?: number; // in bytes
   accept?: string;
   multiple?: boolean; // Defaults to false
-  initialFiles?: FileMetadata[];
+  initialFiles?: FileMetadata[] | null;
   onFilesChange?: (files: FileWithPreview[]) => void; // Callback when files change
   onFilesAdded?: (addedFiles: FileWithPreview[]) => void; // Callback when new files are added
 };
@@ -80,11 +80,12 @@ export const useFileUpload = (
   } = options;
   const t = useTranslations();
   const [state, setState] = useState<FileUploadState>({
-    files: initialFiles.map((file) => ({
-      file,
-      id: file.id,
-      preview: file.url,
-    })),
+    files:
+      initialFiles?.map((file) => ({
+        file,
+        id: file.id,
+        preview: file.url,
+      })) || [],
     isDragging: false,
     errors: [],
   });

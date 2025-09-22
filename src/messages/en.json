@@ -9,6 +9,85 @@
     "theme": "Theme",
     "toggleSidebar": "Toggle sidebar"
   },
+  "dashboard": {
+    "meta": {
+      "title": "Admin Dashboard",
+      "description": "Overview of applicants, partners, and recruitment performance metrics"
+    },
+    "charts": {
+      "visa": {
+        "title": "Visa Processing Status",
+        "description": "Track visa processing status for each partner, showing the number of applicants still working, returned, or departed",
+        "xAxis": "Partner",
+        "yAxis": "Applicants",
+        "tooltip": {
+          "applicants": "applicants"
+        },
+        "statuses": {
+          "stillWorking": "Still Working",
+          "returned": "Returned",
+          "departed": "Departed"
+        }
+      },
+      "countries": {
+        "title": "Top Employment Countries",
+        "description": "See which countries are receiving the most applicants and identify key employment markets",
+        "xAxis": "Country",
+        "yAxis": "Applicants",
+        "tooltip": {
+          "applicants": "applicants"
+        }
+      },
+      "partners": {
+        "title": "Partner Performance Ranking",
+        "description": "Compare recruitment performance across partners based on total number of applicants processed",
+        "xAxis": "Applicants",
+        "yAxis": "Partner",
+        "tooltip": {
+          "applicants": "applicants"
+        }
+      },
+      "trend": {
+        "title": "Monthly Application Volume",
+        "description": "Track the number of new applications received each month to identify seasonal patterns and growth trends",
+        "yAxis": "Applications",
+        "xAxis": "Time Period",
+        "tooltip": {
+          "applications": "applications",
+          "week": "Week of",
+          "month": "Month of"
+        }
+      },
+      "status": {
+        "title": "Application Status Overview",
+        "description": "Current status breakdown of all applicants, from new applications to hired and completed cases"
+      }
+    },
+    "kpi": {
+      "title": "Key Performance Metrics",
+      "description": "Quick overview of critical metrics including total applicants, new applications, processing status, and success rates",
+      "total": {
+        "title": "Total Applicants",
+        "description": "Total number of applicants in the system"
+      },
+      "new": {
+        "title": "New Applications",
+        "description": "Applicants in initial stage"
+      },
+      "in_progress": {
+        "title": "In Progress",
+        "description": "Applications being processed"
+      },
+      "hired": {
+        "title": "Hired",
+        "description": "Successfully placed applicants"
+      },
+      "rejected": {
+        "title": "Rejected",
+        "description": "Applications that were not successful"
+      }
+    }
+  },
   "Common": {
     "save": "Save",
     "ok": "Okay",
@@ -195,25 +274,51 @@
       "fired": "Fired"
     },
     "form": {
-      "sections": {
-        "personalInfo": {
-          "title": "Personal Information",
-          "description": "Basic personal details of the applicant."
-        },
-        "contactInfo": {
-          "title": "Contact Information",
-          "description": "How to get in touch with the applicant."
-        },
-        "addressInfo": {
-          "title": "Address Information",
-          "description": "Applicant's residential address."
-        },
-        "employmentInfo": {
-          "title": "Employment & Nationality",
-          "description": "Details about employment and nationality."
-        }
+      "buttons": {
+        "submit": "Submit Applicant",
+        "cancel": "Cancel",
+        "addWork": "Add Work Experience"
       },
       "fields": {
+        "issued": {
+          "label": "Visa Issued",
+          "options": {
+            "yes": "Yes",
+            "no": "No"
+          },
+          "message": "Select whether the visa has been issued. If yes, you'll need to provide issue and departure dates."
+        },
+        "issueDate": {
+          "label": "Issue Date"
+        },
+        "departureDate": {
+          "label": "Departure Date"
+        },
+        "arrived": {
+          "label": "Has Arrived",
+          "options": {
+            "yes": "Yes",
+            "no": "No"
+          },
+          "message": "Indicate if the applicant has arrived at their destination."
+        },
+        "status": {
+          "label": "Visa Status",
+          "options": {
+            "still_working": "Still Working",
+            "returned": "Returned",
+            "departed": "Departed"
+          },
+          "message": "Current status of the visa and applicant's work situation."
+        },
+        "flightDocuments": {
+          "label": "Flight Documents",
+          "message": "Upload flight tickets, itinerary, etc."
+        },
+        "files": {
+          "label": "Visa Documents",
+          "message": "Upload visa copy and related documents."
+        },
         "firstName": {
           "label": "First Name",
           "placeholder": "Enter first name"
@@ -289,10 +394,6 @@
           "label": "Nationality",
           "placeholder": "Select nationality"
         },
-        "preferredJobTitle": {
-          "label": "Preferred Job Title",
-          "placeholder": "e.g., Software Engineer"
-        },
         "partner": {
           "label": "Partner",
           "placeholder": "Select partner"
@@ -300,11 +401,67 @@
         "languages": {
           "label": "Languages",
           "placeholder": "Select languages"
+        },
+        "jobTitle": {
+          "label": "Job Title",
+          "placeholder": "e.g., Software Engineer"
+        },
+        "company": {
+          "label": "Company",
+          "placeholder": "e.g., Tech Corp"
+        },
+        "startDate": {
+          "label": "Start Date"
+        },
+        "endDate": {
+          "label": "End Date"
+        },
+        "location": {
+          "label": "Location",
+          "placeholder": "e.g., New York, NY"
+        },
+        "responsibilities": {
+          "label": "Responsibilities",
+          "placeholder": "Describe your key responsibilities"
+        },
+        "achievements": {
+          "label": "Achievements",
+          "placeholder": "List your key achievements (optional)"
         }
       },
-      "buttons": {
-        "submit": "Submit Applicant",
-        "cancel": "Cancel"
+      "sections": {
+        "visaInfo": {
+          "title": "Visa Information",
+          "description": "Manage visa and travel details.",
+          "empty": {
+            "title": "No visa information added",
+            "description": "Add visa details and travel documents."
+          }
+        },
+        "personalInfo": {
+          "title": "Personal Information",
+          "description": "Basic personal details of the applicant."
+        },
+        "contactInfo": {
+          "title": "Contact Information",
+          "description": "How to get in touch with the applicant."
+        },
+        "addressInfo": {
+          "title": "Address Information",
+          "description": "Applicant's residential address."
+        },
+        "employmentInfo": {
+          "title": "Employment & Nationality",
+          "description": "Details about employment and nationality."
+        },
+        "workInfo": {
+          "title": "Work Experience",
+          "description": "Previous work experience and employment history.",
+          "empty": {
+            "title": "No work experience added",
+            "description": "Add your previous work experience to help us better understand your background."
+          }
+        }
       }
     },
     "validation": {
