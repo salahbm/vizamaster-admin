@@ -110,4 +110,20 @@ export class ApplicantRepository {
       where: { id: { in: ids } },
     });
   }
+
+  // ───────────────── ARCHIVE APPLICANTS ────────────────── //
+  async archiveApplicants(ids: string[]) {
+    return await this.prismaApplicant.updateMany({
+      where: { id: { in: ids } },
+      data: { isArchived: true },
+    });
+  }
+
+  // ───────────────── UNARCHIVE APPLICANTS ────────────────── //
+  async unarchiveApplicants(ids: string[]) {
+    return await this.prismaApplicant.updateMany({
+      where: { id: { in: ids } },
+      data: { isArchived: false },
+    });
+  }
 }

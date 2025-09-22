@@ -7,7 +7,13 @@ import { useRouter } from 'next/navigation';
 import { DropdownMenu } from '@radix-ui/react-dropdown-menu';
 import { Column, ColumnDef, Row, Table } from '@tanstack/react-table';
 import { format } from 'date-fns';
-import { Archive, EllipsisVertical, Pencil, Trash } from 'lucide-react';
+import {
+  Archive,
+  EllipsisVertical,
+  FolderOpenDot,
+  Pencil,
+  Trash,
+} from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
 import { DataTableColumnHeader } from '@/components/shared/data-table/column-header';
@@ -23,6 +29,10 @@ import {
 
 import { Applicant } from '@/generated/prisma';
 import { useDeleteApplicant } from '@/hooks/applicant';
+import {
+  useArchiveApplicant,
+  useUnarchiveApplicant,
+} from '@/hooks/applicant/use-archive';
 import { useAlert } from '@/providers/alert';
 import { useCodesStore } from '@/store/use-codes-store';
 
@@ -288,6 +298,8 @@ const ActionsCell = ({ row }: { row: Row<Applicant> }) => {
   const t = useTranslations();
 
   const { mutateAsync: deleteApplicants } = useDeleteApplicant();
+  const { mutateAsync: archiveApplicants } = useArchiveApplicant();
+  const { mutateAsync: unarchiveApplicants } = useUnarchiveApplicant();
   return (
     <Fragment>
       <DropdownMenu>
@@ -325,17 +337,26 @@ const ActionsCell = ({ row }: { row: Row<Applicant> }) => {
           </DropdownMenuItem>
           <DropdownMenuItem
             onClick={async () =>
-              alert({
-                title: t('Common.archive'),
-                description: t('Common.messages.archiveDescription'),
-                //   onConfirm: async () => await deleteAdmin(row.original.id),
-                confirmText: t('Common.archive'),
-              })
+              row.original.isArchived
+                ? await unarchiveApplicants([row.original.id])
+                : alert({
+                    title: t('Common.archive'),
+                    description: t('Common.messages.archiveDescription'),
+                    onConfirm: async () =>
+                      await archiveApplicants([row.original.id]),
+                    confirmText: t('Common.archive'),
+                  })
             }
             className="flex-between"
           >
-            {t('Common.archive')}
-            <Archive className="size-4" />
+            {row.original.isArchived
+              ? t('Common.unarchive')
+              : t('Common.archive')}
+            {row.original.isArchived ? (
+              <FolderOpenDot className="size-4" />
+            ) : (
+              <Archive className="size-4" />
+            )}
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>

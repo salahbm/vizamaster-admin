@@ -450,16 +450,14 @@ const ApplicantUserInfo: React.FC<IApplicantUserInfoProps> = ({
             />
             <FormFields
               name="preferredJobTitle"
-              label={t('applicant.form.fields.preferredJobTitle.label')}
+              label={t('applicant.form.fields.jobTitle.label')}
               control={form.control}
               loading={isLoadingVacancies}
               render={({ field }) => (
                 <Combobox
                   searchable
                   options={memoVacancies}
-                  placeholder={t(
-                    'applicant.form.fields.preferredJobTitle.placeholder',
-                  )}
+                  placeholder={t('applicant.form.fields.jobTitle.placeholder')}
                   {...field}
                 />
               )}

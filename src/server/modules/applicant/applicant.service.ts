@@ -162,6 +162,33 @@ class ApplicantService {
       throw handlePrismaError(error, 'Applicant');
     }
   }
+
+  /* *****************************************************************
+   * PATCH
+   * ***************************************************************** */
+  // ───────────────── PATCH APPLICANTS ────────────────── //
+  async archiveApplicants(ids: string[]) {
+    try {
+      const applicant = await this.repository.archiveApplicants(ids);
+
+      if (!applicant) throw new NotFoundError('Applicant not found');
+
+      return createResponse(applicant);
+    } catch (error) {
+      throw handlePrismaError(error, 'Applicant');
+    }
+  }
+  async unarchiveApplicants(ids: string[]) {
+    try {
+      const applicant = await this.repository.unarchiveApplicants(ids);
+
+      if (!applicant) throw new NotFoundError('Applicant not found');
+
+      return createResponse(applicant);
+    } catch (error) {
+      throw handlePrismaError(error, 'Applicant');
+    }
+  }
 }
 
 export const applicantService = new ApplicantService(new ApplicantRepository());

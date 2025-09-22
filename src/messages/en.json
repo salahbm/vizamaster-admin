@@ -119,6 +119,7 @@
     "status": "Status",
     "archive": "Archive",
     "active": "Active",
+    "unarchive": "Unarchive",
     "archived": "Archived",
     "userInfo": "User Info",
     "professionalInfo": "Professional Info",

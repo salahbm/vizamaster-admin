@@ -2,7 +2,7 @@
 
 import { Fragment, useMemo } from 'react';
 
-import { Archive, Trash2 } from 'lucide-react';
+import { Archive, FolderOpenDot, Trash2 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import * as nuqs from 'nuqs';
 import { useQueryState } from 'nuqs';
@@ -15,6 +15,10 @@ import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 import { Applicant } from '@/generated/prisma';
 import { useDeleteApplicant, useGetAllApplicants } from '@/hooks/applicant';
+import {
+  useArchiveApplicant,
+  useUnarchiveApplicant,
+} from '@/hooks/applicant/use-archive';
 import { useDataTable } from '@/hooks/common/use-data-table';
 import { useQueryReader } from '@/hooks/common/use-query-reader';
 import { useAlert } from '@/providers/alert';
@@ -35,6 +39,10 @@ export const ApplicantTable = ({
 
   const { mutateAsync: deleteApplicants, isPending: isDeleting } =
     useDeleteApplicant();
+  const { mutateAsync: archiveApplicants, isPending: isArchiving } =
+    useArchiveApplicant();
+  const { mutateAsync: unarchiveApplicants, isPending: isUnarchiving } =
+    useUnarchiveApplicant();
 
   // Instant filters - these update immediately
   const instantQuery = useQueryReader({
@@ -205,9 +213,40 @@ export const ApplicantTable = ({
               <Trash2 className="mr-2 h-4 w-4" />
               {t('Common.delete')}
             </Button>
-            <Button type="button" size="sm" variant="outline">
-              <Archive className="mr-2 h-4 w-4" />
-              {t('Common.archive')}
+            <Button
+              type="button"
+              size="sm"
+              variant="outline"
+              disabled={isArchiving || isUnarchiving}
+              onClick={async () =>
+                // if tab is true then unarchive else archive
+                tabParam === 'true'
+                  ? await unarchiveApplicants(
+                      table
+                        .getFilteredSelectedRowModel()
+                        .rows.map((row) => row.original.id),
+                    )
+                  : alert({
+                      title: t('Common.archive'),
+                      description: t('Common.messages.archiveDescription'),
+                      onConfirm: async () =>
+                        archiveApplicants(
+                          table
+                            .getFilteredSelectedRowModel()
+                            .rows.map((row) => row.original.id),
+                        ),
+                      confirmText: t('Common.archive'),
+                    })
+              }
+            >
+              {tabParam === 'true' ? (
+                <FolderOpenDot className="mr-2 h-4 w-4" />
+              ) : (
+                <Archive className="mr-2 h-4 w-4" />
+              )}
+              {tabParam === 'true'
+                ? t('Common.unarchive')
+                : t('Common.archive')}
             </Button>
           </div>
         )}
