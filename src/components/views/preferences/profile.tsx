@@ -25,6 +25,8 @@ import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
+import { generateGradientThumbnail } from '@/utils/gradient-bg';
+
 import { useAlert } from '@/providers/alert';
 
 // Define the form schema
@@ -167,8 +169,14 @@ const Profile: React.FC<IProfileProps> = () => {
               />
             ) : (
               <div className="bg-primary text-primary-foreground flex h-full w-full items-center justify-center text-2xl">
-                {userData.firstName[0]}
-                {userData.lastName[0]}
+                <Image
+                  src={generateGradientThumbnail(
+                    userData.firstName[0] + userData.lastName[0],
+                  )}
+                  alt={`${userData.firstName} ${userData.lastName}`}
+                  fill
+                  className="object-cover"
+                />
               </div>
             )}
           </div>
