@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server';
 
+import z from 'zod';
+
 import { Prisma } from '@/generated/prisma';
 
 // Base API error class
@@ -76,6 +78,12 @@ export async function handleApiError(error: unknown): Promise<NextResponse> {
   if (error instanceof ApiError) {
     // If it's already an ApiError, use it directly
     apiError = error;
+  } else if (error instanceof z.ZodError) {
+    apiError = new ValidationError(
+      'Validation failed',
+      z.treeifyError(error),
+      4220,
+    );
   } else {
     // Fallback for unhandled errors (e.g., raw Error or unknown)
     apiError = new InternalServerError(

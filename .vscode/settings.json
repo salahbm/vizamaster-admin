@@ -28,5 +28,5 @@
   "language_server.memory.usage.limit": "8gb",
   "language_server.processes.limit": 1,
   "i18n-ally.localesPaths": ["src/i18n", "src/messages"],
-  "cSpell.words": ["oklch"]
+  "cSpell.words": ["accountss", "oklch", "sessionss"]
 }

@@ -5,6 +5,7 @@ import { useEffect, useMemo } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useLocale, useTranslations } from 'next-intl';
 import { useForm } from 'react-hook-form';
+import { toast } from 'sonner';
 
 import { DatePicker } from '@/components/shared/date-pickers';
 import { FormFields } from '@/components/shared/form-fields';
@@ -16,7 +17,6 @@ import { Input, TelephoneInput } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Separator } from '@/components/ui/separator';
-import { Uploader } from '@/components/ui/uploader';
 
 import { mapOptions } from '@/lib/utils';
 
@@ -27,6 +27,7 @@ import {
   useCreateApplicant,
   useUpdateApplicant,
 } from '@/hooks/applicant';
+import { useUpload } from '@/hooks/files';
 import { useCodes } from '@/hooks/settings/codes';
 import { ApplicantDto, TApplicantDto } from '@/server/common/dto/applicant.dto';
 
@@ -64,6 +65,7 @@ const ApplicantUserInfo: React.FC<IApplicantUserInfoProps> = ({
     useCreateApplicant();
   const { mutateAsync: updateApplicant, isPending: isPendingUpdateApplicant } =
     useUpdateApplicant();
+  const { mutateAsync: uploadFile } = useUpload();
 
   // MEMOS
   const countryOfResidenceOptions = useMemo(() => getCountries(), []);
@@ -195,16 +197,47 @@ const ApplicantUserInfo: React.FC<IApplicantUserInfoProps> = ({
               )}
             />
           </div>
-          <div className="mt-6">
-            <FormFields
-              name="passportPhoto"
-              label={t('applicant.form.fields.passportPhoto.label')}
-              control={form.control}
-              render={({ field }) => <Uploader {...field} maxFiles={1} />}
-              message={t('applicant.form.fields.passportPhoto.message')}
-              messageClassName="text-muted-foreground text-xs"
-            />
-          </div>
+          {id && (
+            <div className="mt-6">
+              <FormFields
+                name="passportPhoto"
+                label={t('applicant.form.fields.passportPhoto.label')}
+                control={form.control}
+                render={({ field }) => (
+                  <Input
+                    placeholder="Choose passport photo"
+                    type="file"
+                    {...field}
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (file) {
+                        if (!id) {
+                          toast.error('Please save the applicant first');
+                          return;
+                        }
+
+                        uploadFile({
+                          file,
+                          applicantId: id,
+                          fileType: 'PASSPORT',
+                        })
+                          .then(({ fileUrl }) => {
+                            field.onChange(fileUrl);
+                          })
+                          .catch((error) => {
+                            toast.error(
+                              'Failed to upload file: ' + error.message,
+                            );
+                          });
+                      }
+                    }}
+                  />
+                )}
+                message={t('applicant.form.fields.passportPhoto.message')}
+                messageClassName="text-muted-foreground text-xs"
+              />
+            </div>
+          )}
         </div>
         <Separator />
         {/* Contact Information */}

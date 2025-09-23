@@ -67,12 +67,6 @@ model Accounts {
   @@map("accounts")
 }
 
-enum UserRole {
-  USER
-  EDITOR
-  ADMIN
-  CREATOR
-}
 
 model Sidebar {
   id        String   @id @default(cuid())
@@ -174,8 +168,8 @@ model Applicant {
 
   // Relations
   work                Work[]
-  files               File[]
   visa                Visa[]
+  files               File[]
 
   // Audit
   createdBy           String   @default("System") // Ideally set to user ID
@@ -192,29 +186,6 @@ model Applicant {
 }
 
 
-enum ApplicantStatus {
-  NEW                  // Just applied 
-  IN_PROGRESS  // Currently being processed
-  CONFIRMED_PROGRAM // Accepted into internship/training program
-
-  // Outcomes
-  HIRED              // Hired by hotel
-  HOTEL_REJECTED   // Refused by hotel
-  APPLICANT_REJECTED // Applicant refused/withdrews
-  FIRED              // Hired but later fired
-}
-
-
-enum VisaStatus {
-  STILL_WORKING
-  RETURNED
-  DEPARTED
-}
-
-enum Gender {
-  MALE
-  FEMALE
-}
 
 model Visa {
   id              String      @id @default(cuid())
@@ -228,7 +199,7 @@ model Visa {
   status          VisaStatus  @default(STILL_WORKING) // still_working, returned, departed
   flightDocuments String[]     @map("flight_documents") // URL to flight docs (e.g., S3)
   
-  files           File[]      // Related uploaded files (e.g., visa copy)
+  files           String[]      // Related uploaded files (e.g., visa copy)
 
   createdBy       String      @default("System")
   updatedBy       String      @default("System")
@@ -253,7 +224,7 @@ model Work {
   responsibilities String    @map("responsibilities") // Text description
   achievements    String?   @map("achievements") // Optional text for key wins
   location        String?   @map("location") // e.g., "New York, NY"
-  files           File[]    // Related uploaded files (e.g., passport copy)
+  files           String[]    // Related uploaded files (e.g., passport copy)
 
   createdBy       String    @default("System")
   updatedBy       String    @default("System")
@@ -264,6 +235,31 @@ model Work {
   @@index([applicantId])
 }
 
+
+model File {
+  id              String    @id @default(cuid())
+  
+  applicantId     String    @map("applicant_id")
+  applicant       Applicant @relation(fields: [applicantId], references: [id], onDelete: Cascade)
+
+  
+  fileType        FileType  @map("file_type") // e.g., PASSPORT, VISA, CV
+  fileUrl         String    @map("file_url") // URL to file in storage (e.g., S3)
+  fileName        String    @map("file_name") // Original file name
+  fileSize        Int?      @map("file_size") // Size in bytes
+  mimeType        String?   @map("mime_type") // e.g., "application/pdf"
+
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  @@map("files")
+  @@index([applicantId])
+  @@index([fileType])
+}
+
+
+// ENUMS
+
 enum FileType {
   PASSPORT
   VISA
@@ -273,31 +269,34 @@ enum FileType {
   OTHER
 }
 
-model File {
-  id              String    @id @default(cuid())
-  
-  applicantId     String    @map("applicant_id")
-  applicant       Applicant @relation(fields: [applicantId], references: [id], onDelete: Cascade)
 
-  visaId          String?   @map("visa_id")
-  visa            Visa?     @relation(fields: [visaId], references: [id], onDelete: Cascade)
-  
-  workId          String?   @map("work_id")
-  work            Work?     @relation(fields: [workId], references: [id], onDelete: Cascade)
-  
-  fileType        FileType  @map("file_type") // e.g., PASSPORT, VISA, CV
-  fileUrl         String    @map("file_url") // URL to file in storage (e.g., S3)
-  fileName        String    @map("file_name") // Original file name
-  fileSize        Int?      @map("file_size") // Size in bytes
-  mimeType        String?   @map("mime_type") // e.g., "application/pdf"
+enum ApplicantStatus {
+  NEW                 
+  IN_PROGRESS 
+  CONFIRMED_PROGRAM
 
-  createdBy       String    @default("System")
-  updatedBy       String    @default("System")
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
+ 
+  HIRED             
+  HOTEL_REJECTED  
+  APPLICANT_REJECTED
+  FIRED             
+}
 
-  @@map("files")
-  @@index([applicantId])
-  @@index([visaId])
-  @@index([fileType])
+
+enum VisaStatus {
+  STILL_WORKING
+  RETURNED
+  DEPARTED
+}
+
+enum Gender {
+  MALE
+  FEMALE
+}
+
+enum UserRole {
+  USER
+  EDITOR
+  ADMIN
+  CREATOR
 }
