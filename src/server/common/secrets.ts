@@ -1,0 +1,29 @@
+const DATABASE_URL = process.env.DATABASE_URL;
+
+const DIRECT_URL = process.env.DIRECT_URL;
+
+const BETTER_AUTH_SECRET = process.env.BETTER_AUTH_SECRET;
+const BETTER_AUTH_URL = process.env.BETTER_AUTH_URL;
+const NEXT_PUBLIC_APP_URL = process.env.NEXT_PUBLIC_APP_URL;
+
+const NODE_ENV = process.env.NODE_ENV;
+
+const R2_ACCOUNT_ID = process.env.R2_ACCOUNT_ID;
+const R2_ACCESS_KEY_ID = process.env.R2_ACCESS_KEY_ID;
+const R2_SECRET_ACCESS_KEY = process.env.R2_SECRET_ACCESS_KEY;
+const R2_BUCKET = process.env.R2_BUCKET;
+const R2_ENDPOINT = process.env.R2_ENDPOINT;
+
+export {
+  BETTER_AUTH_SECRET,
+  BETTER_AUTH_URL,
+  DATABASE_URL,
+  DIRECT_URL,
+  NEXT_PUBLIC_APP_URL,
+  NODE_ENV,
+  R2_ACCESS_KEY_ID,
+  R2_ACCOUNT_ID,
+  R2_BUCKET,
+  R2_ENDPOINT,
+  R2_SECRET_ACCESS_KEY,
+};

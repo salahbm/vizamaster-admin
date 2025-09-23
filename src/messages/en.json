@@ -428,6 +428,10 @@
         "achievements": {
           "label": "Achievements",
           "placeholder": "List your key achievements (optional)"
+        },
+        "workFiles": {
+          "label": "Files",
+          "message": "Upload your files"
         }
       },
       "sections": {

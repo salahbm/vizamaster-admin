@@ -253,6 +253,7 @@ model Work {
   responsibilities String    @map("responsibilities") // Text description
   achievements    String?   @map("achievements") // Optional text for key wins
   location        String?   @map("location") // e.g., "New York, NY"
+  files           File[]    // Related uploaded files (e.g., passport copy)
 
   createdBy       String    @default("System")
   updatedBy       String    @default("System")
@@ -274,10 +275,15 @@ enum FileType {
 
 model File {
   id              String    @id @default(cuid())
+  
   applicantId     String    @map("applicant_id")
   applicant       Applicant @relation(fields: [applicantId], references: [id], onDelete: Cascade)
+
   visaId          String?   @map("visa_id")
-  visa            Visa?     @relation(fields: [visaId], references: [id], onDelete: SetNull)
+  visa            Visa?     @relation(fields: [visaId], references: [id], onDelete: Cascade)
+  
+  workId          String?   @map("work_id")
+  work            Work?     @relation(fields: [workId], references: [id], onDelete: Cascade)
   
   fileType        FileType  @map("file_type") // e.g., PASSPORT, VISA, CV
   fileUrl         String    @map("file_url") // URL to file in storage (e.g., S3)

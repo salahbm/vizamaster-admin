@@ -11,6 +11,7 @@ import { Button } from '@/components/ui/button';
 import { Form } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
+import { Uploader } from '@/components/ui/uploader';
 
 import {
   TWorkArraySchema,
@@ -50,6 +51,7 @@ const ApplicantWorkInfo: React.FC<IApplicantWorkInfoProps> = ({ id }) => {
       responsibilities: '',
       achievements: '',
       location: '',
+      files: [],
     });
   };
 
@@ -182,6 +184,18 @@ const ApplicantWorkInfo: React.FC<IApplicantWorkInfoProps> = ({ id }) => {
                           {...field}
                         />
                       )}
+                    />
+                  </div>
+                  <div className="col-span-2">
+                    <FormFields
+                      name={`workExperiences.${index}.files`}
+                      label={t('applicant.form.fields.workFiles.label')}
+                      control={form.control}
+                      render={({ field }) => (
+                        <Uploader {...field} maxFiles={8} maxSizeMB={2} />
+                      )}
+                      message={t('applicant.form.fields.workFiles.message')}
+                      messageClassName="mb-2"
                     />
                   </div>
                 </div>

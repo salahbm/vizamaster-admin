@@ -1,5 +1,7 @@
 import z from 'zod';
 
+import { FileMetadataSchema } from '@/hooks/common/use-file-upload';
+
 export const WorkDto = z.object({
   id: z.string().optional(),
   jobTitle: z.string().min(1),
@@ -9,6 +11,7 @@ export const WorkDto = z.object({
   responsibilities: z.string().min(1),
   achievements: z.string().nullable(),
   location: z.string().nullable(),
+  files: z.array(FileMetadataSchema).optional(),
 });
 
 export type TWorkDto = z.infer<typeof WorkDto>;

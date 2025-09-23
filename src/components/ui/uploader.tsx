@@ -41,7 +41,7 @@ function Uploader({
   maxSizeMB = 2,
   maxFiles = 6,
   onChange,
-  accept = 'image/svg+xml,image/png,image/jpeg,image/jpg,image/gif,application/pdf',
+  accept = 'image/png,image/jpeg,image/jpg,image/gif,application/pdf',
   multiple = true,
 }: UploaderProps) {
   const t = useTranslations();
@@ -65,7 +65,6 @@ function Uploader({
     multiple,
     maxFiles,
     initialFiles: value as FileMetadata[],
-    onFilesChange: onChange,
   });
 
   return (
