@@ -83,3 +83,15 @@ export const dateToMonth = (date?: Date): number =>
  */
 export const monthToDate = (month?: number): Date =>
   month ? new Date(month, 0, 1) : new Date();
+
+export const getLastSixMonths = (): Date => {
+  const nextMonth = new Date();
+  nextMonth.setMonth(nextMonth.getMonth() - 6);
+  return nextMonth;
+};
+
+export const getNextSixMonths = (): Date => {
+  const nextMonth = new Date();
+  nextMonth.setMonth(nextMonth.getMonth() + 6);
+  return nextMonth;
+};

@@ -12,14 +12,6 @@ import { z } from 'zod';
 
 import { FormFields } from '@/components/shared/form-fields';
 import { Button } from '@/components/ui/button';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
 import { Form } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
@@ -204,14 +196,14 @@ const Profile: React.FC<IProfileProps> = () => {
 
             {/* Profile Tab */}
             <TabsContent value="profile">
-              <Card>
-                <CardHeader>
-                  <CardTitle>{t('profileInfo')}</CardTitle>
-                  <CardDescription>
+              <div className="card-md">
+                <div className="mb-6">
+                  <h3 className="font-header text-lg">{t('profileInfo')}</h3>
+                  <p className="text-muted-foreground text-sm">
                     {t('updateYourPersonalInformation')}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
+                  </p>
+                </div>
+                <div className="space-y-6">
                   <Form {...profileForm}>
                     <form
                       onSubmit={profileForm.handleSubmit(onProfileSubmit)}
@@ -270,18 +262,20 @@ const Profile: React.FC<IProfileProps> = () => {
                       </Button>
                     </form>
                   </Form>
-                </CardContent>
-              </Card>
+                </div>
+              </div>
             </TabsContent>
 
             {/* Security Tab */}
             <TabsContent value="security">
-              <Card>
-                <CardHeader>
-                  <CardTitle>{t('changePassword')}</CardTitle>
-                  <CardDescription>{t('updateYourPassword')}</CardDescription>
-                </CardHeader>
-                <CardContent>
+              <div className="card-md">
+                <div className="mb-6">
+                  <h3 className="font-header text-lg">{t('changePassword')}</h3>
+                  <p className="text-muted-foreground text-sm">
+                    {t('updateYourPassword')}
+                  </p>
+                </div>
+                <div className="space-y-6">
                   <Form {...passwordForm}>
                     <form
                       onSubmit={passwordForm.handleSubmit(onPasswordSubmit)}
@@ -337,33 +331,33 @@ const Profile: React.FC<IProfileProps> = () => {
                       </Button>
                     </form>
                   </Form>
-                </CardContent>
-              </Card>
+                </div>
+              </div>
 
               <Separator className="my-6" />
 
-              <Card className="border-destructive">
-                <CardHeader>
-                  <CardTitle className="text-destructive">
+              <div className="card-md border-destructive">
+                <div className="mb-6">
+                  <h3 className="font-header text-destructive text-lg">
                     {t('dangerZone')}
-                  </CardTitle>
-                  <CardDescription>
+                  </h3>
+                  <p className="text-muted-foreground text-sm">
                     {t('dangerZoneDescription')}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
+                  </p>
+                </div>
+                <div className="space-y-6">
                   <div className="border-destructive bg-destructive/10 text-destructive rounded-md border p-4">
                     <h4 className="font-medium">{t('deleteAccount')}</h4>
                     <p className="mt-1 text-sm">{t('deleteAccountWarning')}</p>
                   </div>
-                </CardContent>
-                <CardFooter>
-                  <Button variant="destructive" onClick={handleDeleteAccount}>
-                    <Trash2 className="mr-2 h-4 w-4" />
-                    {t('deleteAccount')}
-                  </Button>
-                </CardFooter>
-              </Card>
+                  <div>
+                    <Button variant="destructive" onClick={handleDeleteAccount}>
+                      <Trash2 className="mr-2 h-4 w-4" />
+                      {t('deleteAccount')}
+                    </Button>
+                  </div>
+                </div>
+              </div>
             </TabsContent>
           </Tabs>
         </div>

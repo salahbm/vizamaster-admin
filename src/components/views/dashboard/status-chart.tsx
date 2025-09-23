@@ -10,7 +10,7 @@ import {
   Tooltip,
 } from 'recharts';
 
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { useIsMobile } from '@/hooks/common/use-mobile';
 
 type CustomTooltipProps = {
   active?: boolean;
@@ -39,6 +39,7 @@ interface IApplicantStatusChartProps {}
 
 const ApplicantStatusChart: React.FC<IApplicantStatusChartProps> = () => {
   const t = useTranslations();
+  const isMobile = useIsMobile();
 
   const statusColors = {
     NEW: '#6BB8E5', // soft sky blue
@@ -103,68 +104,61 @@ const ApplicantStatusChart: React.FC<IApplicantStatusChartProps> = () => {
   const total = calculateTotal(data);
 
   return (
-    <Card className="border-0 p-0 md:border md:p-0">
-      <CardHeader className="px-2 pt-2 pb-0 md:px-6 md:pt-6 md:pb-2">
-        <CardTitle className="text-base font-medium">
-          {t('dashboard.charts.status.title')}
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="p-2 md:p-6">
-        <div className="h-[350px]">
-          <ResponsiveContainer width="100%" height="100%">
-            <PieChart>
-              <Pie
-                data={data}
-                cx="50%"
-                cy="50%"
-                innerRadius={70}
-                outerRadius={140}
-                paddingAngle={2}
-                dataKey="value"
-              >
-                {data.map((entry) => (
-                  <Cell key={entry.id} fill={entry.color} />
-                ))}
-              </Pie>
-              <Tooltip
-                content={({ active, payload }: CustomTooltipProps) => {
-                  if (active && payload && payload.length) {
-                    const data = payload[0].payload;
-                    return (
-                      <div className="bg-background rounded-lg border p-2 shadow-md">
-                        <div className="grid grid-cols-2 gap-2">
-                          <div className="flex items-center gap-2">
-                            <div
-                              className="h-2 w-2 rounded-full"
-                              style={{ background: data.color }}
-                            />
-                            <span className="font-medium">{data.name}</span>
-                          </div>
-                          <div className="text-right font-medium">
-                            {((data.value / total) * 100).toFixed(1)}%
-                          </div>
-                          <div className="text-muted-foreground col-span-2 text-xs">
-                            {data.value} applicants
-                          </div>
-                        </div>
+    <div className="card-md ] h-[350px]">
+      <ResponsiveContainer width="100%" height="100%">
+        <PieChart>
+          <Pie
+            data={data}
+            cx="50%"
+            cy="50%"
+            innerRadius={70}
+            outerRadius={140}
+            paddingAngle={2}
+            dataKey="value"
+          >
+            {data.map((entry) => (
+              <Cell key={entry.id} fill={entry.color} />
+            ))}
+          </Pie>
+          <Tooltip
+            content={({ active, payload }: CustomTooltipProps) => {
+              if (active && payload && payload.length) {
+                const data = payload[0].payload;
+                return (
+                  <div className="bg-background rounded-lg border p-2 shadow-md">
+                    <div className="grid grid-cols-2 gap-2">
+                      <div className="flex items-center gap-2">
+                        <div
+                          className="h-2 w-2 rounded-full"
+                          style={{ background: data.color }}
+                        />
+                        <span className="font-medium">{data.name}</span>
                       </div>
-                    );
-                  }
-                  return null;
-                }}
-              />
-              <Legend
-                layout="vertical"
-                verticalAlign="middle"
-                align="right"
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                content={(props: any) => <CustomLegend {...props} />}
-              />
-            </PieChart>
-          </ResponsiveContainer>
-        </div>
-      </CardContent>
-    </Card>
+                      <div className="text-right font-medium">
+                        {((data.value / total) * 100).toFixed(1)}%
+                      </div>
+                      <div className="text-muted-foreground col-span-2 text-xs">
+                        {data.value} applicants
+                      </div>
+                    </div>
+                  </div>
+                );
+              }
+              return null;
+            }}
+          />
+          {isMobile ? null : (
+            <Legend
+              layout="vertical"
+              verticalAlign="middle"
+              align="right"
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              content={(props: any) => <CustomLegend {...props} />}
+            />
+          )}
+        </PieChart>
+      </ResponsiveContainer>
+    </div>
   );
 };
 

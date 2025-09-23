@@ -12,8 +12,6 @@ import {
   YAxis,
 } from 'recharts';
 
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-
 interface TrendData {
   date: string;
   count: number;
@@ -44,78 +42,69 @@ const ApplicantTrendChart: React.FC<IApplicantTrendChartProps> = () => {
   const data = generateMockData();
 
   return (
-    <Card className="border-0 p-0 md:border md:p-0">
-      <CardHeader className="px-2 pt-2 pb-0 md:px-6 md:pt-6 md:pb-2">
-        <CardTitle className="text-base font-medium">
-          {t('dashboard.charts.trend.title')}
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="p-2 md:p-6">
-        <div className="h-[350px]">
-          <ResponsiveContainer width="100%" height="100%">
-            <AreaChart
-              data={data}
-              margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
-            >
-              <defs>
-                <linearGradient id="colorCount" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#38bdf8" stopOpacity={0.8} />{' '}
-                  {/* cyan-400 */}
-                  <stop offset="95%" stopColor="#38bdf8" stopOpacity={0} />
-                </linearGradient>
-              </defs>
-              <XAxis
-                dataKey="date"
-                tickLine={false}
-                axisLine={false}
-                tick={{ fontSize: 12 }}
-                tickMargin={10}
-              />
-              <YAxis
-                tickLine={false}
-                axisLine={false}
-                tick={{ fontSize: 12 }}
-                tickMargin={10}
-              />
-              <CartesianGrid
-                strokeDasharray="3 3"
-                vertical={false}
-                stroke="#e5e7eb"
-              />
-              <Tooltip
-                content={({ active, payload }) => {
-                  if (active && payload && payload.length) {
-                    const data = payload[0].payload as TrendData;
-                    return (
-                      <div className="bg-background rounded-lg border p-2 shadow-md">
-                        <div className="grid gap-2">
-                          <div className="flex items-center gap-2">
-                            <div className="h-2 w-2 rounded-full bg-blue-500" />
-                            <span className="font-medium">{data.date}</span>
-                          </div>
-                          <div className="text-muted-foreground text-xs">
-                            {data.count}{' '}
-                            {t('dashboard.charts.trend.tooltip.applications')}
-                          </div>
-                        </div>
+    <div className="card-md h-[350px]">
+      <ResponsiveContainer width="100%" height="100%">
+        <AreaChart
+          data={data}
+          margin={{ top: 10, right: 5, left: -30, bottom: 0 }}
+        >
+          <defs>
+            <linearGradient id="colorCount" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="5%" stopColor="#38bdf8" stopOpacity={0.8} />{' '}
+              {/* cyan-400 */}
+              <stop offset="95%" stopColor="#38bdf8" stopOpacity={0} />
+            </linearGradient>
+          </defs>
+          <XAxis
+            dataKey="date"
+            tickLine={false}
+            axisLine={false}
+            tick={{ fontSize: 12 }}
+            tickMargin={10}
+          />
+          <YAxis
+            tickLine={false}
+            axisLine={false}
+            tick={{ fontSize: 12 }}
+            tickMargin={10}
+          />
+          <CartesianGrid
+            strokeDasharray="3 3"
+            vertical={false}
+            stroke="#e5e7eb"
+          />
+          <Tooltip
+            content={({ active, payload }) => {
+              if (active && payload && payload.length) {
+                const data = payload[0].payload as TrendData;
+                return (
+                  <div className="bg-background rounded-lg border p-2 shadow-md">
+                    <div className="grid gap-2">
+                      <div className="flex items-center gap-2">
+                        <div className="h-2 w-2 rounded-full bg-blue-500" />
+                        <span className="font-medium">{data.date}</span>
                       </div>
-                    );
-                  }
-                  return null;
-                }}
-              />
-              <Area
-                type="monotone"
-                dataKey="count"
-                stroke="oklch(0.80 0.13 220)"
-                fillOpacity={1}
-                fill="url(#colorCount)"
-              />
-            </AreaChart>
-          </ResponsiveContainer>
-        </div>
-      </CardContent>
-    </Card>
+                      <div className="text-muted-foreground text-xs">
+                        {data.count}{' '}
+                        {t('dashboard.charts.trend.tooltip.applications')}
+                      </div>
+                    </div>
+                  </div>
+                );
+              }
+              return null;
+            }}
+          />
+          <Area
+            type="monotone"
+            dataKey="count"
+            stroke="oklch(0.80 0.13 220)"
+            fillOpacity={1}
+            fill="url(#colorCount)"
+          />
+        </AreaChart>
+      </ResponsiveContainer>
+    </div>
   );
 };
 

@@ -12,8 +12,6 @@ import {
   YAxis,
 } from 'recharts';
 
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-
 interface VisaData {
   partner: string;
   stillWorking: number;
@@ -73,126 +71,114 @@ const VisaStatusChart: React.FC<IVisaStatusChartProps> = () => {
   };
 
   return (
-    <Card className="border-0 p-0 md:border md:p-0">
-      <CardHeader className="px-2 pt-2 pb-0 md:px-6 md:pt-6 md:pb-2">
-        <CardTitle className="text-base font-medium">
-          {t('dashboard.charts.visa.title')}
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="p-2 md:p-6">
-        <div className="h-[350px]">
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart
-              data={data}
-              margin={{ top: 10, right: 10, left: 10, bottom: -30 }}
-            >
-              <CartesianGrid
-                strokeDasharray="3 3"
-                vertical={false}
-                stroke="#e5e7eb"
-              />
-              <XAxis
-                dataKey="partner"
-                tickLine={false}
-                axisLine={false}
-                tick={{ fontSize: 12 }}
-                tickMargin={10}
-                interval={0}
-                angle={-45}
-                textAnchor="end"
-                height={60}
-              />
-              <YAxis
-                tickLine={false}
-                axisLine={false}
-                tick={{ fontSize: 12 }}
-                tickMargin={10}
-              />
-              <Tooltip
-                cursor={{ fill: 'rgb(244 245 247 / 0.5)' }}
-                content={({ active, payload }) => {
-                  if (active && payload && payload.length) {
-                    const data = payload[0].payload as VisaData;
-                    return (
-                      <div className="bg-background rounded-lg border p-2 shadow-md">
-                        <div className="grid gap-2">
-                          <div className="font-medium">{data.partner}</div>
-                          {payload.map((entry) => (
-                            <div
-                              key={entry.dataKey}
-                              className="flex items-center gap-2"
-                            >
-                              <div
-                                className="h-2 w-2 rounded-full"
-                                style={{
-                                  background:
-                                    statusColors[
-                                      entry.dataKey as keyof typeof statusColors
-                                    ],
-                                }}
-                              />
-                              <span className="text-xs">
-                                {t(
-                                  `dashboard.charts.visa.statuses.${entry.dataKey}`,
-                                )}
-                              </span>
-                              <span className="text-muted-foreground text-xs">
-                                {entry.value}{' '}
-                                {t('dashboard.charts.visa.tooltip.applicants')}
-                              </span>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    );
-                  }
-                  return null;
-                }}
-              />
-              <Legend
-                verticalAlign="bottom"
-                align="center"
-                wrapperStyle={{ bottom: -10, left: 0, right: 0 }}
-                content={({ payload }) => (
-                  <div className="mt-8 flex justify-center gap-4">
-                    {payload?.map((entry) => (
-                      <div
-                        key={entry.value}
-                        className="flex items-center gap-2"
-                      >
+    <div className="card-md h-[350px]">
+      <ResponsiveContainer width="100%" height="100%">
+        <BarChart
+          data={data}
+          margin={{ top: 10, right: 10, left: -30, bottom: -30 }}
+        >
+          <CartesianGrid
+            strokeDasharray="3 3"
+            vertical={false}
+            stroke="#e5e7eb"
+          />
+          <XAxis
+            dataKey="partner"
+            tickLine={false}
+            axisLine={false}
+            tick={{ fontSize: 12 }}
+            tickMargin={10}
+            interval={0}
+            angle={-45}
+            textAnchor="end"
+            height={60}
+          />
+          <YAxis
+            tickLine={false}
+            axisLine={false}
+            tick={{ fontSize: 12 }}
+            tickMargin={10}
+          />
+          <Tooltip
+            cursor={{ fill: 'rgb(244 245 247 / 0.5)' }}
+            content={({ active, payload }) => {
+              if (active && payload && payload.length) {
+                const data = payload[0].payload as VisaData;
+                return (
+                  <div className="bg-background rounded-lg border p-2 shadow-md">
+                    <div className="grid gap-2">
+                      <div className="font-medium">{data.partner}</div>
+                      {payload.map((entry) => (
                         <div
-                          className="h-2 w-2 rounded-full"
-                          style={{ background: entry.color }}
-                        />
-                        <span className="text-xs">
-                          {t(`dashboard.charts.visa.statuses.${entry.dataKey}`)}
-                        </span>
-                      </div>
-                    ))}
+                          key={entry.dataKey}
+                          className="flex items-center gap-2"
+                        >
+                          <div
+                            className="h-2 w-2 rounded-full"
+                            style={{
+                              background:
+                                statusColors[
+                                  entry.dataKey as keyof typeof statusColors
+                                ],
+                            }}
+                          />
+                          <span className="text-xs">
+                            {t(
+                              `dashboard.charts.visa.statuses.${entry.dataKey}`,
+                            )}
+                          </span>
+                          <span className="text-muted-foreground text-xs">
+                            {entry.value}{' '}
+                            {t('dashboard.charts.visa.tooltip.applicants')}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
                   </div>
-                )}
-              />
-              <Bar
-                dataKey="stillWorking"
-                stackId="status"
-                fill={statusColors.stillWorking}
-                radius={[4, 4, 0, 0]}
-              />
-              <Bar
-                dataKey="returned"
-                stackId="status"
-                fill={statusColors.returned}
-              />
-              <Bar
-                dataKey="departed"
-                stackId="status"
-                fill={statusColors.departed}
-              />
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
-      </CardContent>
-    </Card>
+                );
+              }
+              return null;
+            }}
+          />
+          <Legend
+            verticalAlign="bottom"
+            align="center"
+            wrapperStyle={{ bottom: -10, left: 0, right: 0 }}
+            content={({ payload }) => (
+              <div className="mt-8 flex justify-center gap-4">
+                {payload?.map((entry) => (
+                  <div key={entry.value} className="flex items-center gap-2">
+                    <div
+                      className="h-2 w-2 rounded-full"
+                      style={{ background: entry.color }}
+                    />
+                    <span className="text-xs">
+                      {t(`dashboard.charts.visa.statuses.${entry.dataKey}`)}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            )}
+          />
+          <Bar
+            dataKey="stillWorking"
+            stackId="status"
+            fill={statusColors.stillWorking}
+            radius={[4, 4, 0, 0]}
+          />
+          <Bar
+            dataKey="returned"
+            stackId="status"
+            fill={statusColors.returned}
+          />
+          <Bar
+            dataKey="departed"
+            stackId="status"
+            fill={statusColors.departed}
+          />
+        </BarChart>
+      </ResponsiveContainer>
+    </div>
   );
 };
 
