@@ -201,8 +201,6 @@ model Visa {
   
   files           String[]      // Related uploaded files (e.g., visa copy)
 
-  createdBy       String      @default("System")
-  updatedBy       String      @default("System")
   createdAt       DateTime    @default(now())
   updatedAt       DateTime    @updatedAt
 
@@ -226,8 +224,6 @@ model Work {
   location        String?   @map("location") // e.g., "New York, NY"
   files           String[]    // Related uploaded files (e.g., passport copy)
 
-  createdBy       String    @default("System")
-  updatedBy       String    @default("System")
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
 

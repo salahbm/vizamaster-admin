@@ -1,6 +1,7 @@
 import { TFileDto } from '@/server/common/dto/files.dto';
 import { BadRequestError, handlePrismaError } from '@/server/common/errors';
-import { R2_ENDPOINT } from '@/server/common/secrets';
+import { R2_ACCOUNT_ID, R2_BUCKET } from '@/server/common/secrets';
+import { createResponse } from '@/server/common/utils';
 import prisma from '@/server/db/prisma';
 
 import FilesRepository, { fileRepository } from './files.repository';
@@ -32,30 +33,29 @@ class FilesService {
       );
     }
 
-    // Get signed URL with metadata
-    const { signedUrl, key: finalKey } =
-      await this.fileRepository.getSignedUrlForUpload({
-        key,
-        contentType,
-        applicantId,
-        fileType,
-      });
-
+    // Get signed URL and create file record
     const fileRecord = await this.createFileRecord({
       applicantId,
       fileType,
       fileName: key,
       mimeType: contentType,
-      fileUrl: `${R2_ENDPOINT}/${finalKey}`,
+      fileUrl: `https://${R2_BUCKET}.${R2_ACCOUNT_ID}.r2.cloudflarestorage.com/${applicantId}/${key}`,
     });
 
     if (!fileRecord) throw new BadRequestError('Failed to create file record');
 
-    return {
+    // Get signed URL for upload
+    const { signedUrl } = await this.fileRepository.getSignedUrlForUpload({
+      key,
+      contentType,
+      applicantId,
+      fileType,
+    });
+
+    return createResponse({
       signedUrl,
-      fileId: fileRecord.id,
       fileUrl: fileRecord.fileUrl,
-    };
+    });
   }
 
   /**
@@ -72,38 +72,6 @@ class FilesService {
           fileSize: file.fileSize,
           mimeType: file.mimeType,
         },
-      });
-    } catch (error) {
-      handlePrismaError(error);
-    }
-  }
-
-  /**
-   * Delete a file from storage and database
-   */
-  async deleteFile(fileId: string) {
-    try {
-      const file = await prisma.file.findUnique({ where: { id: fileId } });
-      if (!file) throw new BadRequestError('File not found');
-
-      // Delete from R2 first
-      await this.fileRepository.deleteFileFromStorage(file.fileName);
-
-      // Then delete from DB
-      return prisma.file.delete({ where: { id: fileId } });
-    } catch (error) {
-      handlePrismaError(error);
-    }
-  }
-
-  /**
-   * List all files for an applicant
-   */
-  async listFiles(applicantId: string) {
-    try {
-      return prisma.file.findMany({
-        where: { applicantId },
-        orderBy: { createdAt: 'desc' },
       });
     } catch (error) {
       handlePrismaError(error);

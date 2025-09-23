@@ -208,27 +208,37 @@ const ApplicantUserInfo: React.FC<IApplicantUserInfoProps> = ({
                     placeholder="Choose passport photo"
                     type="file"
                     {...field}
-                    onChange={(e) => {
-                      const file = e.target.files?.[0];
-                      if (file) {
-                        if (!id) {
-                          toast.error('Please save the applicant first');
-                          return;
-                        }
+                    onChange={async (e) => {
+                      e.preventDefault(); // Prevent form submission
+                      e.stopPropagation(); // Stop event bubbling
 
-                        uploadFile({
+                      const file = e.target.files?.[0];
+                      if (!file) return;
+
+                      if (!id) {
+                        toast.error('Please save the applicant first');
+                        return;
+                      }
+
+                      try {
+                        const { fileUrl } = await uploadFile({
                           file,
                           applicantId: id,
                           fileType: 'PASSPORT',
-                        })
-                          .then(({ fileUrl }) => {
-                            field.onChange(fileUrl);
-                          })
-                          .catch((error) => {
-                            toast.error(
-                              'Failed to upload file: ' + error.message,
-                            );
-                          });
+                          onProgress: (progress) => {
+                            // You can use this to show upload progress
+                            console.log('Upload progress:', progress);
+                          },
+                        });
+                        field.onChange(fileUrl);
+                        toast.success('File uploaded successfully');
+                      } catch (error) {
+                        console.error('Upload error:', error);
+                        toast.error(
+                          'Failed to upload file: ' + (error as Error).message,
+                        );
+                        // Reset the input
+                        e.target.value = '';
                       }
                     }}
                   />
