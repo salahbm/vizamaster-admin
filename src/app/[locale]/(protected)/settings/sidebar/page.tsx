@@ -12,7 +12,7 @@ import { SidebarTable } from '@/components/views/sidebar';
 
 import { routes } from '@/constants/routes';
 
-import { AuthGuard } from '@/server/modules/auth/auth.guard';
+import { AuthGuard } from '@/server/common/guard/auth.guard';
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations('sidebar');

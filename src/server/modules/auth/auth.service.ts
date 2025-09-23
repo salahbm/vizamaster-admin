@@ -6,8 +6,8 @@ import { NotFoundError, UnauthorizedError } from '@/server/common/errors';
 import { createPaginatedResult, createResponse } from '@/server/common/utils';
 
 import { Prisma } from '../../../../generated/prisma';
+import { AuthGuard } from '../../common/guard/auth.guard';
 import { auth } from './auth';
-import { AuthGuard } from './auth.guard';
 import { AuthRepository } from './auth.repository';
 
 export class AuthService {

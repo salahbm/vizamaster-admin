@@ -1,1 +1,1 @@
-export * from './applicant.service';
+export * from './user-info/user-info.service';

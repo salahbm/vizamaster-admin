@@ -4,8 +4,7 @@ import { getTranslations } from 'next-intl/server';
 
 import { API_CODES } from '@/server/common/codes';
 import { UnauthorizedError } from '@/server/common/errors';
-
-import { auth } from './auth';
+import { auth } from '@/server/modules/auth/auth';
 
 export class AuthGuard {
   async requireRole(user: { role: string }, allowedRoles: string[]) {

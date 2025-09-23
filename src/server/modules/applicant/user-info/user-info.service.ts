@@ -7,7 +7,7 @@ import {
 import { createPaginatedResult, createResponse } from '@/server/common/utils';
 import { ISort } from '@/types/data-table';
 
-import { ApplicantRepository } from './applicant.repository';
+import { ApplicantRepository } from './user-info.repository';
 
 class ApplicantService {
   private readonly repository: ApplicantRepository;

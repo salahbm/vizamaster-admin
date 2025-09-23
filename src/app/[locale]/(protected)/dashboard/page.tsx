@@ -4,7 +4,7 @@ import { DashboardView } from '@/components/views/dashboard';
 
 import { routes } from '@/constants/routes';
 
-import { AuthGuard } from '@/server/modules/auth/auth.guard';
+import { AuthGuard } from '@/server/common/guard/auth.guard';
 
 export default function DashboardPage() {
   const auth = new AuthGuard();

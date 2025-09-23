@@ -10,7 +10,6 @@ import { FormFields } from '@/components/shared/form-fields';
 import { Button } from '@/components/ui/button';
 import { Form } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { Separator } from '@/components/ui/separator';
 import { Textarea } from '@/components/ui/textarea';
 
 import {
@@ -49,8 +48,8 @@ const ApplicantWorkInfo: React.FC<IApplicantWorkInfoProps> = ({ id }) => {
       startDate: new Date(),
       endDate: null,
       responsibilities: '',
-      achievements: null,
-      location: null,
+      achievements: '',
+      location: '',
     });
   };
 
@@ -58,7 +57,7 @@ const ApplicantWorkInfo: React.FC<IApplicantWorkInfoProps> = ({ id }) => {
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
         <div>
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col justify-between gap-6 lg:flex-row lg:items-center">
             <div>
               <h2 className="font-header text-xl">
                 {t('applicant.form.sections.workInfo.title')}
@@ -70,7 +69,7 @@ const ApplicantWorkInfo: React.FC<IApplicantWorkInfoProps> = ({ id }) => {
             <Button
               type="button"
               variant="outline"
-              size="sm"
+              className="self-center md:ml-auto"
               onClick={addNewWorkExperience}
             >
               <Plus className="mr-2 h-4 w-4" />
@@ -78,16 +77,20 @@ const ApplicantWorkInfo: React.FC<IApplicantWorkInfoProps> = ({ id }) => {
             </Button>
           </div>
 
-          <div className="mt-6 space-y-6">
+          <div className="mt-12 space-y-12">
             {fields.map((field, index) => (
-              <div key={field.id} className="relative rounded-lg border p-6">
+              <div
+                key={field.id}
+                className="relative border-b lg:rounded-md lg:border lg:p-4"
+              >
                 <Button
                   type="button"
                   variant="ghost"
                   size="icon"
-                  className="absolute top-4 right-4"
+                  className="absolute -top-8 right-3 lg:-top-9 lg:right-5"
                   onClick={() => remove(index)}
                 >
+                  {t('Common.delete')}
                   <Trash2 className="h-4 w-4" />
                 </Button>
 
@@ -184,7 +187,6 @@ const ApplicantWorkInfo: React.FC<IApplicantWorkInfoProps> = ({ id }) => {
                 </div>
               </div>
             ))}
-
             {fields.length === 0 && (
               <div className="rounded-lg border border-dashed p-8">
                 <div className="text-center">
@@ -208,8 +210,6 @@ const ApplicantWorkInfo: React.FC<IApplicantWorkInfoProps> = ({ id }) => {
             )}
           </div>
         </div>
-
-        <Separator />
 
         <div className="flex justify-end space-x-4">
           <Button variant="outline" type="button">

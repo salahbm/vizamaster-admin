@@ -3,7 +3,7 @@ import { buildOrderBy } from '@/server/common/utils';
 import prisma from '@/server/db/prisma';
 import { ISort } from '@/types/data-table';
 
-import { ApplicantHelper } from './applicant.helper';
+import { ApplicantHelper } from './user-info.helper';
 
 export class ApplicantRepository {
   private readonly prismaApplicant: PrismaClient['applicant'];
