@@ -12,7 +12,7 @@ import ApplicantVisaInfo from './visa-info';
 import ApplicantWorkInfo from './work-info';
 
 interface IUpsertApplicantProps {
-  id?: string;
+  id: string;
   countryOfEmployment: string;
   partner: string;
 }
@@ -58,18 +58,18 @@ export const UpsertApplicant: React.FC<IUpsertApplicantProps> = ({
             {t('Common.visaInfo')}
           </TabsTrigger>
           <TabsTrigger
-            value="comments"
-            variant="outline"
-            className="w-32 max-w-fit"
-          >
-            {t('Common.comments')}
-          </TabsTrigger>
-          <TabsTrigger
             value="files"
             variant="outline"
             className="w-32 max-w-fit"
           >
             {t('Common.files')}
+          </TabsTrigger>
+          <TabsTrigger
+            value="comments"
+            variant="outline"
+            className="w-32 max-w-fit"
+          >
+            {t('Common.comments')}
           </TabsTrigger>
         </TabsList>
       )}

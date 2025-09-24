@@ -20,35 +20,36 @@ import { useDeleteFile, useUpload } from '../files';
 
 export type FileUploadOptions = {
   values?: TFileDto[] | null;
-  maxSize?: number; // in bytes
-  maxFiles?: number; // Only used when multiple is true, defaults to Infinity
+  maxSize?: number;
+  maxFiles?: number;
   accept?: string;
-  multiple?: boolean; // Defaults to false
+  multiple?: boolean;
   applicantId: string;
   fileType: FileType;
-  deleteOnRemove?: boolean; // If true, delete from server immediately; else, queue for submit (default: false)
-  onFilesChange?: (files: TFileDto[]) => void; // Callback when files change
-  onFilesAdded?: (addedFiles: TFileDto[]) => void; // Callback when new files are added
-  onConfirmDelete?: (file: TFileDto) => Promise<boolean>; // Optional async callback to confirm delete (e.g., modal)
+  deleteOnRemove?: boolean;
+  onChange?: (files: TFileDto[]) => void;
+  onDelete?: (fileKeys: string[]) => void; // Changed to sync pending deletes
+  onCancelDelete?: () => void; // Changed to handle cancel action
 };
 
 export type ExtendedFileDto = TFileDto & {
-  status?: 'pending' | 'uploading' | 'uploaded' | 'error'; // For per-file state
+  status?: 'pending' | 'uploading' | 'uploaded' | 'error';
   error?: string;
 };
 
 export type FileUploadState = {
   files: ExtendedFileDto[];
-  pendingDeletes: string[]; // File keys/IDs to delete on submit
+  pendingDeletes: string[];
   isDragging: boolean;
   errors: string[];
 };
 
 export type FileUploadActions = {
   addFiles: (files: FileList | File[]) => void;
-  removeFile: (e: React.MouseEvent, id: string) => Promise<void>;
+  removeFile: (id: string) => Promise<void>;
   clearFiles: () => Promise<void>;
   clearErrors: () => void;
+  clearPendingDeletes: () => void;
   handleDragEnter: (e: DragEvent<HTMLElement>) => void;
   handleDragLeave: (e: DragEvent<HTMLElement>) => void;
   handleDragOver: (e: DragEvent<HTMLElement>) => void;
@@ -60,25 +61,24 @@ export type FileUploadActions = {
   ) => InputHTMLAttributes<HTMLInputElement> & {
     ref: React.Ref<HTMLInputElement>;
   };
-  getPendingDeletes: () => string[]; // For parent to access on submit
 };
 
 export const useFileUpload = (
   options: FileUploadOptions,
 ): [FileUploadState, FileUploadActions] => {
   const {
+    deleteOnRemove = false,
     maxFiles = Infinity,
     maxSize = Infinity,
-    accept = '*',
     multiple = false,
-    values,
+    accept = '*',
     applicantId,
     fileType,
-    onFilesChange,
-    onFilesAdded,
-    deleteOnRemove = false,
-    onConfirmDelete,
+    values,
+    onChange,
+    onCancelDelete,
   } = options;
+
   const t = useTranslations();
   const inputRef = useRef<HTMLInputElement>(null);
   const [state, setState] = useState<FileUploadState>({
@@ -108,18 +108,22 @@ export const useFileUpload = (
             return fileTypeLower.startsWith(type.slice(0, -1));
           return fileTypeLower === type;
         });
-        if (!isAccepted) {
-          return t('Common.messages.fileAcceptType', { accept });
-        }
+        if (!isAccepted) return t('Common.messages.fileAcceptType', { accept });
       }
+
+      // check is file already exists
+      const fileExists = state.files.some(
+        (f) => f.fileName === file.name && f.fileSize === file.size,
+      );
+      if (fileExists) return t('Common.messages.fileExists');
       return null;
     },
-    [accept, maxSize, t],
+    [accept, maxSize, t, state.files],
   );
 
   const createFileDto = useCallback(
     (file: File): ExtendedFileDto => ({
-      id: crypto.randomUUID(), // Temp local ID for uniqueness
+      id: crypto.randomUUID(),
       applicantId: '',
       fileType: FileType.OTHER,
       fileKey: '',
@@ -146,7 +150,7 @@ export const useFileUpload = (
           ...prev,
           files: prev.files.map((f) =>
             f.id === dto.id
-              ? { ...uploaded, preview: f.preview, status: 'uploaded' } // Merge server data, keep preview
+              ? { ...uploaded, preview: f.preview, status: 'uploaded' }
               : f,
           ),
         }));
@@ -171,10 +175,9 @@ export const useFileUpload = (
       const newFilesArray = Array.from(newFiles);
       const errors: string[] = [];
 
-      setState((prev) => ({ ...prev, errors: [] })); // Clear old errors
+      setState((prev) => ({ ...prev, errors: [] }));
 
       if (!multiple) {
-        // For single, clear existing optimistically
         state.files.forEach((f) => f.preview && URL.revokeObjectURL(f.preview));
         setState((prev) => ({ ...prev, files: [] }));
       }
@@ -189,12 +192,6 @@ export const useFileUpload = (
       const validRawFiles: File[] = [];
 
       newFilesArray.forEach((file) => {
-        if (multiple) {
-          const isDuplicate = state.files.some(
-            (f) => f.fileName === file.name && f.fileSize === file.size,
-          );
-          if (isDuplicate) return; // Skip silently
-        }
         const error = validateFile(file);
         if (error) {
           errors.push(error);
@@ -210,12 +207,10 @@ export const useFileUpload = (
           const updatedFiles = multiple
             ? [...prev.files, ...validDtos]
             : validDtos;
-          if (onFilesAdded) onFilesAdded(validDtos);
-          if (onFilesChange) onFilesChange(updatedFiles);
+          if (onChange) onChange(updatedFiles);
           return { ...prev, files: updatedFiles, errors };
         });
 
-        // Upload async immediately
         validRawFiles.forEach((file, i) => uploadAndUpdate(file, validDtos[i]));
       } else if (errors.length) {
         setState((prev) => ({ ...prev, errors }));
@@ -224,38 +219,30 @@ export const useFileUpload = (
       if (inputRef.current) inputRef.current.value = '';
     },
     [
-      multiple,
+      t,
       maxFiles,
+      onChange,
+      multiple,
+      state.files,
       validateFile,
       createFileDto,
-      onFilesAdded,
-      onFilesChange,
-      t,
       uploadAndUpdate,
-      state.files,
     ],
   );
 
   const removeFile = useCallback(
-    async (e: React.MouseEvent, id: string) => {
-      e.stopPropagation();
+    async (id: string) => {
       const fileToRemove = state.files.find((f) => f.id === id);
       if (!fileToRemove) return;
-
-      let confirmed = true;
-      if (onConfirmDelete) {
-        confirmed = await onConfirmDelete(fileToRemove);
-      }
-      if (!confirmed) return;
 
       if (fileToRemove.preview) URL.revokeObjectURL(fileToRemove.preview);
 
       setState((prev) => {
         const newFiles = prev.files.filter((f) => f.id !== id);
-        const newPendingDeletes = fileToRemove.fileKey // Only queue if it has a server key (uploaded)
+        const newPendingDeletes = fileToRemove.fileKey
           ? [...prev.pendingDeletes, fileToRemove.fileKey]
           : prev.pendingDeletes;
-        if (onFilesChange) onFilesChange(newFiles);
+        if (onChange) onChange(newFiles);
         return {
           ...prev,
           files: newFiles,
@@ -269,7 +256,6 @@ export const useFileUpload = (
           await deleteFile({
             fileKey: fileToRemove.fileKey,
             applicantId,
-            fileType,
           });
           setState((prev) => ({
             ...prev,
@@ -285,26 +271,17 @@ export const useFileUpload = (
         }
       }
     },
-    [
-      onConfirmDelete,
-      onFilesChange,
-      deleteOnRemove,
-      deleteFile,
-      applicantId,
-      fileType,
-      state.files,
-    ],
+    [onChange, deleteOnRemove, deleteFile, applicantId, state.files],
   );
 
   const clearFiles = useCallback(async () => {
-    // Optional: Batch confirm if needed
     setState((prev) => {
       prev.files.forEach((f) => f.preview && URL.revokeObjectURL(f.preview));
       const newPendingDeletes = [
         ...prev.pendingDeletes,
         ...prev.files.filter((f) => !!f.fileKey).map((f) => f.fileKey),
       ];
-      if (onFilesChange) onFilesChange([]);
+      if (onChange) onChange([]);
       if (inputRef.current) inputRef.current.value = '';
       return {
         ...prev,
@@ -315,11 +292,12 @@ export const useFileUpload = (
     });
 
     if (deleteOnRemove) {
-      const deletes = state.pendingDeletes.map((key) =>
-        deleteFile({ fileKey: key, applicantId, fileType }),
-      );
       try {
-        await Promise.all(deletes);
+        await Promise.all(
+          state.pendingDeletes.map((key) =>
+            deleteFile({ fileKey: key, applicantId }),
+          ),
+        );
         setState((prev) => ({ ...prev, pendingDeletes: [] }));
       } catch (err) {
         setState((prev) => ({
@@ -328,18 +306,16 @@ export const useFileUpload = (
         }));
       }
     }
-  }, [
-    onFilesChange,
-    deleteOnRemove,
-    deleteFile,
-    applicantId,
-    fileType,
-    state.pendingDeletes,
-  ]);
+  }, [onChange, deleteOnRemove, deleteFile, applicantId, state.pendingDeletes]);
 
   const clearErrors = useCallback(() => {
     setState((prev) => ({ ...prev, errors: [] }));
   }, []);
+
+  const clearPendingDeletes = useCallback(() => {
+    setState((prev) => ({ ...prev, pendingDeletes: [] }));
+    if (onCancelDelete) onCancelDelete();
+  }, [onCancelDelete]);
 
   const handleDragEnter = useCallback((e: DragEvent<HTMLElement>) => {
     e.preventDefault();
@@ -394,11 +370,6 @@ export const useFileUpload = (
     [accept, multiple, handleFileChange],
   );
 
-  const getPendingDeletes = useCallback(
-    () => state.pendingDeletes,
-    [state.pendingDeletes],
-  );
-
   return [
     state,
     {
@@ -406,6 +377,7 @@ export const useFileUpload = (
       removeFile,
       clearFiles,
       clearErrors,
+      clearPendingDeletes,
       handleDragEnter,
       handleDragLeave,
       handleDragOver,
@@ -413,7 +385,6 @@ export const useFileUpload = (
       handleFileChange,
       openFileDialog,
       getInputProps,
-      getPendingDeletes, // Expose for parent submit handler
     },
   ];
 };

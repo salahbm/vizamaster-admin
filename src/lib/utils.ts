@@ -7,7 +7,6 @@ import { IComboboxOption } from '@/components/ui/combobox';
 import { SideNavItem } from '@/constants/routes';
 
 import { Codes, Sidebar } from '@/generated/prisma';
-import { FileMetadata } from '@/hooks/common/use-file-upload';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -61,9 +60,6 @@ export const mapOptions = (
     label: locale === 'ru' ? option.labelRu : option.labelEn,
     className: 'capitalize',
   })) || [];
-
-export const mapFilesIntoUrl = (files: FileMetadata[] | null): string =>
-  files?.[0]?.url || '';
 
 export const capitalizeFirstLetter = (str: string): string =>
   str.charAt(0).toUpperCase() + str.slice(1);

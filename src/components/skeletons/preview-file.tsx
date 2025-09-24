@@ -9,15 +9,17 @@ import { cn } from '@/lib/utils';
 export const PreviewFileSkeleton = ({
   className,
   previewUrl,
+  type,
 }: {
   className?: string;
   previewUrl?: string;
+  type?: string;
 }) => {
   return (
     <div className="bg-background flex shrink items-center justify-between gap-2 rounded-lg border p-2 pe-3">
       <div className="flex items-center gap-3 overflow-hidden">
         <div className="aspect-square shrink-0 rounded">
-          {previewUrl ? (
+          {previewUrl && type?.includes('image') ? (
             <Image
               src={previewUrl}
               alt="Preview"

@@ -1,5 +1,7 @@
 'use client';
 
+import { useEffect, useRef } from 'react';
+
 import { AlertCircleIcon, ImageIcon, UploadIcon } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
@@ -19,11 +21,14 @@ interface UploaderProps {
   values?: TFileDto[];
   maxFiles?: number;
   maxSizeMB?: number;
-  onChange?: (files: TFileDto[]) => void; // Updated to accept files for better sync
+  onChange?: (files: TFileDto[]) => void;
+  onDelete?: (fileKeys: string[]) => void;
+  onCancelDelete?: () => void;
   accept?: string;
   multiple?: boolean;
   applicantId: string;
-  fileType: FileType;
+  fileType: string;
+  deleteOnRemove?: boolean;
 }
 
 function Uploader({
@@ -31,13 +36,19 @@ function Uploader({
   maxSizeMB = 2,
   maxFiles = 6,
   onChange,
+  onDelete,
+  onCancelDelete,
   accept = 'image/png,image/jpeg,image/jpg,image/gif,application/pdf',
   multiple = true,
   applicantId,
-  fileType = FileType.OTHER,
+  fileType,
+  deleteOnRemove = false,
 }: UploaderProps) {
   const t = useTranslations();
-  const maxSize = maxSizeMB * 1024 * 1024; // Convert MB to bytes
+  const maxSize = maxSizeMB * 1024 * 1024;
+
+  const prevPendingDeletesRef = useRef<string[]>([]);
+  const clearPendingRef = useRef<string[]>([]);
 
   const [
     { files, isDragging, errors, pendingDeletes },
@@ -50,8 +61,6 @@ function Uploader({
       removeFile,
       clearFiles,
       getInputProps,
-      addFiles,
-      getPendingDeletes,
     },
   ] = useFileUpload({
     accept,
@@ -60,18 +69,38 @@ function Uploader({
     maxFiles,
     values,
     applicantId,
-    fileType,
-    onFilesChange: (updatedFiles) => {
-      onChange?.(updatedFiles);
-    },
-    onFilesAdded: (addedFiles) => {
-      // Optional: Can log or handle added files specifically if needed
-    },
-    deleteOnRemove: false, // Defer deletes to form submit as per requirement
+    fileType: fileType as FileType,
+    onChange,
+    onCancelDelete,
+    deleteOnRemove,
   });
 
-  // Check if any file is uploading for global loading state
   const isUploading = files.some((file) => file.status === 'uploading');
+
+  // Notify parent of pending deletes only when they change
+  useEffect(() => {
+    // Compare arrays to avoid unnecessary calls
+    if (
+      onDelete &&
+      (pendingDeletes.length !== prevPendingDeletesRef.current.length ||
+        pendingDeletes.some(
+          (key, i) => key !== prevPendingDeletesRef.current[i],
+        ))
+    ) {
+      onDelete(pendingDeletes);
+      prevPendingDeletesRef.current = [...pendingDeletes]; // Update ref
+    }
+  }, [pendingDeletes, onDelete]);
+
+  useEffect(() => {
+    if (pendingDeletes.length === 0) {
+      clearPendingRef.current = [];
+    }
+    if (onCancelDelete && clearPendingRef.current.length > 0) {
+      onCancelDelete();
+      clearPendingRef.current = [];
+    }
+  }, [pendingDeletes, onCancelDelete]);
 
   return (
     <div className="flex flex-col gap-2">
@@ -83,7 +112,7 @@ function Uploader({
         onDrop={handleDrop}
         data-dragging={isDragging || undefined}
         data-files={files.length > 0 || undefined}
-        className="border-input data-[dragging=true]:bg-accent/50 has-[input:focus]:border-ring has-[input:focus]:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive relative flex min-h-52 flex-col items-center overflow-hidden rounded-lg border border-dashed p-4 transition-colors not-data-[files]:justify-center has-[input:focus]:ring-[3px]"
+        className="border-input data-[dragging=true]:bg-accent/50 has-[input:focus]:border-ring has-[input:focus]:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive relative flex min-h-52 flex-col items-center overflow-hidden rounded-lg border border-dashed p-4 transition-colors not-data-[files]:justify-center has-[input:focus]:ring-[3px] md:min-h-64"
       >
         <div className="flex flex-col items-center justify-center px-4 py-3 text-center">
           <div
@@ -111,17 +140,18 @@ function Uploader({
         </div>
       </div>
 
-      <Button
-        variant="outline"
-        className="ml-auto w-fit"
-        type="button"
-        onClick={openFileDialog}
-        disabled={isUploading}
-      >
-        <UploadIcon className="-ms-1 opacity-60" aria-hidden="true" />
-        {t('Common.uploadMore')}
-      </Button>
-
+      {files.length > 0 && files.length < maxFiles && (
+        <Button
+          variant="outline"
+          className="ml-auto w-fit"
+          type="button"
+          onClick={openFileDialog}
+          disabled={isUploading}
+        >
+          <UploadIcon className="-ms-1 opacity-60" aria-hidden="true" />
+          {t('Common.uploadMore')}
+        </Button>
+      )}
       <input
         {...getInputProps()}
         className="sr-only"
@@ -151,9 +181,10 @@ function Uploader({
               key={file.id}
               fileKey={file.fileKey}
               className="size-10 rounded-[inherit] object-cover"
-              onDelete={(e) => removeFile(e, file.id!)} // Added prop for delete handling
-              status={file.status} // Pass status for UI (e.g., show spinner if 'uploading')
-              error={file.error} // Pass per-file error if any
+              onDelete={() => removeFile(file.id!)}
+              pendingDeletes={pendingDeletes}
+              status={file.status}
+              error={file.error}
             />
           ))}
 

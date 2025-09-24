@@ -173,7 +173,9 @@
       "archiveDescription": "Are you sure you want to archive this data? You can retrieve it later.",
       "notFound": "Not found {message}",
       "conflict": "Conflict {message}",
-      "unknownError": "Unknown error"
+      "unknownError": "Unknown error",
+      "uploadsSavedDeletesManual": "Uploads saved automatically, but please confirm to delete removed files",
+      "fileExists": "File already exists"
     }
   },
   "auth": {

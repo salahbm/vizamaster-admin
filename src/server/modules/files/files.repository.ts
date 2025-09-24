@@ -110,6 +110,7 @@ export class FilesRepository {
     const command = new GetObjectCommand({
       Bucket: R2_BUCKET,
       Key: fileKey,
+      ResponseContentDisposition: 'attachment',
     });
 
     const signedUrl = await getSignedUrl(S3, command, {
@@ -119,17 +120,22 @@ export class FilesRepository {
     return { signedUrl };
   }
 
-  async deleteFileFromR2(fileKey: string) {
-    if (!fileKey) throw new BadRequestError('fileKey is required');
+  async deleteFileFromR2(fileKeys: string[]) {
+    if (!fileKeys?.length) throw new BadRequestError('fileKeys are required');
 
-    const command = new DeleteObjectCommand({
-      Bucket: R2_BUCKET,
-      Key: fileKey,
-    });
-
-    const result = await S3.send(command);
+    // Delete from R2 in parallel
+    const result = await Promise.all(
+      fileKeys.map((fileKey) =>
+        S3.send(new DeleteObjectCommand({ Bucket: R2_BUCKET, Key: fileKey })),
+      ),
+    );
 
     if (!result) throw new BadRequestError('Failed to delete file from R2');
+
+    // Delete from DB in one go
+    await this.prismaFile.deleteMany({
+      where: { fileKey: { in: fileKeys } },
+    });
 
     return true;
   }

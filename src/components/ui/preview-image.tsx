@@ -18,9 +18,10 @@ import { Button } from './button';
 interface PreviewFileProps extends React.HTMLAttributes<HTMLImageElement> {
   fileKey: string;
   file: ExtendedFileDto; // Updated to ExtendedFileDto for status/error
-  onDelete?: (e: React.MouseEvent) => Promise<void>; // Updated to async for removeFile
+  onDelete?: () => void; // Simplified to avoid async during render
   status?: ExtendedFileDto['status']; // Passed from parent, but can access from file
   error?: string; // Per-file error
+  pendingDeletes?: string[];
 }
 
 export const PreviewFile = ({
@@ -30,6 +31,7 @@ export const PreviewFile = ({
   onDelete,
   status = file.status, // Use file.status if not passed
   error = file.error,
+  pendingDeletes,
   ...props
 }: PreviewFileProps) => {
   const { data, isLoading: isLoadingPreview } = usePreviewUrl(fileKey);
@@ -41,18 +43,25 @@ export const PreviewFile = ({
   const previewUrl = file.preview || signedUrl; // Prefer local preview if available
   const canDownload = !!previewUrl;
   const canDelete = !isLoading && !hasError;
+  const isPendingDelete = pendingDeletes?.includes(fileKey);
 
   if (isLoading)
     return (
-      <PreviewFileSkeleton className={className} previewUrl={previewUrl} />
+      <PreviewFileSkeleton
+        className={className}
+        previewUrl={previewUrl}
+        type={file.mimeType}
+      />
     );
 
   if (!previewUrl && !file.mimeType) return null; // No preview available
 
   return (
     <div
-      key={file.id}
-      className="bg-background animate-fade-in flex shrink items-center justify-between gap-2 rounded-lg border p-2 pe-3"
+      className={cn(
+        'bg-background animate-fade-in flex shrink items-center justify-between gap-2 rounded-lg border p-2 pe-3',
+        isPendingDelete && 'bg-destructive/10 grayscale',
+      )}
     >
       <div className="flex items-center gap-3 overflow-hidden">
         {file.mimeType?.includes('image') && previewUrl ? (
@@ -71,7 +80,7 @@ export const PreviewFile = ({
             />
           </div>
         ) : (
-          <FileText className="text-accent-foreground size-6 rounded-[inherit] object-cover" />
+          <FileText className="text-secondary size-6 min-w-10 rounded-[inherit] object-cover" />
         )}
         <div className="flex min-w-0 flex-col gap-0.5">
           <p className="font-caption-1 truncate text-[13px]">{file.fileName}</p>

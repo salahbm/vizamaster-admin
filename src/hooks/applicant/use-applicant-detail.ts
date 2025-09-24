@@ -5,7 +5,6 @@ import {
 } from '@tanstack/react-query';
 
 import agent from '@/lib/agent';
-import { mapFilesIntoUrl } from '@/lib/utils';
 
 import { QueryKeys } from '@/constants/query-keys';
 
@@ -42,11 +41,9 @@ export const updateApplicant = async (
   body: TApplicantDto & { id: string },
   updatedBy: string,
 ): Promise<TResponse<Applicant>> => {
-  const passportPhoto = mapFilesIntoUrl(body.passportPhoto);
   return await agent.put<TResponse<Applicant>>(`api/applicant/${body.id}`, {
     ...body,
     updatedBy,
-    passportPhoto,
   });
 };
 

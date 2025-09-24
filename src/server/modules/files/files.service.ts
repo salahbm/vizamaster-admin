@@ -56,14 +56,11 @@ class FilesService {
 
       if (!fileRecord) {
         // if prisma has error to create file record, delete file from R2
-        await this.deleteFileFromR2(fileKey);
+        await this.deleteFileFromR2([fileKey]);
         throw new BadRequestError('Failed to create file record');
       }
 
-      return createResponse({
-        fileKey: fileKey,
-        fileId: fileRecord.id,
-      });
+      return createResponse(fileRecord);
     } catch (error) {
       throw error;
     }
@@ -103,8 +100,9 @@ class FilesService {
   /**
    * Delete a file from R2
    */
-  async deleteFileFromR2(fileKey: string) {
-    await this.fileRepository.deleteFileFromR2(fileKey);
+  async deleteFileFromR2(fileKeys: string[]) {
+    await this.fileRepository.deleteFileFromR2(fileKeys);
+    return createResponse(true);
   }
 }
 

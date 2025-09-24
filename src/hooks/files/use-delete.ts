@@ -4,21 +4,17 @@ import agent from '@/lib/agent';
 
 import { QueryKeys } from '@/constants/query-keys';
 
-import { FileType } from '@/generated/prisma';
-
 import useMutation from '../common/use-mutation';
 
 const deleteFile = async ({
   fileKey,
   applicantId,
-  fileType,
 }: {
   fileKey: string;
   applicantId: string;
-  fileType: FileType;
 }): Promise<void> => {
   await agent.delete(
-    `/api/files/delete?fileKey=${fileKey}&applicantId=${applicantId}&fileType=${fileType}`,
+    `/api/files/delete?ids=${fileKey}&applicantId=${applicantId}`,
   );
 };
 

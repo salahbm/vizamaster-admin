@@ -3,14 +3,10 @@ import { NextRequest, NextResponse } from 'next/server';
 
 import { handleApiError } from '@/server/common/errors';
 
-type RouteContext = {
-  params?: Record<string, string>;
-};
-
-export function withHandler(
-  handler: (req: NextRequest, context: RouteContext) => Promise<any>,
+export function withHandler<T>(
+  handler: (req: NextRequest, context: T) => Promise<any>,
 ) {
-  return async (req: NextRequest, context: RouteContext) => {
+  return async (req: NextRequest, context: T) => {
     try {
       const data = await handler(req, context);
       if (data instanceof NextResponse) return data;

@@ -8,7 +8,6 @@ import {
 
 import agent from '@/lib/agent';
 import { objectToSearchParams } from '@/lib/object-to-params';
-import { mapFilesIntoUrl } from '@/lib/utils';
 
 import { QueryKeys } from '@/constants/query-keys';
 
@@ -28,14 +27,12 @@ const createApplicant = (
   creatorEmail: string,
 ): Promise<Applicant> => {
   const userId = generateUserId();
-  const passportPhoto = mapFilesIntoUrl(data.passportPhoto);
   const mappedData: Omit<
     Applicant,
     'id' | 'createdAt' | 'updatedAt' | 'isArchived'
   > = {
     ...data,
     userId,
-    passportPhoto,
     gender: data.gender as Gender,
     status: ApplicantStatus.NEW,
     createdBy: creatorEmail,
