@@ -13,7 +13,7 @@ export interface IFormFields<T extends FieldValues> {
   id?: string;
   name: Path<T>;
   control: Control<T>;
-  label?: string;
+  label?: string | ReactNode;
   required?: boolean;
   className?: string;
   labelClassName?: string;

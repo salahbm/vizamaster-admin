@@ -53,10 +53,18 @@ const ApplicantVisaInfo: React.FC<IApplicantVisaInfoProps> = ({ id }) => {
           <div className="flex flex-col gap-6">
             <FormFields
               name="issued"
-              label={t('applicant.form.fields.issued.label')}
+              label={
+                <>
+                  <span className="font-body-1">
+                    {t('applicant.form.fields.issued.label')}
+                  </span>
+                  <span className="text-muted-foreground font-caption-2">
+                    {t('applicant.form.fields.issued.message')}
+                  </span>
+                </>
+              }
               control={form.control}
-              message={t('applicant.form.fields.issued.message')}
-              messageClassName="text-muted-foreground text-xs mt-2"
+              labelClassName="flex flex-col justify-start items-start gap-1"
               render={({ field }) => (
                 <RadioGroup
                   {...field}
@@ -103,10 +111,18 @@ const ApplicantVisaInfo: React.FC<IApplicantVisaInfoProps> = ({ id }) => {
 
             <FormFields
               name="arrived"
-              label={t('applicant.form.fields.arrived.label')}
+              label={
+                <>
+                  <span className="font-body-1">
+                    {t('applicant.form.fields.arrived.label')}
+                  </span>
+                  <span className="text-muted-foreground font-caption-2">
+                    {t('applicant.form.fields.arrived.message')}
+                  </span>
+                </>
+              }
               control={form.control}
-              message={t('applicant.form.fields.arrived.message')}
-              messageClassName="text-muted-foreground text-xs mt-2"
+              labelClassName="flex flex-col justify-start items-start gap-1"
               render={({ field }) => (
                 <RadioGroup {...field} className="flex items-center gap-4">
                   <div className="flex items-center gap-2">
@@ -139,11 +155,18 @@ const ApplicantVisaInfo: React.FC<IApplicantVisaInfoProps> = ({ id }) => {
 
             <FormFields
               name="status"
-              label={t('applicant.form.fields.status.label')}
+              label={
+                <>
+                  <span className="font-body-1">
+                    {t('applicant.form.fields.status.label')}
+                  </span>
+                  <span className="text-muted-foreground font-caption-2">
+                    {t('applicant.form.fields.status.message')}
+                  </span>
+                </>
+              }
               control={form.control}
-              message={t('applicant.form.fields.status.message')}
-              messageClassName="text-muted-foreground text-xs mt-2"
-              required
+              labelClassName="flex flex-col justify-start items-start gap-1"
               render={({ field }) => (
                 <RadioGroup
                   {...field}
