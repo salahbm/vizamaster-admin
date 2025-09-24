@@ -1,7 +1,5 @@
 import z from 'zod';
 
-import { FileMetadataSchema } from '@/hooks/common/use-file-upload';
-
 export const ApplicantDto = z.object({
   // Personal Information
   firstName: z.string().min(1),
@@ -10,7 +8,6 @@ export const ApplicantDto = z.object({
   gender: z.enum(['MALE', 'FEMALE']),
   dateOfBirth: z.date().nullable(),
   passportNumber: z.string().min(1),
-  passportPhoto: z.array(FileMetadataSchema).nullable(),
 
   // Contact Information
   email: z.email(),

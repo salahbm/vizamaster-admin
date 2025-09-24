@@ -142,7 +142,6 @@ model Applicant {
   gender              Gender   @default(MALE)
 
   passportNumber      String   @map("passport_number") // Encrypt in DB/app
-  passportPhoto       String   // URL to secure storage (e.g., S3)
 
   phoneNumber         String   @map("phone_number")
   phoneNumberAdditional String? @map("phone_number_additional")
@@ -196,10 +195,10 @@ model Visa {
   issueDate       DateTime?   @map("issue_date") // When visa was issued
   departureDate   DateTime?   @map("departure_date") // Only if issued
   arrived         Boolean     @default(false)
+  arrivalDate     DateTime?   @map("arrival_date") // Only if arrived
   status          VisaStatus  @default(STILL_WORKING) // still_working, returned, departed
-  flightDocuments String[]     @map("flight_documents") // URL to flight docs (e.g., S3)
-  
-  files           String[]      // Related uploaded files (e.g., visa copy)
+  returnedDate    DateTime?   @map("returned_date") // Only if returned
+
 
   createdAt       DateTime    @default(now())
   updatedAt       DateTime    @updatedAt
@@ -222,7 +221,6 @@ model Work {
   responsibilities String    @map("responsibilities") // Text description
   achievements    String?   @map("achievements") // Optional text for key wins
   location        String?   @map("location") // e.g., "New York, NY"
-  files           String[]    // Related uploaded files (e.g., passport copy)
 
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
@@ -240,7 +238,7 @@ model File {
 
   
   fileType        FileType  @map("file_type") // e.g., PASSPORT, VISA, CV
-  fileUrl         String    @map("file_url") // URL to file in storage (e.g., S3)
+  fileKey         String    @map("file_key") // Path in R2 (applicantId/fileType/filename)
   fileName        String    @map("file_name") // Original file name
   fileSize        Int?      @map("file_size") // Size in bytes
   mimeType        String?   @map("mime_type") // e.g., "application/pdf"
@@ -280,6 +278,7 @@ enum ApplicantStatus {
 
 
 enum VisaStatus {
+  NOT_APPLIED
   STILL_WORKING
   RETURNED
   DEPARTED

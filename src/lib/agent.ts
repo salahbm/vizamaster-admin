@@ -176,7 +176,15 @@ class Agent {
 
     // Add the request body for non-GET requests
     if (body && method !== 'GET') {
-      requestOptions.body = JSON.stringify(body);
+      // If it's FormData, pass it as is and remove Content-Type header
+      if (body instanceof FormData) {
+        requestOptions.body = body;
+        // Remove Content-Type header to let browser set it with boundary
+        const headerObj = requestOptions.headers as Record<string, string>;
+        delete headerObj['Content-Type'];
+      } else {
+        requestOptions.body = JSON.stringify(body);
+      }
     }
 
     try {

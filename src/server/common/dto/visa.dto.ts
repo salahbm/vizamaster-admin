@@ -1,8 +1,6 @@
-import z from 'zod';
+import { z } from 'zod';
 
-import { FileMetadataSchema } from '@/hooks/common/use-file-upload';
-
-export const VisaStatus = z.enum(['STILL_WORKING', 'RETURNED', 'DEPARTED']);
+import { VisaStatus } from '@/generated/prisma';
 
 export const VisaDto = z
   .object({
@@ -11,22 +9,46 @@ export const VisaDto = z
     issueDate: z.date().nullable(),
     departureDate: z.date().nullable(),
     arrived: z.boolean().default(false),
-    status: VisaStatus.default('STILL_WORKING'),
-    flightDocuments: z.array(FileMetadataSchema).nullable(),
-    files: z.array(FileMetadataSchema).nullable(),
+    arrivalDate: z.date().nullable(),
+    returnedDate: z.date().nullable(),
+    status: z.enum(Object.values(VisaStatus)).default(VisaStatus.NOT_APPLIED),
   })
-  .refine(
-    (data) => {
-      // If visa is issued, both dates must be present
-      if (data.issued) {
-        return data.issueDate !== null && data.departureDate !== null;
+  .superRefine((data, ctx) => {
+    // If visa is issued, require both dates
+    if (data.issued) {
+      if (!data.issueDate) {
+        ctx.addIssue({
+          code: 'custom',
+          message: 'Issue date is required when visa is issued',
+          path: ['issueDate'],
+        });
       }
-      return true;
-    },
-    {
-      message: 'Issue date and departure date are required when visa is issued',
-      path: ['issueDate', 'departureDate'],
-    },
-  );
+      if (!data.departureDate) {
+        ctx.addIssue({
+          code: 'custom',
+          message: 'Departure date is required when visa is issued',
+          path: ['departureDate'],
+        });
+      }
+    }
+
+    // If arrived, require arrivalDate
+    if (data.arrived && !data.arrivalDate) {
+      ctx.addIssue({
+        code: 'custom',
+        message: 'Arrival date is required when visa is marked as arrived',
+        path: ['arrivalDate'],
+      });
+    }
+
+    // If status is RETURNED, require returnedDate
+    if (data.status === VisaStatus.RETURNED && !data.returnedDate) {
+      ctx.addIssue({
+        code: 'custom',
+        message: 'Returned date is required when visa is returned',
+        path: ['returnedDate'],
+      });
+    }
+  });
 
 export type TVisaDto = z.infer<typeof VisaDto>;

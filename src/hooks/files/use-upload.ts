@@ -1,7 +1,6 @@
 import agent from '@/lib/agent';
 
 import { FileType } from '@/generated/prisma';
-import { InternalServerError } from '@/server/common/errors';
 
 import useMutation from '../common/use-mutation';
 
@@ -12,63 +11,35 @@ interface UploadParams {
   onProgress?: (progress: number) => void;
 }
 
-interface UploadResponse {
-  signedUrl: string;
-  fileUrl: string;
-}
-
 const upload = async ({
   file,
   applicantId,
   fileType,
   onProgress,
 }: UploadParams): Promise<{ fileUrl: string }> => {
-  // 1. Get signed URL
-  const response = await agent.post<UploadResponse>('/api/upload', {
-    key: file.name,
-    contentType: file.type,
-    applicantId,
-    fileType,
-  });
+  const formData = new FormData();
 
-  // 2. Upload with XHR for progress
-  await new Promise<void>((resolve, reject) => {
-    const xhr = new XMLHttpRequest();
-    xhr.open('PUT', response.signedUrl, true);
+  formData.append('file', file);
+  formData.append('fileName', file.name);
+  formData.append('contentType', file.type);
+  formData.append('applicantId', applicantId);
+  formData.append('fileType', fileType);
+  formData.append('fileSize', file.size.toString());
 
-    // Set required headers for R2
-    xhr.setRequestHeader('Content-Type', file.type);
-    // Don't set x-amz headers here, they're in the signed URL
+  const response = await agent.post<{ data: { fileUrl: string } }>(
+    '/api/upload',
+    formData,
+    { headers: { Accept: 'application/json' } },
+  );
 
-    xhr.upload.onprogress = (event) => {
-      if (onProgress && event.lengthComputable) {
-        const percent = Math.round((event.loaded / event.total) * 100);
-        onProgress(percent);
-      }
-    };
+  console.info('Upload response:', response);
 
-    xhr.onload = () => {
-      if (xhr.status === 200) {
-        resolve();
-      } else {
-        console.error('Upload failed:', {
-          status: xhr.status,
-          response: xhr.response,
-          statusText: xhr.statusText,
-        });
-        reject(new Error(`Upload failed: ${xhr.statusText || xhr.status}`));
-      }
-    };
+  if (onProgress) {
+    onProgress(100);
+  }
 
-    xhr.onerror = (error) => {
-      console.error('Upload network error:', error);
-      reject(new InternalServerError('Upload failed - network error'));
-    };
-
-    xhr.send(file);
-  });
-
-  return { fileUrl: response.fileUrl };
+  return { fileUrl: response.data.fileUrl };
 };
 
-export const useUpload = () => useMutation({ mutationFn: upload });
+export const useUpload = () =>
+  useMutation({ mutationFn: upload, options: { meta: { toast: false } } });

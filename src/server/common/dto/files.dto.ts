@@ -16,10 +16,25 @@ export const fileDto = z.object({
       FileType.OTHER,
     ])
     .default(FileType.OTHER),
-  fileUrl: z.url(),
+  fileKey: z.string(),
   fileName: z.string(),
   fileSize: z.number().int().positive().optional(),
   mimeType: z.string().optional(),
 });
 
 export type TFileDto = z.infer<typeof fileDto>;
+
+export const uploadRequestSchema = z.object({
+  fileKey: z.string(),
+  contentType: z.string(),
+  applicantId: z.string(),
+  fileType: z.enum([
+    FileType.PASSPORT,
+    FileType.VISA,
+    FileType.CV,
+    FileType.INSURANCE,
+    FileType.FLIGHT_DOCUMENT,
+    FileType.OTHER,
+  ]),
+  fileSize: z.number().int().positive(),
+});

@@ -62,6 +62,13 @@ export const UpsertApplicant: React.FC<IUpsertApplicantProps> = ({
           >
             {t('Common.comments')}
           </TabsTrigger>
+          <TabsTrigger
+            value="files"
+            variant="outline"
+            className="w-32 max-w-fit"
+          >
+            {t('Common.files')}
+          </TabsTrigger>
         </TabsList>
       )}
       <TabsContent value="user-info">

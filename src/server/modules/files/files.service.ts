@@ -1,7 +1,6 @@
 import { TFileDto } from '@/server/common/dto/files.dto';
 import { BadRequestError, handlePrismaError } from '@/server/common/errors';
-import { R2_ACCOUNT_ID, R2_BUCKET } from '@/server/common/secrets';
-import { createResponse } from '@/server/common/utils';
+import { createResponse, removeR2Prefix } from '@/server/common/utils';
 import prisma from '@/server/db/prisma';
 
 import FilesRepository, { fileRepository } from './files.repository';
@@ -17,44 +16,48 @@ class FilesService {
    * Get a signed URL for file upload with proper metadata
    */
   async getSignedUrlForUpload({
-    key,
+    fileName,
     contentType,
     applicantId,
     fileType,
+    buffer,
   }: {
-    key: string;
+    fileName: string;
     contentType: string;
     applicantId: string;
     fileType: TFileDto['fileType'];
+    buffer: Buffer;
   }) {
-    if (!key || !contentType || !applicantId || !fileType) {
+    if (!fileName || !contentType || !applicantId || !fileType || !buffer) {
       throw new BadRequestError(
-        'key, contentType, applicantId, and fileType are required',
+        'fileName, contentType, applicantId, fileType, and buffer are required',
       );
     }
 
-    // Get signed URL and create file record
-    const fileRecord = await this.createFileRecord({
-      applicantId,
-      fileType,
-      fileName: key,
-      mimeType: contentType,
-      fileUrl: `https://${R2_BUCKET}.${R2_ACCOUNT_ID}.r2.cloudflarestorage.com/${applicantId}/${key}`,
-    });
-
-    if (!fileRecord) throw new BadRequestError('Failed to create file record');
-
-    // Get signed URL for upload
-    const { signedUrl } = await this.fileRepository.getSignedUrlForUpload({
-      key,
+    // Upload directly to R2
+    const fileKey = await this.fileRepository.uploadToR2({
+      buffer,
+      fileName,
       contentType,
       applicantId,
       fileType,
     });
 
+    // Create file record
+    const fileRecord = await this.createFileRecord({
+      applicantId,
+      fileType,
+      fileName,
+      mimeType: contentType,
+      fileKey,
+      fileSize: buffer.length,
+    });
+
+    if (!fileRecord) throw new BadRequestError('Failed to create file record');
+
     return createResponse({
-      signedUrl,
-      fileUrl: fileRecord.fileUrl,
+      fileKey: removeR2Prefix(fileKey),
+      fileId: fileRecord.id,
     });
   }
 
@@ -67,7 +70,7 @@ class FilesService {
         data: {
           applicantId: file.applicantId,
           fileType: file.fileType,
-          fileUrl: file.fileUrl,
+          fileKey: removeR2Prefix(file.fileKey),
           fileName: file.fileName,
           fileSize: file.fileSize,
           mimeType: file.mimeType,
@@ -76,6 +79,29 @@ class FilesService {
     } catch (error) {
       handlePrismaError(error);
     }
+  }
+
+  /**
+   * Get a signed URL for file download
+   */
+  async getSignedUrlForDownload({
+    fileKey,
+    applicantId,
+    fileType,
+  }: {
+    fileKey: string;
+    applicantId: string;
+    fileType: TFileDto['fileType'];
+  }) {
+    const result = await this.fileRepository.getSignedUrlForDownload({
+      fileKey,
+      applicantId,
+      fileType,
+    });
+
+    return createResponse({
+      signedUrl: result.signedUrl,
+    });
   }
 }
 

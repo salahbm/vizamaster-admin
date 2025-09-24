@@ -1,34 +1,36 @@
-import { NextRequest, NextResponse } from 'next/server';
-
-import { z } from 'zod';
+import { NextRequest } from 'next/server';
 
 import { FileType } from '@/generated/prisma';
-import { handleApiError } from '@/server/common/errors';
+import { BadRequestError } from '@/server/common/errors';
 import { withHandler } from '@/server/common/interceptors/handle.interceptor';
 import { filesService } from '@/server/modules/files/files.service';
 
-const uploadRequestSchema = z.object({
-  key: z.string(),
-  contentType: z.string(),
-  applicantId: z.string(),
-  fileType: z.enum([
-    FileType.PASSPORT,
-    FileType.VISA,
-    FileType.CV,
-    FileType.INSURANCE,
-    FileType.FLIGHT_DOCUMENT,
-    FileType.OTHER,
-  ]),
-});
-
 export const POST = withHandler(async (request: NextRequest) => {
-  try {
-    const body = await request.json();
-    const validatedBody = uploadRequestSchema.parse(body);
+  const formData = await request.formData();
+  const file = formData.get('file') as File;
 
-    const result = await filesService.getSignedUrlForUpload(validatedBody);
-    return NextResponse.json(result);
-  } catch (error) {
-    return handleApiError(error);
+  if (!file) throw new BadRequestError('File is required');
+
+  // Convert file to buffer
+  const arrayBuffer = await file.arrayBuffer();
+  const buffer = Buffer.from(arrayBuffer);
+
+  const fileName = formData.get('fileName') as string;
+  const contentType = formData.get('contentType') as string;
+  const applicantId = formData.get('applicantId') as string;
+  const fileType = formData.get('fileType') as FileType;
+
+  if (!fileName || !contentType || !applicantId || !fileType) {
+    throw new BadRequestError('Missing required fields');
   }
+
+  const result = await filesService.getSignedUrlForUpload({
+    fileName,
+    contentType,
+    applicantId,
+    fileType,
+    buffer,
+  });
+
+  return result;
 });

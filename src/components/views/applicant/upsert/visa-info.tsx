@@ -11,9 +11,8 @@ import { Form } from '@/components/ui/form';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Separator } from '@/components/ui/separator';
-import { Uploader } from '@/components/ui/uploader';
 
-import { VisaDto } from '@/server/common/dto/visa.dto';
+import { TVisaDto, VisaDto } from '@/server/common/dto/visa.dto';
 
 interface IApplicantVisaInfoProps {
   id?: string;
@@ -29,13 +28,13 @@ const ApplicantVisaInfo: React.FC<IApplicantVisaInfoProps> = ({ id }) => {
       issueDate: null,
       departureDate: null,
       arrived: false,
-      status: 'STILL_WORKING',
-      flightDocuments: null,
-      files: null,
+      status: 'NOT_APPLIED',
+      arrivalDate: null,
+      returnedDate: null,
     },
   });
 
-  const onSubmit = (data: any) => {
+  const onSubmit = (data: TVisaDto) => {
     console.log(data, id);
     // TODO: Handle submit when hooks are ready
   };
@@ -126,6 +125,18 @@ const ApplicantVisaInfo: React.FC<IApplicantVisaInfoProps> = ({ id }) => {
               )}
             />
 
+            {/* Arrival Date */}
+            {String(form.watch('arrived')) === 'true' && (
+              <FormFields
+                name="arrivalDate"
+                label={t('applicant.form.fields.arrivalDate.label')}
+                control={form.control}
+                required
+                className="lg:w-1/2"
+                render={({ field }) => <DatePicker {...field} />}
+              />
+            )}
+
             <FormFields
               name="status"
               label={t('applicant.form.fields.status.label')}
@@ -138,6 +149,21 @@ const ApplicantVisaInfo: React.FC<IApplicantVisaInfoProps> = ({ id }) => {
                   {...field}
                   className="flex flex-wrap items-center gap-4"
                 >
+                  <div className="flex items-center gap-2">
+                    <RadioGroupItem
+                      value="NOT_APPLIED"
+                      id="status-not-applied"
+                    />
+                    <Label htmlFor="status-not-applied">
+                      {t('applicant.form.fields.status.options.not_applied')}
+                    </Label>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <RadioGroupItem value="DEPARTED" id="status-departed" />
+                    <Label htmlFor="status-departed">
+                      {t('applicant.form.fields.status.options.departed')}
+                    </Label>
+                  </div>
                   <div className="flex items-center gap-2">
                     <RadioGroupItem
                       value="STILL_WORKING"
@@ -153,35 +179,21 @@ const ApplicantVisaInfo: React.FC<IApplicantVisaInfoProps> = ({ id }) => {
                       {t('applicant.form.fields.status.options.returned')}
                     </Label>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <RadioGroupItem value="DEPARTED" id="status-departed" />
-                    <Label htmlFor="status-departed">
-                      {t('applicant.form.fields.status.options.departed')}
-                    </Label>
-                  </div>
                 </RadioGroup>
               )}
             />
-          </div>
 
-          <div className="mt-6 space-y-6">
-            <FormFields
-              name="flightDocuments"
-              label={t('applicant.form.fields.flightDocuments.label')}
-              control={form.control}
-              render={({ field }) => <Uploader {...field} maxFiles={5} />}
-              message={t('applicant.form.fields.flightDocuments.message')}
-              messageClassName="text-muted-foreground text-xs"
-            />
-
-            <FormFields
-              name="files"
-              label={t('applicant.form.fields.files.label')}
-              control={form.control}
-              render={({ field }) => <Uploader {...field} maxFiles={5} />}
-              message={t('applicant.form.fields.files.message')}
-              messageClassName="text-muted-foreground text-xs"
-            />
+            {/* Return Date */}
+            {form.watch('status') === 'RETURNED' && (
+              <FormFields
+                name="returnedDate"
+                label={t('applicant.form.fields.returnedDate.label')}
+                control={form.control}
+                required
+                className="lg:w-1/2"
+                render={({ field }) => <DatePicker {...field} />}
+              />
+            )}
           </div>
         </div>
 

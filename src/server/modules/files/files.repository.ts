@@ -1,4 +1,4 @@
-import { PutObjectCommand } from '@aws-sdk/client-s3';
+import { GetObjectCommand, PutObjectCommand } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 
 import { PrismaClient } from '@/generated/prisma';
@@ -32,7 +32,8 @@ export class FilesRepository {
       );
     }
 
-    const finalKey = `${applicantId}/${key}`;
+    // Create a structured path: applicantId/fileType/filename
+    const finalKey = `${applicantId}/${fileType.toLowerCase()}/${key}`;
 
     const command = new PutObjectCommand({
       Bucket: R2_BUCKET,
@@ -44,9 +45,45 @@ export class FilesRepository {
       },
     });
 
-    const signedUrl = await getSignedUrl(S3, command, { expiresIn: 60 * 15 });
+    const signedUrl = await getSignedUrl(S3, command, {
+      expiresIn: 60 * 60 * 8,
+    }); // 8 hours
 
     return { signedUrl };
+  }
+
+  async uploadToR2({
+    buffer,
+    fileName,
+    contentType,
+    applicantId,
+    fileType,
+  }: {
+    buffer: Buffer;
+    fileName: string;
+    contentType: string;
+    applicantId: string;
+    fileType: TFileDto['fileType'];
+  }) {
+    // Create a structured path: applicantId/fileType/filename
+    const finalKey = `${applicantId}/${fileType.toLowerCase()}/${fileName}`;
+
+    const command = new PutObjectCommand({
+      Bucket: R2_BUCKET,
+      Key: finalKey,
+      Body: buffer,
+      ContentType: contentType,
+      Metadata: {
+        applicantId,
+        fileType,
+      },
+    });
+
+    const result = await S3.send(command);
+
+    if (!result) throw new BadRequestError('Failed to upload file to R2');
+
+    return finalKey;
   }
 
   async createFileRecord(file: TFileDto) {
@@ -54,12 +91,40 @@ export class FilesRepository {
       data: {
         applicantId: file.applicantId,
         fileType: file.fileType,
-        fileUrl: file.fileUrl,
+        fileKey: file.fileKey,
         fileName: file.fileName,
         fileSize: file.fileSize,
         mimeType: file.mimeType,
       },
     });
+  }
+
+  // PREVIEW AND DOWNLOAD
+  async getSignedUrlForDownload({
+    fileKey,
+    applicantId,
+    fileType,
+  }: {
+    fileKey: string;
+    applicantId: string;
+    fileType: TFileDto['fileType'];
+  }) {
+    if (!fileKey || !applicantId || !fileType) {
+      throw new BadRequestError(
+        'fileKey, applicantId, and fileType are required',
+      );
+    }
+
+    const command = new GetObjectCommand({
+      Bucket: R2_BUCKET,
+      Key: fileKey,
+    });
+
+    const signedUrl = await getSignedUrl(S3, command, {
+      expiresIn: 60 * 60 * 8,
+    }); // 8 hours
+
+    return { signedUrl };
   }
 }
 

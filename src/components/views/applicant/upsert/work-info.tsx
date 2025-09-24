@@ -11,7 +11,6 @@ import { Button } from '@/components/ui/button';
 import { Form } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { Uploader } from '@/components/ui/uploader';
 
 import {
   TWorkArraySchema,
@@ -51,7 +50,6 @@ const ApplicantWorkInfo: React.FC<IApplicantWorkInfoProps> = ({ id }) => {
       responsibilities: '',
       achievements: '',
       location: '',
-      files: [],
     });
   };
 
@@ -71,7 +69,7 @@ const ApplicantWorkInfo: React.FC<IApplicantWorkInfoProps> = ({ id }) => {
             <Button
               type="button"
               variant="outline"
-              className="self-center md:ml-auto"
+              className="w-fit self-center md:ml-auto"
               onClick={addNewWorkExperience}
             >
               <Plus className="mr-2 h-4 w-4" />
@@ -184,18 +182,6 @@ const ApplicantWorkInfo: React.FC<IApplicantWorkInfoProps> = ({ id }) => {
                           {...field}
                         />
                       )}
-                    />
-                  </div>
-                  <div className="col-span-2">
-                    <FormFields
-                      name={`workExperiences.${index}.files`}
-                      label={t('applicant.form.fields.workFiles.label')}
-                      control={form.control}
-                      render={({ field }) => (
-                        <Uploader {...field} maxFiles={8} maxSizeMB={2} />
-                      )}
-                      message={t('applicant.form.fields.workFiles.message')}
-                      messageClassName="mb-2"
                     />
                   </div>
                 </div>

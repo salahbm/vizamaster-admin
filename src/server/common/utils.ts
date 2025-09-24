@@ -4,6 +4,7 @@ import { Prisma } from '@/generated/prisma';
 import { ISort } from '@/types/data-table';
 
 import { BETTER_AUTH_CODES, BETTER_AUTH_ERROR_MESSAGES } from './codes';
+import { R2_ACCOUNT_ID, R2_BUCKET } from './secrets';
 import { PaginatedResult, PaginationParams } from './types';
 
 /**
@@ -136,4 +137,12 @@ export const generateUserId = () => {
     userId += characters.charAt(randomIndex);
   }
   return userId;
+};
+
+// File utils
+export const removeR2Prefix = (url: string) => {
+  return url.replace(
+    `https://${R2_BUCKET}.${R2_ACCOUNT_ID}.r2.cloudflarestorage.com/`,
+    '',
+  );
 };

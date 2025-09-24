@@ -131,6 +131,7 @@
     "partner": "Partner",
     "all": "All",
     "download": "Download",
+    "files": "Files",
     "statuses": {
       "new": "New",
       "inProgress": "In Progress",
@@ -308,7 +309,8 @@
           "options": {
             "still_working": "Still Working",
             "returned": "Returned",
-            "departed": "Departed"
+            "departed": "Departed",
+            "not_applied": "Not Applied"
           },
           "message": "Current status of the visa and applicant's work situation."
         },
@@ -319,6 +321,12 @@
         "files": {
           "label": "Visa Documents",
           "message": "Upload visa copy and related documents."
+        },
+        "returnedDate": {
+          "label": "Returned Date"
+        },
+        "arrivalDate": {
+          "label": "Arrival Date"
         },
         "firstName": {
           "label": "First Name",
@@ -459,6 +467,7 @@
           "title": "Employment & Nationality",
           "description": "Details about employment and nationality."
         },
+
         "workInfo": {
           "title": "Work Experience",
           "description": "Previous work experience and employment history.",

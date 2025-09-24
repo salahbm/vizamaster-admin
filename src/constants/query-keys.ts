@@ -12,6 +12,10 @@ export const QueryKeys = {
     files: ['applicants', 'files'],
   },
 
+  files: {
+    preview: ['files', 'preview'],
+  },
+
   settings: {
     sidebar: {
       all: ['settings', 'sidebar'],

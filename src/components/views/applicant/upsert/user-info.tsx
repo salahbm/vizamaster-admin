@@ -5,7 +5,6 @@ import { useEffect, useMemo } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useLocale, useTranslations } from 'next-intl';
 import { useForm } from 'react-hook-form';
-import { toast } from 'sonner';
 
 import { DatePicker } from '@/components/shared/date-pickers';
 import { FormFields } from '@/components/shared/form-fields';
@@ -27,7 +26,6 @@ import {
   useCreateApplicant,
   useUpdateApplicant,
 } from '@/hooks/applicant';
-import { useUpload } from '@/hooks/files';
 import { useCodes } from '@/hooks/settings/codes';
 import { ApplicantDto, TApplicantDto } from '@/server/common/dto/applicant.dto';
 
@@ -65,7 +63,6 @@ const ApplicantUserInfo: React.FC<IApplicantUserInfoProps> = ({
     useCreateApplicant();
   const { mutateAsync: updateApplicant, isPending: isPendingUpdateApplicant } =
     useUpdateApplicant();
-  const { mutateAsync: uploadFile } = useUpload();
 
   // MEMOS
   const countryOfResidenceOptions = useMemo(() => getCountries(), []);
@@ -87,7 +84,6 @@ const ApplicantUserInfo: React.FC<IApplicantUserInfoProps> = ({
     if (applicant)
       form.reset({
         ...applicant,
-        passportPhoto: [],
         dateOfBirth: applicant.dateOfBirth
           ? new Date(applicant.dateOfBirth)
           : undefined,
@@ -110,7 +106,7 @@ const ApplicantUserInfo: React.FC<IApplicantUserInfoProps> = ({
         {!id && <Separator />}
         {/* Personal Information */}
         <div>
-          <h2 className="font-header text-xl">
+          <h2 className="font-header">
             {t('applicant.form.sections.personalInfo.title')}
           </h2>
           <p className="font-body-2 text-muted-foreground mb-6">
@@ -197,62 +193,11 @@ const ApplicantUserInfo: React.FC<IApplicantUserInfoProps> = ({
               )}
             />
           </div>
-          {id && (
-            <div className="mt-6">
-              <FormFields
-                name="passportPhoto"
-                label={t('applicant.form.fields.passportPhoto.label')}
-                control={form.control}
-                render={({ field }) => (
-                  <Input
-                    placeholder="Choose passport photo"
-                    type="file"
-                    {...field}
-                    onChange={async (e) => {
-                      e.preventDefault(); // Prevent form submission
-                      e.stopPropagation(); // Stop event bubbling
-
-                      const file = e.target.files?.[0];
-                      if (!file) return;
-
-                      if (!id) {
-                        toast.error('Please save the applicant first');
-                        return;
-                      }
-
-                      try {
-                        const { fileUrl } = await uploadFile({
-                          file,
-                          applicantId: id,
-                          fileType: 'PASSPORT',
-                          onProgress: (progress) => {
-                            // You can use this to show upload progress
-                            console.log('Upload progress:', progress);
-                          },
-                        });
-                        field.onChange(fileUrl);
-                        toast.success('File uploaded successfully');
-                      } catch (error) {
-                        console.error('Upload error:', error);
-                        toast.error(
-                          'Failed to upload file: ' + (error as Error).message,
-                        );
-                        // Reset the input
-                        e.target.value = '';
-                      }
-                    }}
-                  />
-                )}
-                message={t('applicant.form.fields.passportPhoto.message')}
-                messageClassName="text-muted-foreground text-xs"
-              />
-            </div>
-          )}
         </div>
         <Separator />
         {/* Contact Information */}
         <div>
-          <h2 className="font-header text-xl">
+          <h2 className="font-header">
             {t('applicant.form.sections.contactInfo.title')}
           </h2>
           <p className="font-body-2 text-muted-foreground mb-6">
@@ -303,7 +248,7 @@ const ApplicantUserInfo: React.FC<IApplicantUserInfoProps> = ({
         <Separator />
         {/* Address Information */}
         <div>
-          <h2 className="font-header text-xl">
+          <h2 className="font-header">
             {t('applicant.form.sections.addressInfo.title')}
           </h2>
           <p className="font-body-2 text-muted-foreground mb-6">
@@ -391,7 +336,7 @@ const ApplicantUserInfo: React.FC<IApplicantUserInfoProps> = ({
         <Separator />
         {/* Employment & Nationality */}
         <div>
-          <h2 className="font-header text-xl">
+          <h2 className="font-header">
             {t('applicant.form.sections.employmentInfo.title')}
           </h2>
           <p className="font-body-2 text-muted-foreground mb-6">
@@ -522,6 +467,7 @@ const ApplicantUserInfo: React.FC<IApplicantUserInfoProps> = ({
           </div>
         </div>
         <Separator />
+
         <div className="flex justify-end space-x-4">
           <Button variant="outline" type="button">
             {t('Common.cancel')}
