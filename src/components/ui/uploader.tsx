@@ -1,26 +1,14 @@
 'use client';
 
-import Image from 'next/image';
-
-import {
-  AlertCircleIcon,
-  FileText,
-  ImageIcon,
-  UploadIcon,
-  XIcon,
-} from 'lucide-react';
+import { AlertCircleIcon, ImageIcon, UploadIcon } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
 import { Button } from '@/components/ui/button';
+import { PreviewFile } from '@/components/ui/preview-image';
 
-import { formatBytes } from '@/utils/formats';
-
-import {
-  FileMetadata,
-  FileWithPreview,
-  useFileUpload,
-} from '@/hooks/common/use-file-upload';
-import { FieldValueTypes } from '@/types/global';
+import { FileType } from '@/generated/prisma';
+import { useFileUpload } from '@/hooks/common/use-file-upload';
+import { TFileDto } from '@/server/common/dto/files.dto';
 
 const makeAcceptString = (accept: string) => {
   const types = accept.split(',');
@@ -28,27 +16,31 @@ const makeAcceptString = (accept: string) => {
 };
 
 interface UploaderProps {
-  value?: FieldValueTypes;
+  values?: TFileDto[];
   maxFiles?: number;
   maxSizeMB?: number;
-  onChange?: (files: FileWithPreview[]) => void;
+  onChange?: (files: TFileDto[]) => void; // Updated to accept files for better sync
   accept?: string;
   multiple?: boolean;
+  applicantId: string;
+  fileType: FileType;
 }
 
 function Uploader({
-  value,
+  values,
   maxSizeMB = 2,
   maxFiles = 6,
   onChange,
   accept = 'image/png,image/jpeg,image/jpg,image/gif,application/pdf',
   multiple = true,
+  applicantId,
+  fileType = FileType.OTHER,
 }: UploaderProps) {
   const t = useTranslations();
   const maxSize = maxSizeMB * 1024 * 1024; // Convert MB to bytes
 
   const [
-    { files, isDragging, errors },
+    { files, isDragging, errors, pendingDeletes },
     {
       handleDragEnter,
       handleDragLeave,
@@ -58,63 +50,77 @@ function Uploader({
       removeFile,
       clearFiles,
       getInputProps,
+      addFiles,
+      getPendingDeletes,
     },
   ] = useFileUpload({
     accept,
     maxSize,
     multiple,
     maxFiles,
-    initialFiles: value as FileMetadata[],
+    values,
+    applicantId,
+    fileType,
+    onFilesChange: (updatedFiles) => {
+      onChange?.(updatedFiles);
+    },
+    onFilesAdded: (addedFiles) => {
+      // Optional: Can log or handle added files specifically if needed
+    },
+    deleteOnRemove: false, // Defer deletes to form submit as per requirement
   });
+
+  // Check if any file is uploading for global loading state
+  const isUploading = files.some((file) => file.status === 'uploading');
 
   return (
     <div className="flex flex-col gap-2">
       {/* Drop area */}
-      {!files.length ? (
-        <div
-          onDragEnter={handleDragEnter}
-          onDragLeave={handleDragLeave}
-          onDragOver={handleDragOver}
-          onDrop={handleDrop}
-          data-dragging={isDragging || undefined}
-          data-files={files.length > 0 || undefined}
-          className="border-input data-[dragging=true]:bg-accent/50 has-[input:focus]:border-ring has-[input:focus]:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive relative flex min-h-52 flex-col items-center overflow-hidden rounded-lg border border-dashed p-4 transition-colors not-data-[files]:justify-center has-[input:focus]:ring-[3px]"
-        >
-          <div className="flex flex-col items-center justify-center px-4 py-3 text-center">
-            <div
-              className="bg-background mb-2 flex size-11 shrink-0 items-center justify-center rounded-full border"
-              aria-hidden="true"
-            >
-              <ImageIcon className="size-4 opacity-60" />
-            </div>
-            <p className="font-body-1 mb-1.5">
-              {t('Common.messages.dropYourFilesHere')}
-            </p>
-            <p className="text-muted-foreground font-caption-1 uppercase">
-              {makeAcceptString(accept)} (max. {maxSizeMB}MB)
-            </p>
-            <Button
-              variant="outline"
-              className="mt-4"
-              type="button"
-              onClick={openFileDialog}
-            >
-              <UploadIcon className="-ms-1 opacity-60" aria-hidden="true" />
-              {t('Common.selectFiles')}
-            </Button>
+      <div
+        onDragEnter={handleDragEnter}
+        onDragLeave={handleDragLeave}
+        onDragOver={handleDragOver}
+        onDrop={handleDrop}
+        data-dragging={isDragging || undefined}
+        data-files={files.length > 0 || undefined}
+        className="border-input data-[dragging=true]:bg-accent/50 has-[input:focus]:border-ring has-[input:focus]:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive relative flex min-h-52 flex-col items-center overflow-hidden rounded-lg border border-dashed p-4 transition-colors not-data-[files]:justify-center has-[input:focus]:ring-[3px]"
+      >
+        <div className="flex flex-col items-center justify-center px-4 py-3 text-center">
+          <div
+            className="bg-background mb-2 flex size-11 shrink-0 items-center justify-center rounded-full border"
+            aria-hidden="true"
+          >
+            <ImageIcon className="size-4 opacity-60" />
           </div>
+          <p className="font-body-1 mb-1.5">
+            {t('Common.messages.dropYourFilesHere')}
+          </p>
+          <p className="text-muted-foreground font-caption-1 uppercase">
+            {makeAcceptString(accept)} (max. {maxSizeMB}MB)
+          </p>
+          <Button
+            variant="outline"
+            className="mt-4"
+            type="button"
+            onClick={openFileDialog}
+            disabled={isUploading}
+          >
+            <UploadIcon className="-ms-1 opacity-60" aria-hidden="true" />
+            {t('Common.selectFiles')}
+          </Button>
         </div>
-      ) : maxFiles > files.length ? (
-        <Button
-          variant="outline"
-          className="ml-auto w-fit"
-          type="button"
-          onClick={openFileDialog}
-        >
-          <UploadIcon className="-ms-1 opacity-60" aria-hidden="true" />
-          {t('Common.uploadMore')}
-        </Button>
-      ) : null}
+      </div>
+
+      <Button
+        variant="outline"
+        className="ml-auto w-fit"
+        type="button"
+        onClick={openFileDialog}
+        disabled={isUploading}
+      >
+        <UploadIcon className="-ms-1 opacity-60" aria-hidden="true" />
+        {t('Common.uploadMore')}
+      </Button>
 
       <input
         {...getInputProps()}
@@ -140,52 +146,26 @@ function Uploader({
       {files.length > 0 && (
         <div className="space-y-2">
           {files.map((file) => (
-            <div
+            <PreviewFile
+              file={file}
               key={file.id}
-              className="bg-background flex shrink items-center justify-between gap-2 rounded-lg border p-2 pe-3"
-            >
-              <div className="flex items-center gap-3 overflow-hidden">
-                {file.file.type.includes('image') ? (
-                  <div className="bg-accent aspect-square shrink-0 rounded">
-                    <Image
-                      src={file.preview || ''}
-                      alt={file.file.name}
-                      className="size-10 rounded-[inherit] object-cover"
-                      placeholder="blur"
-                      blurDataURL={file.preview || ''}
-                      width={100}
-                      height={100}
-                    />
-                  </div>
-                ) : (
-                  <FileText className="text-accent-foreground size-6 rounded-[inherit] object-cover" />
-                )}
-                <div className="flex min-w-0 flex-col gap-0.5">
-                  <p className="font-caption-1 truncate text-[13px]">
-                    {file.file.name}
-                  </p>
-                  <p className="text-muted-foreground text-xs">
-                    {formatBytes(file.file.size)}
-                  </p>
-                </div>
-              </div>
-
-              <Button
-                size="icon"
-                variant="ghost"
-                className="text-muted-foreground/80 hover:text-foreground -me-2 size-8 hover:bg-transparent"
-                onClick={() => removeFile(file.id)}
-                aria-label="Remove file"
-              >
-                <XIcon aria-hidden="true" />
-              </Button>
-            </div>
+              fileKey={file.fileKey}
+              className="size-10 rounded-[inherit] object-cover"
+              onDelete={(e) => removeFile(e, file.id!)} // Added prop for delete handling
+              status={file.status} // Pass status for UI (e.g., show spinner if 'uploading')
+              error={file.error} // Pass per-file error if any
+            />
           ))}
 
           {/* Remove all files button */}
           {files.length > 1 && (
             <div>
-              <Button size="sm" variant="outline" onClick={clearFiles}>
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={clearFiles}
+                disabled={isUploading}
+              >
                 {t('Common.removeAllFiles')}
               </Button>
             </div>

@@ -1,4 +1,8 @@
-import { GetObjectCommand, PutObjectCommand } from '@aws-sdk/client-s3';
+import {
+  DeleteObjectCommand,
+  GetObjectCommand,
+  PutObjectCommand,
+} from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 
 import { PrismaClient } from '@/generated/prisma';
@@ -100,20 +104,8 @@ export class FilesRepository {
   }
 
   // PREVIEW AND DOWNLOAD
-  async getSignedUrlForDownload({
-    fileKey,
-    applicantId,
-    fileType,
-  }: {
-    fileKey: string;
-    applicantId: string;
-    fileType: TFileDto['fileType'];
-  }) {
-    if (!fileKey || !applicantId || !fileType) {
-      throw new BadRequestError(
-        'fileKey, applicantId, and fileType are required',
-      );
-    }
+  async getSignedUrlForDownload(fileKey: string) {
+    if (!fileKey) throw new BadRequestError('fileKey is required');
 
     const command = new GetObjectCommand({
       Bucket: R2_BUCKET,
@@ -125,6 +117,21 @@ export class FilesRepository {
     }); // 8 hours
 
     return { signedUrl };
+  }
+
+  async deleteFileFromR2(fileKey: string) {
+    if (!fileKey) throw new BadRequestError('fileKey is required');
+
+    const command = new DeleteObjectCommand({
+      Bucket: R2_BUCKET,
+      Key: fileKey,
+    });
+
+    const result = await S3.send(command);
+
+    if (!result) throw new BadRequestError('Failed to delete file from R2');
+
+    return true;
   }
 }
 

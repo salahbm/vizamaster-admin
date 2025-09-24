@@ -4,12 +4,13 @@ import agent from '@/lib/agent';
 
 import { QueryKeys } from '@/constants/query-keys';
 
+import { TFileDto } from '@/server/common/dto/files.dto';
 import { NotFoundError } from '@/server/common/errors';
 import { TResponse } from '@/server/common/types';
 
 // ───────────────── GET ────────────────── //
-export const getApplicantFiles = async (id?: string): Promise<File[]> => {
-  const { data } = await agent.get<TResponse<File[]>>(
+export const getApplicantFiles = async (id?: string): Promise<TFileDto[]> => {
+  const { data } = await agent.get<TResponse<TFileDto[]>>(
     `api/applicant/${id}/files`,
   );
 

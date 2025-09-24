@@ -1,6 +1,6 @@
 import { TFileDto } from '@/server/common/dto/files.dto';
 import { BadRequestError, handlePrismaError } from '@/server/common/errors';
-import { createResponse, removeR2Prefix } from '@/server/common/utils';
+import { createResponse } from '@/server/common/utils';
 import prisma from '@/server/db/prisma';
 
 import FilesRepository, { fileRepository } from './files.repository';
@@ -28,37 +28,45 @@ class FilesService {
     fileType: TFileDto['fileType'];
     buffer: Buffer;
   }) {
-    if (!fileName || !contentType || !applicantId || !fileType || !buffer) {
-      throw new BadRequestError(
-        'fileName, contentType, applicantId, fileType, and buffer are required',
-      );
+    try {
+      if (!fileName || !contentType || !applicantId || !fileType || !buffer) {
+        throw new BadRequestError(
+          'fileName, contentType, applicantId, fileType, and buffer are required',
+        );
+      }
+
+      // Upload directly to R2
+      const fileKey = await this.fileRepository.uploadToR2({
+        buffer,
+        fileName,
+        contentType,
+        applicantId,
+        fileType,
+      });
+
+      // Create file record
+      const fileRecord = await this.createFileRecord({
+        applicantId,
+        fileType,
+        fileName,
+        mimeType: contentType,
+        fileKey,
+        fileSize: buffer.length,
+      });
+
+      if (!fileRecord) {
+        // if prisma has error to create file record, delete file from R2
+        await this.deleteFileFromR2(fileKey);
+        throw new BadRequestError('Failed to create file record');
+      }
+
+      return createResponse({
+        fileKey: fileKey,
+        fileId: fileRecord.id,
+      });
+    } catch (error) {
+      throw error;
     }
-
-    // Upload directly to R2
-    const fileKey = await this.fileRepository.uploadToR2({
-      buffer,
-      fileName,
-      contentType,
-      applicantId,
-      fileType,
-    });
-
-    // Create file record
-    const fileRecord = await this.createFileRecord({
-      applicantId,
-      fileType,
-      fileName,
-      mimeType: contentType,
-      fileKey,
-      fileSize: buffer.length,
-    });
-
-    if (!fileRecord) throw new BadRequestError('Failed to create file record');
-
-    return createResponse({
-      fileKey: removeR2Prefix(fileKey),
-      fileId: fileRecord.id,
-    });
   }
 
   /**
@@ -70,7 +78,7 @@ class FilesService {
         data: {
           applicantId: file.applicantId,
           fileType: file.fileType,
-          fileKey: removeR2Prefix(file.fileKey),
+          fileKey: file.fileKey,
           fileName: file.fileName,
           fileSize: file.fileSize,
           mimeType: file.mimeType,
@@ -84,24 +92,19 @@ class FilesService {
   /**
    * Get a signed URL for file download
    */
-  async getSignedUrlForDownload({
-    fileKey,
-    applicantId,
-    fileType,
-  }: {
-    fileKey: string;
-    applicantId: string;
-    fileType: TFileDto['fileType'];
-  }) {
-    const result = await this.fileRepository.getSignedUrlForDownload({
-      fileKey,
-      applicantId,
-      fileType,
-    });
+  async getSignedUrlForDownload(fileKey: string) {
+    const result = await this.fileRepository.getSignedUrlForDownload(fileKey);
 
     return createResponse({
       signedUrl: result.signedUrl,
     });
+  }
+
+  /**
+   * Delete a file from R2
+   */
+  async deleteFileFromR2(fileKey: string) {
+    await this.fileRepository.deleteFileFromR2(fileKey);
   }
 }
 

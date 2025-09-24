@@ -10,48 +10,44 @@ import {
 } from 'react';
 
 import { useTranslations } from 'next-intl';
-import { z } from 'zod';
 
 import { formatBytes } from '@/utils/formats';
 
-export const FileMetadataSchema = z.object({
-  id: z.string(),
-  name: z.string(),
-  type: z.string(),
-  url: z.string(),
-  size: z.number(),
-  userId: z.string().optional(),
-  createdAt: z.date().optional(),
-});
+import { FileType } from '@/generated/prisma';
+import { TFileDto } from '@/server/common/dto/files.dto';
 
-export type FileMetadata = z.infer<typeof FileMetadataSchema>;
-
-export type FileWithPreview = {
-  file: File | FileMetadata;
-  id: string;
-  preview?: string;
-};
+import { useDeleteFile, useUpload } from '../files';
 
 export type FileUploadOptions = {
-  maxFiles?: number; // Only used when multiple is true, defaults to Infinity
+  values?: TFileDto[] | null;
   maxSize?: number; // in bytes
+  maxFiles?: number; // Only used when multiple is true, defaults to Infinity
   accept?: string;
   multiple?: boolean; // Defaults to false
-  initialFiles?: FileMetadata[] | null;
-  onFilesChange?: (files: FileWithPreview[]) => void; // Callback when files change
-  onFilesAdded?: (addedFiles: FileWithPreview[]) => void; // Callback when new files are added
+  applicantId: string;
+  fileType: FileType;
+  deleteOnRemove?: boolean; // If true, delete from server immediately; else, queue for submit (default: false)
+  onFilesChange?: (files: TFileDto[]) => void; // Callback when files change
+  onFilesAdded?: (addedFiles: TFileDto[]) => void; // Callback when new files are added
+  onConfirmDelete?: (file: TFileDto) => Promise<boolean>; // Optional async callback to confirm delete (e.g., modal)
+};
+
+export type ExtendedFileDto = TFileDto & {
+  status?: 'pending' | 'uploading' | 'uploaded' | 'error'; // For per-file state
+  error?: string;
 };
 
 export type FileUploadState = {
-  files: FileWithPreview[];
+  files: ExtendedFileDto[];
+  pendingDeletes: string[]; // File keys/IDs to delete on submit
   isDragging: boolean;
   errors: string[];
 };
 
 export type FileUploadActions = {
   addFiles: (files: FileList | File[]) => void;
-  removeFile: (id: string) => void;
-  clearFiles: () => void;
+  removeFile: (e: React.MouseEvent, id: string) => Promise<void>;
+  clearFiles: () => Promise<void>;
   clearErrors: () => void;
   handleDragEnter: (e: DragEvent<HTMLElement>) => void;
   handleDragLeave: (e: DragEvent<HTMLElement>) => void;
@@ -64,316 +60,285 @@ export type FileUploadActions = {
   ) => InputHTMLAttributes<HTMLInputElement> & {
     ref: React.Ref<HTMLInputElement>;
   };
+  getPendingDeletes: () => string[]; // For parent to access on submit
 };
 
 export const useFileUpload = (
-  options: FileUploadOptions = {},
+  options: FileUploadOptions,
 ): [FileUploadState, FileUploadActions] => {
   const {
     maxFiles = Infinity,
     maxSize = Infinity,
     accept = '*',
     multiple = false,
-    initialFiles = [],
+    values,
+    applicantId,
+    fileType,
     onFilesChange,
     onFilesAdded,
+    deleteOnRemove = false,
+    onConfirmDelete,
   } = options;
   const t = useTranslations();
+  const inputRef = useRef<HTMLInputElement>(null);
   const [state, setState] = useState<FileUploadState>({
-    files:
-      initialFiles?.map((file) => ({
-        file,
-        id: file.id,
-        preview: file.url,
-      })) || [],
+    files: (values || []).map((f) => ({ ...f, status: 'uploaded' })),
+    pendingDeletes: [],
     isDragging: false,
     errors: [],
   });
 
-  const inputRef = useRef<HTMLInputElement>(null);
+  const { mutateAsync: deleteFile } = useDeleteFile();
+  const { mutateAsync: uploadFile } = useUpload();
 
   const validateFile = useCallback(
-    (file: File | FileMetadata): string | null => {
-      if (file instanceof File) {
-        if (file.size > maxSize) {
-          return `${t('Common.messages.fileSize', { maxSize: formatBytes(maxSize) })}`;
-        }
-      } else {
-        if (file.size > maxSize) {
-          return `${t('Common.messages.fileSize', { maxSize: formatBytes(maxSize) })}`;
-        }
+    (file: File): string | null => {
+      if (file.size > maxSize) {
+        return t('Common.messages.fileSize', { maxSize: formatBytes(maxSize) });
       }
-
       if (accept !== '*') {
-        const acceptedTypes = accept.split(',').map((type) => type.trim());
-        const fileType = file instanceof File ? file.type || '' : file.type;
-        const fileExtension = `.${file instanceof File ? file.name.split('.').pop() : file.name.split('.').pop()}`;
-
+        const acceptedTypes = accept
+          .split(',')
+          .map((type) => type.trim().toLowerCase());
+        const fileTypeLower = file.type.toLowerCase();
+        const fileExtension = `.${file.name.split('.').pop()?.toLowerCase() || ''}`;
         const isAccepted = acceptedTypes.some((type) => {
-          if (type.startsWith('.')) {
-            return fileExtension.toLowerCase() === type.toLowerCase();
-          }
-          if (type.endsWith('/*')) {
-            const baseType = type.split('/')[0];
-            return fileType.startsWith(`${baseType}/`);
-          }
-          return fileType === type;
+          if (type.startsWith('.')) return fileExtension === type;
+          if (type.endsWith('/*'))
+            return fileTypeLower.startsWith(type.slice(0, -1));
+          return fileTypeLower === type;
         });
-
         if (!isAccepted) {
           return t('Common.messages.fileAcceptType', { accept });
         }
       }
-
       return null;
     },
     [accept, maxSize, t],
   );
 
-  const createPreview = useCallback(
-    (file: File | FileMetadata): string | undefined => {
-      if (file instanceof File) {
-        return URL.createObjectURL(file);
-      }
-      return file.url;
-    },
+  const createFileDto = useCallback(
+    (file: File): ExtendedFileDto => ({
+      id: crypto.randomUUID(), // Temp local ID for uniqueness
+      applicantId: '',
+      fileType: FileType.OTHER,
+      fileKey: '',
+      fileName: file.name,
+      fileSize: file.size,
+      mimeType: file.type,
+      preview: URL.createObjectURL(file),
+      status: 'pending',
+    }),
     [],
   );
 
-  const generateUniqueId = useCallback((file: File | FileMetadata): string => {
-    if (file instanceof File) {
-      return `${file.name}-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
-    }
-    return file.id;
-  }, []);
-
-  const clearFiles = useCallback(() => {
-    setState((prev) => {
-      // Clean up object URLs
-      prev.files.forEach((file) => {
-        if (
-          file.preview &&
-          file.file instanceof File &&
-          file.file.type.startsWith('image/')
-        ) {
-          URL.revokeObjectURL(file.preview);
-        }
-      });
-
-      if (inputRef.current) {
-        inputRef.current.value = '';
+  const uploadAndUpdate = useCallback(
+    async (file: File, dto: ExtendedFileDto) => {
+      try {
+        setState((prev) => ({
+          ...prev,
+          files: prev.files.map((f) =>
+            f.id === dto.id ? { ...f, status: 'uploading' } : f,
+          ),
+        }));
+        const uploaded = await uploadFile({ file, applicantId, fileType });
+        setState((prev) => ({
+          ...prev,
+          files: prev.files.map((f) =>
+            f.id === dto.id
+              ? { ...uploaded, preview: f.preview, status: 'uploaded' } // Merge server data, keep preview
+              : f,
+          ),
+        }));
+      } catch (err) {
+        setState((prev) => ({
+          ...prev,
+          files: prev.files.map((f) =>
+            f.id === dto.id
+              ? { ...f, status: 'error', error: (err as Error).message }
+              : f,
+          ),
+          errors: [...prev.errors, (err as Error).message],
+        }));
       }
-
-      // Call onFilesChange with an empty array
-      if (onFilesChange) {
-        onFilesChange([] as unknown as FileWithPreview[]);
-      }
-
-      const newState = {
-        ...prev,
-        files: [],
-        errors: [],
-      };
-
-      return newState;
-    });
-  }, [onFilesChange]);
+    },
+    [uploadFile, applicantId, fileType],
+  );
 
   const addFiles = useCallback(
     (newFiles: FileList | File[]) => {
-      if (!newFiles || newFiles.length === 0) return;
-
+      if (!newFiles?.length) return;
       const newFilesArray = Array.from(newFiles);
       const errors: string[] = [];
 
-      // Clear existing errors when new files are uploaded
-      setState((prev) => ({ ...prev, errors: [] }));
+      setState((prev) => ({ ...prev, errors: [] })); // Clear old errors
 
-      // In single file mode, clear existing files first
       if (!multiple) {
-        clearFiles();
+        // For single, clear existing optimistically
+        state.files.forEach((f) => f.preview && URL.revokeObjectURL(f.preview));
+        setState((prev) => ({ ...prev, files: [] }));
       }
 
-      // Check if adding these files would exceed maxFiles (only in multiple mode)
-      if (
-        multiple &&
-        maxFiles !== Infinity &&
-        state.files.length + newFilesArray.length > maxFiles
-      ) {
+      if (multiple && state.files.length + newFilesArray.length > maxFiles) {
         errors.push(t('Common.messages.fileCount', { maxFiles }));
         setState((prev) => ({ ...prev, errors }));
         return;
       }
 
-      const validFiles: FileWithPreview[] = [];
+      const validDtos: ExtendedFileDto[] = [];
+      const validRawFiles: File[] = [];
 
       newFilesArray.forEach((file) => {
-        // Only check for duplicates if multiple files are allowed
         if (multiple) {
           const isDuplicate = state.files.some(
-            (existingFile) =>
-              existingFile.file.name === file.name &&
-              existingFile.file.size === file.size,
+            (f) => f.fileName === file.name && f.fileSize === file.size,
           );
-
-          // Skip duplicate files silently
-          if (isDuplicate) {
-            return;
-          }
+          if (isDuplicate) return; // Skip silently
         }
-
-        // Check file size
-        if (file.size > maxSize) {
-          errors.push(
-            multiple
-              ? `${t('Common.messages.fileSize', { maxSize: formatBytes(maxSize) })}`
-              : `${t('Common.messages.fileSize', { maxSize: formatBytes(maxSize) })}`,
-          );
-          return;
-        }
-
         const error = validateFile(file);
         if (error) {
           errors.push(error);
         } else {
-          // Create a proper FileMetadata object that matches the schema
-          const fileId = generateUniqueId(file);
-          const preview = createPreview(file);
-
-          // If it's a File object, transform it to match FileMetadataSchema
-          if (file instanceof File) {
-            validFiles.push({
-              file: {
-                id: fileId,
-                name: file.name,
-                type: file.type,
-                url: preview || '',
-                size: file.size,
-              },
-              id: fileId,
-              preview,
-            });
-          } else {
-            // It's already a FileMetadata object
-            validFiles.push({
-              file,
-              id: fileId,
-              preview,
-            });
-          }
+          const dto = createFileDto(file);
+          validDtos.push(dto);
+          validRawFiles.push(file);
         }
       });
 
-      // Only update state if we have valid files to add
-      if (validFiles.length > 0) {
-        // Call the onFilesAdded callback with the newly added valid files
-        if (onFilesAdded) {
-          onFilesAdded(validFiles);
-        }
-
+      if (validDtos.length) {
         setState((prev) => {
-          const newFiles = !multiple
-            ? validFiles
-            : [...prev.files, ...validFiles];
-
-          // Call onFilesChange with the updated files array
-          // Convert FileWithPreview[] to FileMetadata[] for the form
-          if (onFilesChange) {
-            const fileMetadataArray = newFiles.map((item) => {
-              if (item.file instanceof File) {
-                return {
-                  id: item.id,
-                  name: item.file.name,
-                  type: item.file.type,
-                  url: item.preview || '',
-                  size: item.file.size,
-                };
-              }
-              return item.file;
-            });
-            onFilesChange(fileMetadataArray as unknown as FileWithPreview[]);
-          }
-
-          return {
-            ...prev,
-            files: newFiles,
-            errors,
-          };
+          const updatedFiles = multiple
+            ? [...prev.files, ...validDtos]
+            : validDtos;
+          if (onFilesAdded) onFilesAdded(validDtos);
+          if (onFilesChange) onFilesChange(updatedFiles);
+          return { ...prev, files: updatedFiles, errors };
         });
-      } else if (errors.length > 0) {
-        setState((prev) => ({
-          ...prev,
-          errors,
-        }));
+
+        // Upload async immediately
+        validRawFiles.forEach((file, i) => uploadAndUpdate(file, validDtos[i]));
+      } else if (errors.length) {
+        setState((prev) => ({ ...prev, errors }));
       }
 
-      // Reset input value after handling files
-      if (inputRef.current) {
-        inputRef.current.value = '';
-      }
+      if (inputRef.current) inputRef.current.value = '';
     },
     [
-      state.files,
-      maxFiles,
       multiple,
-      maxSize,
+      maxFiles,
       validateFile,
-      createPreview,
-      generateUniqueId,
-      clearFiles,
+      createFileDto,
       onFilesAdded,
       onFilesChange,
       t,
+      uploadAndUpdate,
+      state.files,
     ],
   );
 
   const removeFile = useCallback(
-    (id: string) => {
+    async (e: React.MouseEvent, id: string) => {
+      e.stopPropagation();
+      const fileToRemove = state.files.find((f) => f.id === id);
+      if (!fileToRemove) return;
+
+      let confirmed = true;
+      if (onConfirmDelete) {
+        confirmed = await onConfirmDelete(fileToRemove);
+      }
+      if (!confirmed) return;
+
+      if (fileToRemove.preview) URL.revokeObjectURL(fileToRemove.preview);
+
       setState((prev) => {
-        const fileToRemove = prev.files.find((file) => file.id === id);
-        if (
-          fileToRemove &&
-          fileToRemove.preview &&
-          fileToRemove.file instanceof File &&
-          fileToRemove.file.type.startsWith('image/')
-        ) {
-          URL.revokeObjectURL(fileToRemove.preview);
-        }
-
-        const newFiles = prev.files.filter((file) => file.id !== id);
-
-        // Convert FileWithPreview[] to FileMetadata[] for the form
-        if (onFilesChange) {
-          const fileMetadataArray = newFiles.map((item) => {
-            if (item.file instanceof File) {
-              return {
-                id: item.id,
-                name: item.file.name,
-                type: item.file.type,
-                url: item.preview || '',
-                size: item.file.size,
-              };
-            }
-            return item.file;
-          });
-          onFilesChange(fileMetadataArray as unknown as FileWithPreview[]);
-        }
-
+        const newFiles = prev.files.filter((f) => f.id !== id);
+        const newPendingDeletes = fileToRemove.fileKey // Only queue if it has a server key (uploaded)
+          ? [...prev.pendingDeletes, fileToRemove.fileKey]
+          : prev.pendingDeletes;
+        if (onFilesChange) onFilesChange(newFiles);
         return {
           ...prev,
           files: newFiles,
+          pendingDeletes: newPendingDeletes,
           errors: [],
         };
       });
+
+      if (deleteOnRemove && fileToRemove.fileKey) {
+        try {
+          await deleteFile({
+            fileKey: fileToRemove.fileKey,
+            applicantId,
+            fileType,
+          });
+          setState((prev) => ({
+            ...prev,
+            pendingDeletes: prev.pendingDeletes.filter(
+              (k) => k !== fileToRemove.fileKey,
+            ),
+          }));
+        } catch (err) {
+          setState((prev) => ({
+            ...prev,
+            errors: [...prev.errors, (err as Error).message],
+          }));
+        }
+      }
     },
-    [onFilesChange],
+    [
+      onConfirmDelete,
+      onFilesChange,
+      deleteOnRemove,
+      deleteFile,
+      applicantId,
+      fileType,
+      state.files,
+    ],
   );
 
+  const clearFiles = useCallback(async () => {
+    // Optional: Batch confirm if needed
+    setState((prev) => {
+      prev.files.forEach((f) => f.preview && URL.revokeObjectURL(f.preview));
+      const newPendingDeletes = [
+        ...prev.pendingDeletes,
+        ...prev.files.filter((f) => !!f.fileKey).map((f) => f.fileKey),
+      ];
+      if (onFilesChange) onFilesChange([]);
+      if (inputRef.current) inputRef.current.value = '';
+      return {
+        ...prev,
+        files: [],
+        pendingDeletes: newPendingDeletes,
+        errors: [],
+      };
+    });
+
+    if (deleteOnRemove) {
+      const deletes = state.pendingDeletes.map((key) =>
+        deleteFile({ fileKey: key, applicantId, fileType }),
+      );
+      try {
+        await Promise.all(deletes);
+        setState((prev) => ({ ...prev, pendingDeletes: [] }));
+      } catch (err) {
+        setState((prev) => ({
+          ...prev,
+          errors: [...prev.errors, (err as Error).message],
+        }));
+      }
+    }
+  }, [
+    onFilesChange,
+    deleteOnRemove,
+    deleteFile,
+    applicantId,
+    fileType,
+    state.pendingDeletes,
+  ]);
+
   const clearErrors = useCallback(() => {
-    setState((prev) => ({
-      ...prev,
-      errors: [],
-    }));
+    setState((prev) => ({ ...prev, errors: [] }));
   }, []);
 
   const handleDragEnter = useCallback((e: DragEvent<HTMLElement>) => {
@@ -385,11 +350,7 @@ export const useFileUpload = (
   const handleDragLeave = useCallback((e: DragEvent<HTMLElement>) => {
     e.preventDefault();
     e.stopPropagation();
-
-    if (e.currentTarget.contains(e.relatedTarget as Node)) {
-      return;
-    }
-
+    if (e.currentTarget.contains(e.relatedTarget as Node)) return;
     setState((prev) => ({ ...prev, isDragging: false }));
   }, []);
 
@@ -403,52 +364,39 @@ export const useFileUpload = (
       e.preventDefault();
       e.stopPropagation();
       setState((prev) => ({ ...prev, isDragging: false }));
-
-      // Don't process files if the input is disabled
-      if (inputRef.current?.disabled) {
-        return;
-      }
-
-      if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-        // In single file mode, only use the first file
-        if (!multiple) {
-          const file = e.dataTransfer.files[0];
-          addFiles([file]);
-        } else {
-          addFiles(e.dataTransfer.files);
-        }
-      }
+      if (inputRef.current?.disabled || !e.dataTransfer.files?.length) return;
+      const files = multiple ? e.dataTransfer.files : [e.dataTransfer.files[0]];
+      addFiles(files);
     },
     [addFiles, multiple],
   );
 
   const handleFileChange = useCallback(
     (e: ChangeEvent<HTMLInputElement>) => {
-      if (e.target.files && e.target.files.length > 0) {
-        addFiles(e.target.files);
-      }
+      if (e.target.files?.length) addFiles(e.target.files);
     },
     [addFiles],
   );
 
   const openFileDialog = useCallback(() => {
-    if (inputRef.current) {
-      inputRef.current.click();
-    }
+    inputRef.current?.click();
   }, []);
 
   const getInputProps = useCallback(
-    (props: InputHTMLAttributes<HTMLInputElement> = {}) => {
-      return {
-        ...props,
-        type: 'file' as const,
-        onChange: handleFileChange,
-        accept: props.accept || accept,
-        multiple: props.multiple !== undefined ? props.multiple : multiple,
-        ref: inputRef,
-      };
-    },
+    (props: InputHTMLAttributes<HTMLInputElement> = {}) => ({
+      ...props,
+      type: 'file',
+      onChange: handleFileChange,
+      accept: props.accept || accept,
+      multiple: props.multiple ?? multiple,
+      ref: inputRef,
+    }),
     [accept, multiple, handleFileChange],
+  );
+
+  const getPendingDeletes = useCallback(
+    () => state.pendingDeletes,
+    [state.pendingDeletes],
   );
 
   return [
@@ -465,6 +413,7 @@ export const useFileUpload = (
       handleFileChange,
       openFileDialog,
       getInputProps,
+      getPendingDeletes, // Expose for parent submit handler
     },
   ];
 };

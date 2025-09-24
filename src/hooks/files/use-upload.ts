@@ -1,6 +1,7 @@
 import agent from '@/lib/agent';
 
 import { FileType } from '@/generated/prisma';
+import { TFileDto } from '@/server/common/dto/files.dto';
 
 import useMutation from '../common/use-mutation';
 
@@ -16,7 +17,7 @@ const upload = async ({
   applicantId,
   fileType,
   onProgress,
-}: UploadParams): Promise<{ fileUrl: string }> => {
+}: UploadParams): Promise<TFileDto> => {
   const formData = new FormData();
 
   formData.append('file', file);
@@ -26,19 +27,19 @@ const upload = async ({
   formData.append('fileType', fileType);
   formData.append('fileSize', file.size.toString());
 
-  const response = await agent.post<{ data: { fileUrl: string } }>(
+  const response = await agent.post<{ data: { data: TFileDto } }>(
     '/api/upload',
     formData,
-    { headers: { Accept: 'application/json' } },
+    {
+      headers: { Accept: 'application/json' },
+    },
   );
-
-  console.info('Upload response:', response);
 
   if (onProgress) {
     onProgress(100);
   }
 
-  return { fileUrl: response.data.fileUrl };
+  return response.data.data;
 };
 
 export const useUpload = () =>

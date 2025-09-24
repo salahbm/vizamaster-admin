@@ -20,6 +20,8 @@ export const fileDto = z.object({
   fileName: z.string(),
   fileSize: z.number().int().positive().optional(),
   mimeType: z.string().optional(),
+
+  preview: z.string().optional(), // only for before upload
 });
 
 export type TFileDto = z.infer<typeof fileDto>;
