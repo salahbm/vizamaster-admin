@@ -9,12 +9,12 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
 import { FormFields } from '@/components/shared/form-fields';
+import { Uploader } from '@/components/shared/uploader';
 import { Button } from '@/components/ui/button';
 import { Form } from '@/components/ui/form';
 import { Label } from '@/components/ui/label';
 import Loader from '@/components/ui/loader';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { Uploader } from '@/components/ui/uploader';
 
 import { FileType } from '@/generated/prisma';
 import { useDeleteFile } from '@/hooks/files';
@@ -52,14 +52,18 @@ const ApplicantFiles: React.FC<IApplicantFilesProps> = ({
   });
 
   useEffect(() => {
-    if (files && files.length > 0 && !isLoading) {
+    if (!isLoading) {
       form.reset({
-        files,
+        files: files || [],
         pendingDeletes: [],
         fileType: FileType.OTHER,
       });
     }
   }, [files, isLoading, form]);
+
+  const getPendingDeletes = (fileKeys: string[]) => {
+    form.setValue('pendingDeletes', fileKeys, { shouldValidate: true });
+  };
 
   const selectedType = form.watch('fileType');
   const isDisabled =
@@ -76,6 +80,7 @@ const ApplicantFiles: React.FC<IApplicantFilesProps> = ({
         ),
       ).then(() => {
         form.setValue('pendingDeletes', [], { shouldValidate: true });
+        form.reset();
       });
     }
   };
@@ -119,12 +124,8 @@ const ApplicantFiles: React.FC<IApplicantFilesProps> = ({
                 maxFiles={5}
                 maxSizeMB={10}
                 applicantId={id}
-                fileType={selectedType}
-                getPendingDeletes={(fileKeys) => {
-                  form.setValue('pendingDeletes', fileKeys, {
-                    shouldValidate: true,
-                  });
-                }}
+                fileType={selectedType as FileType}
+                getPendingDeletes={getPendingDeletes}
                 {...field}
               />
             )}

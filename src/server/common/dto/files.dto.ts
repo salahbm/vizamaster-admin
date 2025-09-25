@@ -3,7 +3,7 @@ import { z } from 'zod';
 import { FileType } from '@/generated/prisma';
 
 export const fileDto = z.object({
-  id: z.string().optional(),
+  id: z.string(),
   applicantId: z.string(),
 
   fileType: z
@@ -18,19 +18,16 @@ export const fileDto = z.object({
     .default(FileType.OTHER),
   fileKey: z.string(),
   fileName: z.string(),
-  fileSize: z.number().int().positive().optional(),
-  mimeType: z.string().optional(),
+  fileSize: z.number().int().positive(),
+  mimeType: z.string(),
 
-  preview: z.string().optional(), // only for before upload
+  preview: z.string(), // only for before upload
 });
 
 export type TFileDto = z.infer<typeof fileDto>;
 
 export const uploadRequestSchema = z.object({
-  fileKey: z.string(),
-  contentType: z.string(),
   applicantId: z.string(),
-  fileSize: z.number().int().positive(),
   fileType: z.enum([
     FileType.PASSPORT,
     FileType.VISA,
@@ -39,4 +36,9 @@ export const uploadRequestSchema = z.object({
     FileType.FLIGHT_DOCUMENT,
     FileType.OTHER,
   ]),
+  fileName: z.string(),
+  fileSize: z.number().int().positive(),
+  mimeType: z.string(),
 });
+
+export type TUploadRequestDto = z.infer<typeof uploadRequestSchema>;

@@ -4,51 +4,48 @@ import Image from 'next/image';
 
 import { AlertCircleIcon, Download, FileText, XIcon } from 'lucide-react';
 
+import { PreviewFileSkeleton } from '@/components/skeletons/preview-file';
+import { Button } from '@/components/ui/button';
+
 import { cn } from '@/lib/utils';
 
 import { formatBytes } from '@/utils/formats';
 import { downloadFile } from '@/utils/helpers';
+import { ExtendedFileDto } from '@/utils/uploader-helpers';
 
-import { ExtendedFileDto } from '@/hooks/common/use-file-upload';
 import { usePreviewUrl } from '@/hooks/files/use-preview';
 
-import { PreviewFileSkeleton } from '../skeletons/preview-file';
-import { Button } from './button';
-
 interface PreviewFileProps extends React.HTMLAttributes<HTMLImageElement> {
-  fileKey: string;
   applicantId: string;
   file: ExtendedFileDto; // Updated to ExtendedFileDto for status/error
   onDelete?: () => void; // Simplified to avoid async during render
-  status?: ExtendedFileDto['status']; // Passed from parent, but can access from file
-  error?: string; // Per-file error
   pendingDeletes?: string[];
 }
 
 export const PreviewFile = ({
-  fileKey,
-  className,
   file,
+  className,
   applicantId,
   onDelete,
-  status = file.status, // Use file.status if not passed
-  error = file.error,
   pendingDeletes,
   ...props
 }: PreviewFileProps) => {
   const { data, isLoading: isLoadingPreview } = usePreviewUrl(
-    fileKey,
+    file.fileKey,
     applicantId,
   );
 
   const isLoading =
-    isLoadingPreview || status === 'uploading' || status === 'pending';
-  const hasError = !!error || status === 'error';
+    isLoadingPreview ||
+    file.status === 'uploading' ||
+    file.status === 'pending';
+
+  const hasError = !!file.error || file.status === 'error';
   const signedUrl = data?.signedUrl;
   const previewUrl = file.preview || signedUrl; // Prefer local preview if available
   const canDownload = !!previewUrl;
   const canDelete = !isLoading && !hasError;
-  const isPendingDelete = pendingDeletes?.includes(fileKey);
+  const isPendingDelete = pendingDeletes?.includes(file.fileKey);
 
   if (isLoading)
     return (
@@ -95,7 +92,7 @@ export const PreviewFile = ({
           {hasError && (
             <div className="text-destructive flex items-center gap-1 text-xs">
               <AlertCircleIcon className="size-3" />
-              <span>{error || 'Error uploading file'}</span>
+              <span>{file?.error || 'Error uploading file'}</span>
             </div>
           )}
         </div>
