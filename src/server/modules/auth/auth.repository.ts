@@ -1,12 +1,17 @@
 import { ColumnSort } from '@tanstack/react-table';
+import bcrypt from 'bcryptjs';
 
+import { Prisma } from '@/generated/prisma';
+import {
+  TAdminPasswordDto,
+  TAdminProfileDto,
+} from '@/server/common/dto/admin.dto';
 import { buildOrderBy } from '@/server/common/utils';
 import prisma from '@/server/db/prisma';
 
-import { Prisma } from '../../../../generated/prisma';
-
 export class AuthRepository {
   private readonly prisma = prisma;
+  private readonly bcrypt = bcrypt;
 
   // Users
   findUserById(id: string) {
@@ -97,5 +102,43 @@ export class AuthRepository {
   // DELETE
   deleteUser(id: string) {
     return this.prisma.users.delete({ where: { id } });
+  }
+
+  updateProfile(id: string, data: TAdminProfileDto) {
+    return this.prisma.users.update({
+      where: { id },
+      data,
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        image: true,
+        role: true,
+      },
+    });
+  }
+
+  async updatePassword(id: string, data: TAdminPasswordDto) {
+    const account = await this.prisma.accounts.findFirst({
+      where: { userId: id },
+      select: { id: true, password: true },
+    });
+
+    if (!account) throw new Error('Account not found');
+    if (!account.password) throw new Error('No password set');
+
+    const isValid = await this.bcrypt.compare(
+      data.currentPassword,
+      account.password,
+    );
+    if (!isValid) throw new Error('Current password is incorrect');
+
+    const hashedPassword = await this.bcrypt.hash(data.newPassword, 10);
+
+    return this.prisma.accounts.update({
+      where: { id: account.id },
+      data: { password: hashedPassword },
+      select: { id: true },
+    });
   }
 }

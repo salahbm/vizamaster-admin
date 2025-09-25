@@ -1,12 +1,13 @@
-import { User } from 'better-auth';
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+
+import { Users } from '@/generated/prisma';
 
 interface AuthState {
   isAuthenticated: boolean;
   setAuthenticated: (value: boolean) => void;
-  user: User | null;
-  setUser: (user: User | null) => void;
+  user: Users | null;
+  setUser: (user: Users | null) => void;
   removeUser: () => void;
   hasHydrated: boolean;
   setHasHydrated: (value: boolean) => void;

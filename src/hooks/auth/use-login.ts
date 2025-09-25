@@ -1,17 +1,19 @@
 import { useRouter } from 'next/navigation';
 
 import { useQueryClient } from '@tanstack/react-query';
-import { User } from 'better-auth';
 import { useLocale } from 'next-intl';
 
+import agent from '@/lib/agent';
 import { authClient } from '@/lib/auth-client';
 
 import { routes } from '@/constants/routes';
 
+import { Users } from '@/generated/prisma';
 import useMutation from '@/hooks/common/use-mutation';
 import { API_CODES } from '@/server/common/codes';
 import { SignInSchema } from '@/server/common/dto';
-import { UnauthorizedError } from '@/server/common/errors';
+import { NotFoundError, UnauthorizedError } from '@/server/common/errors';
+import { TResponse } from '@/server/common/types';
 import { getErrorMessage } from '@/server/common/utils';
 import { useAuthStore } from '@/store/use-auth-store';
 
@@ -40,7 +42,13 @@ const login = async (body: SignInSchema, locale: 'en' | 'ru') => {
     };
   }
 
-  return data;
+  const user = await agent.get<TResponse<Users>>(
+    `/api/admins/find-user?id=${data?.user.id}`,
+  );
+
+  if (!user) throw new NotFoundError('User not found');
+
+  return user?.data;
 };
 
 const useLogin = () => {
@@ -54,7 +62,7 @@ const useLogin = () => {
     mutationFn: (data: SignInSchema) => login(data, locale as 'en' | 'ru'),
     options: {
       onSuccess: (data) => {
-        setUser(data?.user as User);
+        setUser(data as Users);
         setAuthenticated(true);
         // On login success:
         queryClient.clear(); // wipes *all* cache

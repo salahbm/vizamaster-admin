@@ -1,4 +1,7 @@
 export const QueryKeys = {
+  admin: {
+    profile: ['admin', 'profile'],
+  },
   admins: {
     all: ['admins'],
     details: ['admins', 'details'],

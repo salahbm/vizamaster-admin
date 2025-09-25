@@ -2,10 +2,17 @@ import { NextRequest } from 'next/server';
 
 import { ColumnSort } from '@tanstack/react-table';
 
-import { NotFoundError, UnauthorizedError } from '@/server/common/errors';
+import {
+  TAdminPasswordDto,
+  TAdminProfileDto,
+} from '@/server/common/dto/admin.dto';
+import {
+  NotFoundError,
+  UnauthorizedError,
+  handlePrismaError,
+} from '@/server/common/errors';
 import { createPaginatedResult, createResponse } from '@/server/common/utils';
 
-import { Prisma } from '../../../../generated/prisma';
 import { AuthGuard } from '../../common/guard/auth.guard';
 import { auth } from './auth';
 import { AuthRepository } from './auth.repository';
@@ -37,14 +44,33 @@ export class AuthService {
     return await this.authRepository.findUserById(id);
   }
 
-  async updateUser(id: string, data: Prisma.UsersUpdateInput) {
-    const updatedUser = await this.authRepository.updateUser(id, data);
-    return createResponse(updatedUser);
+  async updateProfile(id: string, data: TAdminProfileDto) {
+    try {
+      const updatedProfile = await this.authRepository.updateProfile(id, data);
+      return createResponse(updatedProfile);
+    } catch (error) {
+      handlePrismaError(error);
+    }
   }
 
+  async updatePassword(id: string, data: TAdminPasswordDto) {
+    try {
+      const updatedPassword = await this.authRepository.updatePassword(
+        id,
+        data,
+      );
+      return createResponse(updatedPassword);
+    } catch (error) {
+      handlePrismaError(error);
+    }
+  }
   async deleteUser(id: string) {
-    const deletedUser = await this.authRepository.deleteUser(id);
-    return createResponse(deletedUser);
+    try {
+      const deletedUser = await this.authRepository.deleteUser(id);
+      return createResponse(deletedUser);
+    } catch (error) {
+      handlePrismaError(error);
+    }
   }
 
   async checkAuth(request: NextRequest) {
