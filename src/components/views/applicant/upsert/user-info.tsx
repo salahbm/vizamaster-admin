@@ -17,16 +17,14 @@ import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Separator } from '@/components/ui/separator';
 
-import { mapOptions } from '@/lib/utils';
-
 import { getCountries, getLanguages } from '@/utils/intl';
 
 import { Applicant } from '@/generated/prisma';
 import { useCreateApplicant, useUpdateApplicant } from '@/hooks/applicant';
-import { useCodes } from '@/hooks/settings/codes';
 import { ApplicantDto, TApplicantDto } from '@/server/common/dto/applicant.dto';
+import { useCodesStore } from '@/store/use-codes-store';
 
-import { applicantDefaults, applicantQueries } from './applicant.helpers';
+import { applicantDefaults } from './applicant.helpers';
 
 interface IApplicantUserInfoProps {
   id?: string;
@@ -47,32 +45,19 @@ const ApplicantUserInfo: React.FC<IApplicantUserInfoProps> = ({
   const t = useTranslations();
 
   // QUERIES
-  const { data: countries, isLoading: isLoadingCountries } = useCodes(
-    applicantQueries('group-countries'),
-  );
-  const { data: partners, isLoading: isLoadingPartners } = useCodes(
-    applicantQueries('group-partners'),
-  );
-  const { data: vacancies, isLoading: isLoadingVacancies } = useCodes(
-    applicantQueries('group-vacancies'),
-  );
+  const { options: countryOptions } = useCodesStore();
+  const { options: partnerOptions } = useCodesStore();
+  const { options: vacancyOptions } = useCodesStore();
+
+  // MEMOS
+  const countryOfResidenceOptions = useMemo(() => getCountries(), []);
+  const languagesOptions = useMemo(() => getLanguages(), []);
 
   // MUTATIONS
   const { mutateAsync: createApplicant, isPending: isPendingCreateApplicant } =
     useCreateApplicant();
   const { mutateAsync: updateApplicant, isPending: isPendingUpdateApplicant } =
     useUpdateApplicant();
-
-  // MEMOS
-  const countryOfResidenceOptions = useMemo(() => getCountries(), []);
-  const languagesOptions = useMemo(() => getLanguages(), []);
-  const { memoCountries, memoPartners, memoVacancies } = useMemo(() => {
-    return {
-      memoCountries: mapOptions(countries?.data, locale),
-      memoPartners: mapOptions(partners?.data, locale),
-      memoVacancies: mapOptions(vacancies?.data, locale),
-    };
-  }, [countries, partners, vacancies, locale]);
 
   const form = useForm<TApplicantDto>({
     resolver: zodResolver(ApplicantDto),
@@ -391,12 +376,11 @@ const ApplicantUserInfo: React.FC<IApplicantUserInfoProps> = ({
               label={t('applicant.form.fields.countryOfEmployment.label')}
               required
               control={form.control}
-              loading={isLoadingCountries}
               render={({ field }) => (
                 <Combobox
                   searchable
                   disabled={!id && countryOfEmployment !== 'all'}
-                  options={memoCountries}
+                  options={countryOptions('group-countries', locale)}
                   placeholder={t(
                     'applicant.form.fields.countryOfEmployment.placeholder',
                   )}
@@ -409,12 +393,11 @@ const ApplicantUserInfo: React.FC<IApplicantUserInfoProps> = ({
               label={t('applicant.form.fields.partner.label')}
               required
               control={form.control}
-              loading={isLoadingPartners}
               render={({ field }) => (
                 <Combobox
                   searchable
                   disabled={!id && partner !== 'all'}
-                  options={memoPartners}
+                  options={partnerOptions('group-partners', locale)}
                   placeholder={t('applicant.form.fields.partner.placeholder')}
                   {...field}
                 />
@@ -439,11 +422,10 @@ const ApplicantUserInfo: React.FC<IApplicantUserInfoProps> = ({
               name="preferredJobTitle"
               label={t('applicant.form.fields.jobTitle.label')}
               control={form.control}
-              loading={isLoadingVacancies}
               render={({ field }) => (
                 <Combobox
                   searchable
-                  options={memoVacancies}
+                  options={vacancyOptions('group-vacancies', locale)}
                   placeholder={t('applicant.form.fields.jobTitle.placeholder')}
                   {...field}
                 />

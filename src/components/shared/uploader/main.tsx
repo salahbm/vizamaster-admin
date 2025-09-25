@@ -32,7 +32,7 @@ import { FileType } from '@/generated/prisma';
 import { useDeleteFile, useUpload } from '@/hooks/files';
 import { TFileDto } from '@/server/common/dto/files.dto';
 
-import { PreviewFile } from './preview-image';
+import { PreviewFile } from './preview';
 
 export enum FileStatus {
   PENDING = 'pending',
@@ -92,6 +92,23 @@ function Uploader({
   const { mutateAsync: uploadFile } = useUpload();
 
   useEffect(() => {
+    // Skip processing if value hasn't changed meaningfully
+    const valueKeys = new Set(value.map((f) => f.fileKey).filter(Boolean));
+    const stateKeys = new Set(
+      state.files
+        .filter((f) => f.status === FileStatus.UPLOADED)
+        .map((f) => f.fileKey)
+        .filter(Boolean),
+    );
+
+    // Quick comparison of keys to see if we need to process
+    const keysMatch =
+      valueKeys.size === stateKeys.size &&
+      [...valueKeys].every((key) => stateKeys.has(key));
+
+    // If the keys match and we're not in the initial render, skip processing
+    if (keysMatch && state.files.length > 0) return;
+
     const newUploaded = value.map((f) => ({
       ...f,
       status: FileStatus.UPLOADED,
@@ -115,7 +132,7 @@ function Uploader({
         if (f.preview) URL.revokeObjectURL(f.preview);
       });
 
-      // Keep uploaded files
+      // Keep uploaded files and preserve their existing state
       const kept = prev.files.filter(
         (f) =>
           f.status !== FileStatus.UPLOADED ||
@@ -133,7 +150,7 @@ function Uploader({
       // Update state
       return { ...prev, files: [...kept, ...toAdd], pendingDeletes: [] };
     });
-  }, [value]);
+  }, [value, state.files]);
 
   // Function to add new files for upload
   const addFiles = useCallback(
@@ -324,9 +341,29 @@ function Uploader({
       ),
     );
 
-    setState((p) => ({ ...p, pendingDeletes: [], errors: [] }));
+    // Update the files array by removing the deleted files
+    setState((p) => {
+      // Filter out files that were pending deletion
+      const updatedFiles = p.files.filter(
+        (f) => !p.pendingDeletes.includes(f.fileKey),
+      );
+
+      // Update the onChange callback with the new active files
+      const active = updatedFiles.filter(
+        (f) => f.status === FileStatus.UPLOADED,
+      );
+      if (onChange) onChange(active.map(stripExtended));
+
+      return {
+        ...p,
+        files: updatedFiles,
+        pendingDeletes: [],
+        errors: [],
+      };
+    });
+
     if (inputRef.current) inputRef.current.value = '';
-  }, [state, applicantId, deleteFile]);
+  }, [state, applicantId, deleteFile, onChange]);
 
   // Function to clear pending deletes and recover files
   const clearPendingDeletes = useCallback(

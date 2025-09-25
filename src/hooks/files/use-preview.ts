@@ -24,5 +24,10 @@ export const usePreviewUrl = (fileKey: string, id: string) => {
     queryKey: [...QueryKeys.applicants.files, { id, fileKey }],
     queryFn: () => getPreviewUrl({ fileKey }),
     enabled: Boolean(fileKey),
+    staleTime: 1000 * 60 * 30, // 30 minutes
+    gcTime: 1000 * 60 * 60, // 60 minutes
+    refetchOnWindowFocus: false,
+    refetchOnMount: false,
+    refetchOnReconnect: false,
   });
 };

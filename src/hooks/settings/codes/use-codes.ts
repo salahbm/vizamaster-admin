@@ -1,3 +1,6 @@
+// hooks/use-codes.ts
+import { useEffect } from 'react';
+
 import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import { ColumnSort } from '@tanstack/react-table';
 
@@ -9,6 +12,7 @@ import { QueryKeys } from '@/constants/query-keys';
 import { Codes } from '@/generated/prisma';
 import { NotFoundError } from '@/server/common/errors';
 import { PaginatedResult, TResponse } from '@/server/common/types';
+import { IExtendedCodes, useCodesStore } from '@/store/use-codes-store';
 
 type TCodesParams = {
   page: number;
@@ -32,9 +36,6 @@ export const getAllCodes = async (
   return response.data;
 };
 
-/**
- * Hook for fetching all  codes
- */
 export const useCodes = (params: TCodesParams) =>
   useQuery({
     queryFn: () => getAllCodes(params),
@@ -46,50 +47,37 @@ export const useCodes = (params: TCodesParams) =>
     refetchOnMount: false,
   });
 
-// // New function to fetch ALL codes by looping through pages
-// export const fetchAllCodes = async (): Promise<Codes[]> => {
-//   let allCodes: Codes[] = [];
-//   let page = 1;
-//   const size = 100; // Adjust based on your API limits; keeps requests efficient
+export const fetchAllCodes = async (): Promise<Codes[]> => {
+  let allCodes: Codes[] = [];
+  let page = 1;
+  const size = 100;
 
-//   while (true) {
-//     const params: TCodesParams = { page, size };
-//     const response = await getAllCodes(params);
-//     allCodes = [...allCodes, ...response.data];
+  while (true) {
+    const response = await getAllCodes({ page, size });
+    allCodes = [...allCodes, ...response.data];
+    if (response.data.length < size) break;
+    page++;
+  }
 
-//     // Assuming PaginatedResult has a 'data' array; stop if incomplete page
-//     if (response.data.length < size) {
-//       break;
-//     }
+  return allCodes;
+};
 
-//     page++;
-//   }
+export const useAllCodes = () => {
+  const { setCodes } = useCodesStore();
 
-//   return allCodes;
-// };
+  const { data } = useQuery({
+    queryFn: fetchAllCodes,
+    queryKey: QueryKeys.settings.codes.all,
+    staleTime: Infinity,
+    gcTime: 1000 * 60 * 60, // 1h cache
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+    refetchOnMount: false,
+  });
 
-// /**
-//  * New hook for fetching ALL codes upfront and storing them
-//  */
-// export const useAllCodes = () => {
-//   const { setCodes } = useCodesStore();
+  useEffect(() => {
+    if (data) setCodes(data as IExtendedCodes[]);
+  }, [data, setCodes]);
 
-//   const query = useQuery({
-//     queryFn: fetchAllCodes,
-//     queryKey: [QueryKeys.settings.codes.all], // Use a distinct key if needed
-//     placeholderData: keepPreviousData,
-//     staleTime: Infinity,
-//     refetchOnWindowFocus: false,
-//     refetchOnReconnect: false,
-//     refetchOnMount: false,
-//   });
-
-//   // Update store with all codes
-//   useEffect(() => {
-//     if (query.data) {
-//       setCodes(query.data);
-//     }
-//   }, [query.data, setCodes]);
-
-//   return query;
-// };
+  return data;
+};

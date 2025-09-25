@@ -30,13 +30,18 @@ export const PreviewFile = ({
   pendingDeletes,
   ...props
 }: PreviewFileProps) => {
+  // Only fetch preview if we don't have a local preview and file is not pending delete
+  const isPendingDelete = pendingDeletes?.includes(file.fileKey);
+  const shouldFetchPreview =
+    !file.preview && !!file.fileKey && !isPendingDelete;
+
   const { data, isLoading: isLoadingPreview } = usePreviewUrl(
-    file.fileKey,
+    shouldFetchPreview ? file.fileKey : '',
     applicantId,
   );
 
   const isLoading =
-    isLoadingPreview ||
+    (shouldFetchPreview && isLoadingPreview) ||
     file.status === 'uploading' ||
     file.status === 'pending';
 
@@ -45,7 +50,6 @@ export const PreviewFile = ({
   const previewUrl = file.preview || signedUrl; // Prefer local preview if available
   const canDownload = !!previewUrl;
   const canDelete = !isLoading && !hasError;
-  const isPendingDelete = pendingDeletes?.includes(file.fileKey);
 
   if (isLoading)
     return (
