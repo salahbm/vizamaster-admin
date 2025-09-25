@@ -1,5 +1,7 @@
 'use client';
 
+import { useEffect } from 'react';
+
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Plus, Trash2 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
@@ -7,21 +9,32 @@ import { useFieldArray, useForm } from 'react-hook-form';
 
 import { DatePicker } from '@/components/shared/date-pickers';
 import { FormFields } from '@/components/shared/form-fields';
+import { FormSkeleton } from '@/components/skeletons';
 import { Button } from '@/components/ui/button';
 import { Form } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 
+import { Work } from '@/generated/prisma';
+import { useApplicantWork } from '@/hooks/applicant/use-applicant-work';
 import {
   TWorkArraySchema,
   WorkArraySchema,
 } from '@/server/common/dto/work.dto';
 
+import { applicantWorkMapper } from './applicant.helpers';
+
 interface IApplicantWorkInfoProps {
-  id?: string;
+  id: string;
+  works?: Work[] | [];
+  isLoading?: boolean;
 }
 
-const ApplicantWorkInfo: React.FC<IApplicantWorkInfoProps> = ({ id }) => {
+const ApplicantWorkInfo: React.FC<IApplicantWorkInfoProps> = ({
+  id,
+  works,
+  isLoading,
+}) => {
   const t = useTranslations();
 
   const form = useForm<TWorkArraySchema>({
@@ -36,10 +49,19 @@ const ApplicantWorkInfo: React.FC<IApplicantWorkInfoProps> = ({ id }) => {
     name: 'workExperiences',
   });
 
-  const onSubmit = (data: TWorkArraySchema) => {
-    console.log(data);
-    // TODO: Handle submit when hooks are ready
-  };
+  const { updateWork, isUpdating } = useApplicantWork(id);
+
+  useEffect(() => {
+    if (works && !isLoading) {
+      form.reset({
+        workExperiences: applicantWorkMapper(works),
+      });
+    }
+  }, [works, isLoading, form]);
+
+  if (isLoading) return <FormSkeleton />;
+
+  const onSubmit = async (data: TWorkArraySchema) => await updateWork(data);
 
   const addNewWorkExperience = () => {
     append({
@@ -86,7 +108,7 @@ const ApplicantWorkInfo: React.FC<IApplicantWorkInfoProps> = ({ id }) => {
                 <Button
                   type="button"
                   variant="ghost"
-                  size="icon"
+                  size="sm"
                   className="absolute -top-8 right-3 lg:-top-9 lg:right-5"
                   onClick={() => remove(index)}
                 >
@@ -212,10 +234,18 @@ const ApplicantWorkInfo: React.FC<IApplicantWorkInfoProps> = ({ id }) => {
         </div>
 
         <div className="flex justify-end space-x-4">
-          <Button variant="outline" type="button">
+          <Button
+            variant="outline"
+            type="button"
+            disabled={isUpdating || !form.formState.isDirty}
+            onClick={() => form.reset()}
+          >
             {t('Common.cancel')}
           </Button>
-          <Button type="submit" disabled={!form.formState.isDirty}>
+          <Button
+            type="submit"
+            disabled={!form.formState.isDirty || isUpdating}
+          >
             {t('Common.save')}
           </Button>
         </div>

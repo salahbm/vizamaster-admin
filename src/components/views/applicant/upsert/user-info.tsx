@@ -21,11 +21,8 @@ import { mapOptions } from '@/lib/utils';
 
 import { getCountries, getLanguages } from '@/utils/intl';
 
-import {
-  useApplicantDetail,
-  useCreateApplicant,
-  useUpdateApplicant,
-} from '@/hooks/applicant';
+import { Applicant } from '@/generated/prisma';
+import { useCreateApplicant, useUpdateApplicant } from '@/hooks/applicant';
 import { useCodes } from '@/hooks/settings/codes';
 import { ApplicantDto, TApplicantDto } from '@/server/common/dto/applicant.dto';
 
@@ -33,19 +30,21 @@ import { applicantDefaults, applicantQueries } from './applicant.helpers';
 
 interface IApplicantUserInfoProps {
   id?: string;
+  applicant?: Applicant;
   countryOfEmployment: string;
   partner: string;
+  isLoading?: boolean;
 }
 
 const ApplicantUserInfo: React.FC<IApplicantUserInfoProps> = ({
   id,
+  applicant,
   countryOfEmployment,
   partner,
+  isLoading,
 }) => {
   const locale = useLocale();
   const t = useTranslations();
-
-  const { data: applicant, isLoading } = useApplicantDetail(id);
 
   // QUERIES
   const { data: countries, isLoading: isLoadingCountries } = useCodes(

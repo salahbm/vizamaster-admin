@@ -12,13 +12,20 @@ import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Separator } from '@/components/ui/separator';
 
+import { Visa } from '@/generated/prisma';
 import { TVisaDto, VisaDto } from '@/server/common/dto/visa.dto';
 
 interface IApplicantVisaInfoProps {
   id?: string;
+  visa?: Visa[] | [];
+  isLoading?: boolean;
 }
 
-const ApplicantVisaInfo: React.FC<IApplicantVisaInfoProps> = ({ id }) => {
+const ApplicantVisaInfo: React.FC<IApplicantVisaInfoProps> = ({
+  id,
+  visa,
+  isLoading,
+}) => {
   const t = useTranslations();
 
   const form = useForm({

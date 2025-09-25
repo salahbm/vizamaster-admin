@@ -6,7 +6,7 @@ import { ChevronRight } from 'lucide-react';
 
 import { cn } from '@/lib/utils';
 
-import { useSidebar } from '@/store/sidebar';
+import { useSidebar } from '@/store/use-sidebar-store';
 
 import SidebarNav from './bar';
 

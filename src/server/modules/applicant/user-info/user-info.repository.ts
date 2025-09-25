@@ -84,19 +84,10 @@ export class ApplicantRepository {
 
   // ───────────────── GET APPLICANT BY ID ────────────────── //
   async getApplicantById(id: string) {
-    return await this.prismaApplicant.findUnique({ where: { id } });
-  }
-
-  async getApplicantWork(applicantId: string) {
-    return await this.prismaWork.findMany({ where: { applicantId } });
-  }
-
-  async getApplicantFiles(applicantId: string) {
-    return await this.prismaFile.findMany({ where: { applicantId } });
-  }
-
-  async getApplicantVisa(applicantId: string) {
-    return await this.prismaVisa.findMany({ where: { applicantId } });
+    return await this.prismaApplicant.findUnique({
+      where: { id },
+      include: { work: true, visa: true, files: true },
+    });
   }
 
   // ───────────────── UPDATE APPLICANT ────────────────── //

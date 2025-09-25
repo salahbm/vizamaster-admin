@@ -21,7 +21,7 @@ import { SideNavItem } from '@/constants/routes';
 import { useIsMobile } from '@/hooks/common/use-mobile';
 import { useSidebar } from '@/hooks/settings/sidebar';
 import { usePathname } from '@/i18n/routing';
-import { useSidebar as useSidebarStore } from '@/store/sidebar';
+import { useSidebar as useSidebarStore } from '@/store/use-sidebar-store';
 
 import { DynamicIcon } from './icon';
 

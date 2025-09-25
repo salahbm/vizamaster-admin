@@ -8,17 +8,22 @@ import agent from '@/lib/agent';
 
 import { QueryKeys } from '@/constants/query-keys';
 
-import { Applicant } from '@/generated/prisma';
+import { Applicant, Visa, Work } from '@/generated/prisma';
 import { TApplicantDto } from '@/server/common/dto/applicant.dto';
+import { TFileDto } from '@/server/common/dto/files.dto';
 import { NotFoundError } from '@/server/common/errors';
 import { TResponse } from '@/server/common/types';
-import { useAuthStore } from '@/store/auth-store';
+import { useAuthStore } from '@/store/use-auth-store';
 
 import useMutation from '../common/use-mutation';
 
 // ───────────────── GET ────────────────── //
-export const getApplicantById = async (id?: string): Promise<Applicant> => {
-  const { data } = await agent.get<TResponse<Applicant>>(`api/applicant/${id}`);
+export const getApplicantById = async (
+  id?: string,
+): Promise<Applicant & { files: TFileDto[]; work: Work[]; visa: Visa[] }> => {
+  const { data } = await agent.get<
+    TResponse<Applicant & { files: TFileDto[]; work: Work[]; visa: Visa[] }>
+  >(`api/applicant/${id}`);
 
   if (!data) throw new NotFoundError('Applicant not found');
 

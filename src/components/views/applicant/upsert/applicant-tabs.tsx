@@ -6,7 +6,9 @@ import { parseAsString, useQueryState } from 'nuqs';
 import { Empty } from '@/components/shared/icons';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
-import ApplicantFiles from './files';
+import { useApplicantDetail } from '@/hooks/applicant';
+
+import ApplicantFiles from './user-files';
 import ApplicantUserInfo from './user-info';
 import ApplicantVisaInfo from './visa-info';
 import ApplicantWorkInfo from './work-info';
@@ -28,6 +30,8 @@ export const UpsertApplicant: React.FC<IUpsertApplicantProps> = ({
     'step',
     parseAsString.withDefault('user-info'),
   );
+
+  const { data: applicant, isLoading } = useApplicantDetail(id);
 
   return (
     <Tabs defaultValue="user-info" value={step} onValueChange={setStep}>
@@ -76,15 +80,24 @@ export const UpsertApplicant: React.FC<IUpsertApplicantProps> = ({
       <TabsContent value="user-info">
         <ApplicantUserInfo
           id={id}
+          applicant={applicant}
           countryOfEmployment={countryOfEmployment}
           partner={partner}
         />
       </TabsContent>
       <TabsContent value="professional-info">
-        <ApplicantWorkInfo id={id} />
+        <ApplicantWorkInfo
+          id={id}
+          works={applicant?.work}
+          isLoading={isLoading}
+        />
       </TabsContent>
       <TabsContent value="visa-info">
-        <ApplicantVisaInfo id={id} />
+        <ApplicantVisaInfo
+          id={id}
+          visa={applicant?.visa}
+          isLoading={isLoading}
+        />
       </TabsContent>
       <TabsContent value="comments">
         <div className="flex-center h-[calc(100vh-10rem)] flex-col gap-4">
@@ -93,7 +106,11 @@ export const UpsertApplicant: React.FC<IUpsertApplicantProps> = ({
         </div>
       </TabsContent>
       <TabsContent value="files">
-        <ApplicantFiles id={id} />
+        <ApplicantFiles
+          id={id}
+          files={applicant?.files}
+          isLoading={isLoading}
+        />
       </TabsContent>
     </Tabs>
   );

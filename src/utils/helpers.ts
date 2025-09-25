@@ -6,3 +6,7 @@ export const downloadFile = (url: string, name: string) => {
   link.click();
   document.body.removeChild(link);
 };
+
+export const dateStringIntoDate = (dateString: string) => {
+  return new Date(dateString);
+};

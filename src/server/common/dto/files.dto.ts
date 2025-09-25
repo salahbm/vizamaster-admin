@@ -30,6 +30,7 @@ export const uploadRequestSchema = z.object({
   fileKey: z.string(),
   contentType: z.string(),
   applicantId: z.string(),
+  fileSize: z.number().int().positive(),
   fileType: z.enum([
     FileType.PASSPORT,
     FileType.VISA,
@@ -38,5 +39,4 @@ export const uploadRequestSchema = z.object({
     FileType.FLIGHT_DOCUMENT,
     FileType.OTHER,
   ]),
-  fileSize: z.number().int().positive(),
 });

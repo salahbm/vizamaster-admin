@@ -9,7 +9,7 @@ import { Sidebar } from '@/generated/prisma';
 import { API_CODES } from '@/server/common/codes';
 import { NotFoundError } from '@/server/common/errors';
 import { TResponse } from '@/server/common/types';
-import { useAuthStore } from '@/store/auth-store';
+import { useAuthStore } from '@/store/use-auth-store';
 
 export const getAllSidebar = async (id?: string): Promise<Sidebar[]> => {
   if (!id) return [];

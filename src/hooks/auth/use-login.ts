@@ -13,7 +13,7 @@ import { API_CODES } from '@/server/common/codes';
 import { SignInSchema } from '@/server/common/dto';
 import { UnauthorizedError } from '@/server/common/errors';
 import { getErrorMessage } from '@/server/common/utils';
-import { useAuthStore } from '@/store/auth-store';
+import { useAuthStore } from '@/store/use-auth-store';
 
 const login = async (body: SignInSchema, locale: 'en' | 'ru') => {
   const { error, data } = await authClient.signIn.email({

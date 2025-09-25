@@ -15,6 +15,7 @@ import { formatBytes } from '@/utils/formats';
 
 import { FileType } from '@/generated/prisma';
 import { TFileDto } from '@/server/common/dto/files.dto';
+import { useFilesStore } from '@/store/use-files-store';
 
 import { useDeleteFile, useUpload } from '../files';
 
@@ -88,8 +89,9 @@ export const useFileUpload = (
     errors: [],
   });
 
-  const { mutateAsync: deleteFile } = useDeleteFile();
   const { mutateAsync: uploadFile } = useUpload();
+  const { mutateAsync: deleteFile } = useDeleteFile();
+  const { setFiles } = useFilesStore();
 
   const validateFile = useCallback(
     (file: File): string | null => {

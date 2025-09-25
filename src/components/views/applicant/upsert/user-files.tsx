@@ -15,11 +15,13 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Uploader } from '@/components/ui/uploader';
 
 import { FileType } from '@/generated/prisma';
-import { useApplicantFiles } from '@/hooks/applicant/use-applicant-files';
 import { useDeleteFile } from '@/hooks/files';
+import { TFileDto } from '@/server/common/dto/files.dto';
 
 interface IApplicantFilesProps {
   id: string;
+  files: TFileDto[] | [] | undefined;
+  isLoading: boolean;
 }
 
 const uploadFormSchema = z.object({
@@ -30,9 +32,12 @@ const uploadFormSchema = z.object({
 
 type TUploadForm = z.infer<typeof uploadFormSchema>;
 
-const ApplicantFiles: React.FC<IApplicantFilesProps> = ({ id }) => {
+const ApplicantFiles: React.FC<IApplicantFilesProps> = ({
+  id,
+  files,
+  isLoading,
+}) => {
   const t = useTranslations();
-  const { data: files, isLoading } = useApplicantFiles(id);
   const { mutateAsync: deleteFile } = useDeleteFile();
 
   const form = useForm<TUploadForm>({
@@ -62,10 +67,7 @@ const ApplicantFiles: React.FC<IApplicantFilesProps> = ({ id }) => {
 
   if (!id || isLoading) return <Loader />;
 
-  const handleCancelDelete = () => {
-    form.setValue('pendingDeletes', [], { shouldValidate: true });
-    form.setValue('files', files, { shouldValidate: true });
-  };
+  const handleCancelDelete = () => {};
 
   const handleDelete = (fileKeys: string[]) => {
     form.setValue('pendingDeletes', fileKeys, { shouldValidate: true });

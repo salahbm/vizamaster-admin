@@ -10,7 +10,7 @@ import { BRAND } from '@/constants/brand';
 import { IMAGES } from '@/constants/images';
 
 import { Link } from '@/i18n/routing';
-import { useSidebar } from '@/store/sidebar';
+import { useSidebar } from '@/store/use-sidebar-store';
 
 import Avatar from './avatar';
 import { LanguageToggle } from './language-toggle';

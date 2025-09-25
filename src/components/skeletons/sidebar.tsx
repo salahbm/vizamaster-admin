@@ -6,7 +6,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 
 import { cn } from '@/lib/utils';
 
-import { useSidebar } from '@/store/sidebar';
+import { useSidebar } from '@/store/use-sidebar-store';
 
 export const SideNavSkeleton: FC = () => {
   const { isMinimized } = useSidebar();

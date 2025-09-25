@@ -16,7 +16,7 @@ import { TApplicantDto } from '@/server/common/dto/applicant.dto';
 import { NotFoundError } from '@/server/common/errors';
 import { PaginatedResult, TResponse } from '@/server/common/types';
 import { generateUserId } from '@/server/common/utils';
-import { useAuthStore } from '@/store/auth-store';
+import { useAuthStore } from '@/store/use-auth-store';
 import { ISort } from '@/types/data-table';
 
 import useMutation from '../common/use-mutation';

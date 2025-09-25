@@ -27,8 +27,8 @@ export const useDeleteFile = () => {
       onSuccess: (data, variables) =>
         queryClient.invalidateQueries({
           queryKey: [
-            ...QueryKeys.files.preview,
-            { applicantId: variables.applicantId },
+            ...QueryKeys.applicants.details,
+            { id: variables.applicantId },
           ],
         }),
     },

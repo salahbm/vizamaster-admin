@@ -1,5 +1,8 @@
+import { dateStringIntoDate } from '@/utils/helpers';
+
 import { ApplicantStatus } from '@/generated/prisma';
 import { TApplicantDto } from '@/server/common/dto/applicant.dto';
+import { TWorkArraySchema } from '@/server/common/dto/work.dto';
 
 export function applicantQueries(group: string) {
   return {
@@ -39,28 +42,16 @@ export const applicantDefaults = (
   };
 };
 
-// export const mapApplicantUserInfoIntoForm = (applicant: Applicant) => {
-//   return {
-//     firstName: applicant.firstName,
-//     lastName: applicant.lastName,
-//     middleName: applicant.middleName,
-//     gender: applicant.gender,
-//     dateOfBirth: applicant.dateOfBirth,
-//     passportNumber: applicant.passportNumber,
-//     passportPhoto: applicant.passportPhoto,
-//     email: applicant.email,
-//     phoneNumber: applicant.phoneNumber,
-//     phoneNumberAdditional: applicant.phoneNumberAdditional,
-//     countryOfResidence: applicant.countryOfResidence,
-//     addressLine1: applicant.addressLine1,
-//     addressLine2: applicant.addressLine2,
-//     city: applicant.city,
-//     state: applicant.state,
-//     zipCode: applicant.zipCode,
-//     countryOfEmployment: applicant.countryOfEmployment,
-//     partner: applicant.partner,
-//     nationality: applicant.nationality,
-//     languages: applicant.languages,
-//     preferredJobTitle: applicant.preferredJobTitle,
-//   };
-// };
+export const applicantWorkMapper = (
+  work: TWorkArraySchema['workExperiences'],
+) => {
+  return work.map((work) => ({
+    jobTitle: work.jobTitle,
+    company: work.company,
+    startDate: dateStringIntoDate(work.startDate as unknown as string),
+    endDate: dateStringIntoDate(work.endDate as unknown as string),
+    responsibilities: work.responsibilities,
+    achievements: work.achievements,
+    location: work.location,
+  }));
+};
