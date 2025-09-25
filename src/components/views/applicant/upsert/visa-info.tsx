@@ -6,6 +6,7 @@ import { useForm } from 'react-hook-form';
 
 import { DatePicker } from '@/components/shared/date-pickers';
 import { FormFields } from '@/components/shared/form-fields';
+import { FormSkeleton } from '@/components/skeletons';
 import { Button } from '@/components/ui/button';
 import { Form } from '@/components/ui/form';
 import { Label } from '@/components/ui/label';
@@ -13,11 +14,12 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Separator } from '@/components/ui/separator';
 
 import { Visa } from '@/generated/prisma';
+import { useUpdateApplicantVisa } from '@/hooks/applicant/use-applicant-visa';
 import { TVisaDto, VisaDto } from '@/server/common/dto/visa.dto';
 
 interface IApplicantVisaInfoProps {
   id?: string;
-  visa?: Visa[] | [];
+  visa?: Visa[];
   isLoading?: boolean;
 }
 
@@ -30,7 +32,7 @@ const ApplicantVisaInfo: React.FC<IApplicantVisaInfoProps> = ({
 
   const form = useForm({
     resolver: zodResolver(VisaDto),
-    defaultValues: {
+    defaultValues: visa?.[0] ?? {
       issued: false,
       issueDate: null,
       departureDate: null,
@@ -41,11 +43,14 @@ const ApplicantVisaInfo: React.FC<IApplicantVisaInfoProps> = ({
     },
   });
 
+  const { mutate: updateVisa, isPending } = useUpdateApplicantVisa(id!);
+
   const onSubmit = (data: TVisaDto) => {
-    console.log(data, id);
-    // TODO: Handle submit when hooks are ready
+    if (!id) return;
+    updateVisa(data);
   };
 
+  if (isLoading) return <FormSkeleton />;
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
@@ -75,7 +80,7 @@ const ApplicantVisaInfo: React.FC<IApplicantVisaInfoProps> = ({
               render={({ field }) => (
                 <RadioGroup
                   {...field}
-                  defaultValue="false"
+                  onChange={(value) => field.onChange(value === 'true')}
                   className="flex items-center gap-4"
                 >
                   <div className="flex items-center gap-2">
@@ -131,7 +136,11 @@ const ApplicantVisaInfo: React.FC<IApplicantVisaInfoProps> = ({
               control={form.control}
               labelClassName="flex flex-col justify-start items-start gap-1"
               render={({ field }) => (
-                <RadioGroup {...field} className="flex items-center gap-4">
+                <RadioGroup
+                  {...field}
+                  onChange={(value) => field.onChange(value === 'true')}
+                  className="flex items-center gap-4"
+                >
                   <div className="flex items-center gap-2">
                     <RadioGroupItem value="true" id="arrived-yes" />
                     <Label htmlFor="arrived-yes">
@@ -230,10 +239,15 @@ const ApplicantVisaInfo: React.FC<IApplicantVisaInfoProps> = ({
         <Separator />
 
         <div className="flex justify-end space-x-4">
-          <Button variant="outline" type="button">
+          <Button
+            variant="outline"
+            type="button"
+            disabled={!form.formState.isDirty || isPending}
+            onClick={() => form.reset()}
+          >
             {t('Common.cancel')}
           </Button>
-          <Button type="submit" disabled={!form.formState.isDirty}>
+          <Button type="submit" disabled={!form.formState.isDirty || isPending}>
             {t('Common.save')}
           </Button>
         </div>
