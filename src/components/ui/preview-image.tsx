@@ -17,6 +17,7 @@ import { Button } from './button';
 
 interface PreviewFileProps extends React.HTMLAttributes<HTMLImageElement> {
   fileKey: string;
+  applicantId: string;
   file: ExtendedFileDto; // Updated to ExtendedFileDto for status/error
   onDelete?: () => void; // Simplified to avoid async during render
   status?: ExtendedFileDto['status']; // Passed from parent, but can access from file
@@ -28,13 +29,17 @@ export const PreviewFile = ({
   fileKey,
   className,
   file,
+  applicantId,
   onDelete,
   status = file.status, // Use file.status if not passed
   error = file.error,
   pendingDeletes,
   ...props
 }: PreviewFileProps) => {
-  const { data, isLoading: isLoadingPreview } = usePreviewUrl(fileKey);
+  const { data, isLoading: isLoadingPreview } = usePreviewUrl(
+    fileKey,
+    applicantId,
+  );
 
   const isLoading =
     isLoadingPreview || status === 'uploading' || status === 'pending';
@@ -104,7 +109,7 @@ export const PreviewFile = ({
           className="text-muted-foreground/80 hover:text-foreground -me-2 size-8 hover:bg-transparent"
           onClick={(e) => {
             e.stopPropagation();
-            canDownload && downloadFile(previewUrl!, file.fileName);
+            downloadFile(previewUrl!, file.fileName);
           }}
           aria-label="Download file"
           disabled={!canDownload || isLoading}

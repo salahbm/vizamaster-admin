@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { FileMetadata } from '@/hooks/common/use-file-upload';
+import { TFileDto } from '@/server/common/dto/files.dto';
 
 export type FieldValueTypes =
   | string
@@ -9,8 +9,8 @@ export type FieldValueTypes =
   | boolean
   | 'intermediate'
   | Date
-  | FileMetadata[]
-  | FileMetadata
+  | TFileDto[]
+  | TFileDto
   | { from?: Date | undefined; to?: Date | undefined }
   | undefined
   | null

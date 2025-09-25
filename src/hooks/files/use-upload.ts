@@ -1,4 +1,8 @@
+import { useQueryClient } from '@tanstack/react-query';
+
 import agent from '@/lib/agent';
+
+import { QueryKeys } from '@/constants/query-keys';
 
 import { FileType } from '@/generated/prisma';
 import { TFileDto } from '@/server/common/dto/files.dto';
@@ -12,11 +16,7 @@ interface UploadParams {
   fileType: FileType;
 }
 
-const upload = async ({
-  file,
-  applicantId,
-  fileType,
-}: UploadParams): Promise<TFileDto> => {
+const upload = async ({ file, applicantId, fileType }: UploadParams) => {
   const formData = new FormData();
 
   formData.append('file', file);
@@ -26,7 +26,7 @@ const upload = async ({
   formData.append('fileType', fileType);
   formData.append('fileSize', file.size.toString());
 
-  const { data } = await agent.post<IResponse<TFileDto>>(
+  const res = await agent.post<IResponse<TFileDto>>(
     '/api/files/upload',
     formData,
     {
@@ -34,8 +34,22 @@ const upload = async ({
     },
   );
 
-  return data;
+  return res;
 };
 
-export const useUpload = () =>
-  useMutation({ mutationFn: upload, options: { meta: { toast: false } } });
+export const useUpload = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: upload,
+    options: {
+      onSuccess: (data, variables) => {
+        queryClient.invalidateQueries({
+          queryKey: [
+            ...QueryKeys.applicants.details,
+            { id: variables.applicantId },
+          ],
+        });
+      },
+    },
+  });
+};

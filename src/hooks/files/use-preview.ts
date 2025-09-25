@@ -21,7 +21,7 @@ const getPreviewUrl = async ({
 
 export const usePreviewUrl = (fileKey: string, id: string) => {
   return useQuery({
-    queryKey: [...QueryKeys.applicants.details, { id }],
+    queryKey: [...QueryKeys.applicants.files, { id, fileKey }],
     queryFn: () => getPreviewUrl({ fileKey }),
     enabled: Boolean(fileKey),
   });

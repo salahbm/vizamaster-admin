@@ -1,5 +1,7 @@
 'use client';
 
+import { useEffect } from 'react';
+
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Info } from 'lucide-react';
 import { useTranslations } from 'next-intl';
@@ -44,12 +46,26 @@ const ApplicantFiles: React.FC<IApplicantFilesProps> = ({
     resolver: zodResolver(uploadFormSchema),
     defaultValues: {
       fileType: FileType.OTHER,
-      files: [],
+      files: files || [],
       pendingDeletes: [],
     },
   });
 
+  useEffect(() => {
+    if (files && files.length > 0 && !isLoading) {
+      form.reset({
+        files,
+        pendingDeletes: [],
+        fileType: FileType.OTHER,
+      });
+    }
+  }, [files, isLoading, form]);
+
   const selectedType = form.watch('fileType');
+  const isDisabled =
+    form.formState.isSubmitting ||
+    !form.formState.isDirty ||
+    !form.getValues('pendingDeletes')?.length;
 
   const onSubmit = async (data: TUploadForm) => {
     const { pendingDeletes } = data;
@@ -60,81 +76,72 @@ const ApplicantFiles: React.FC<IApplicantFilesProps> = ({
         ),
       ).then(() => {
         form.setValue('pendingDeletes', [], { shouldValidate: true });
-        form.setValue('files', [], { shouldValidate: true });
       });
     }
   };
 
   if (!id || isLoading) return <Loader />;
 
-  const handleCancelDelete = () => {};
-
-  const handleDelete = (fileKeys: string[]) => {
-    form.setValue('pendingDeletes', fileKeys, { shouldValidate: true });
-  };
-
   return (
     <div className="space-y-8">
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-            <FormFields
-              name="fileType"
-              control={form.control}
-              render={({ field }) => (
-                <RadioGroup
-                  {...field}
-                  className="flex items-center gap-6"
-                  defaultValue={FileType.OTHER}
-                  onValueChange={field.onChange}
-                >
-                  {Object.values(FileType).map((option) => (
-                    <div key={option} className="flex items-center gap-2">
-                      <RadioGroupItem value={option} id={option} />
-                      <Label htmlFor={option}>
-                        {t(`Common.fileType.${option}`)}
-                      </Label>
-                    </div>
-                  ))}
-                </RadioGroup>
-              )}
-            />
-          </div>
+          <FormFields
+            name="fileType"
+            control={form.control}
+            render={({ field }) => (
+              <RadioGroup
+                {...field}
+                className="flex w-full flex-wrap items-center gap-6"
+                defaultValue={FileType.OTHER}
+                onValueChange={field.onChange}
+              >
+                {Object.values(FileType).map((option) => (
+                  <div
+                    key={option}
+                    className="flex items-center gap-2 whitespace-nowrap"
+                  >
+                    <RadioGroupItem value={option} id={option} />
+                    <Label htmlFor={option}>
+                      {t(`Common.fileType.${option}`)}
+                    </Label>
+                  </div>
+                ))}
+              </RadioGroup>
+            )}
+          />
 
-          <Uploader
-            maxFiles={5}
-            values={files}
-            maxSizeMB={10}
-            applicantId={id}
-            fileType={selectedType}
-            onDelete={handleDelete}
-            onCancelDelete={() => handleCancelDelete()}
+          <FormFields
+            name="files"
+            control={form.control}
+            render={({ field }) => (
+              <Uploader
+                maxFiles={5}
+                maxSizeMB={10}
+                applicantId={id}
+                fileType={selectedType}
+                getPendingDeletes={(fileKeys) => {
+                  form.setValue('pendingDeletes', fileKeys, {
+                    shouldValidate: true,
+                  });
+                }}
+                {...field}
+              />
+            )}
           />
 
           <p className="font-caption-1 text-muted-foreground text-end">
             <Info className="mr-2 inline-block size-4 text-inherit" />
             {t('Common.messages.uploadsSavedDeletesManual')}
           </p>
-          <div className="mt-2 flex justify-end gap-2 border-t pt-4">
-            <Button
-              type="reset"
-              variant="outline"
-              disabled={
-                form.formState.isSubmitting ||
-                !form.watch('pendingDeletes')?.length
-              }
-              onClick={handleCancelDelete}
-            >
-              {t('Common.cancel')}
-            </Button>
+          <div className="mt-2 flex justify-end border-t pt-4">
             <Button
               type="submit"
-              disabled={
-                form.formState.isSubmitting ||
-                !form.watch('pendingDeletes')?.length
-              }
+              variant="destructive"
+              className="w-36"
+              disabled={isDisabled}
             >
-              {t('Common.save')}
+              {t('Common.delete')}
             </Button>
           </div>
         </form>

@@ -473,6 +473,7 @@ const ApplicantUserInfo: React.FC<IApplicantUserInfoProps> = ({
           </Button>
           <Button
             type="submit"
+            className="w-36"
             disabled={isPendingCreateApplicant || !form.formState.isDirty}
           >
             {t('applicant.form.buttons.submit')}

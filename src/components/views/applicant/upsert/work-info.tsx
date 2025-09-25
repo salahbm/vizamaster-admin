@@ -244,6 +244,7 @@ const ApplicantWorkInfo: React.FC<IApplicantWorkInfoProps> = ({
           </Button>
           <Button
             type="submit"
+            className="w-36"
             disabled={!form.formState.isDirty || isUpdating}
           >
             {t('Common.save')}
