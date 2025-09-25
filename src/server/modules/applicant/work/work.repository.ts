@@ -1,5 +1,7 @@
 import { PrismaClient } from '@/generated/prisma';
 import { TWorkArraySchema } from '@/server/common/dto/work.dto';
+import { handlePrismaError } from '@/server/common/errors';
+import { createResponse } from '@/server/common/utils';
 import prisma from '@/server/db/prisma';
 
 export class WorkRepository {
@@ -13,25 +15,35 @@ export class WorkRepository {
     workExperiences: TWorkArraySchema['workExperiences'],
     applicantId: string,
   ) {
-    return await this.prismaWork.createMany({
-      data: workExperiences.map((work) => ({
-        ...work,
-        applicantId,
-      })),
-    });
+    try {
+      const works = await this.prismaWork.createMany({
+        data: workExperiences.map((work) => ({
+          ...work,
+          applicantId,
+        })),
+      });
+      return createResponse(works);
+    } catch (error) {
+      handlePrismaError(error, 'Work');
+    }
   }
 
   async updateMany(
     workExperiences: TWorkArraySchema['workExperiences'],
     applicantId: string,
   ) {
-    // First delete all existing work experiences
-    await this.prismaWork.deleteMany({
-      where: { applicantId },
-    });
+    try {
+      // First delete all existing work experiences
+      await this.prismaWork.deleteMany({
+        where: { applicantId },
+      });
 
-    // Then create new ones
-    return await this.createMany(workExperiences, applicantId);
+      // Then create new ones
+      const works = await this.createMany(workExperiences, applicantId);
+      return createResponse(works);
+    } catch (error) {
+      handlePrismaError(error, 'Work');
+    }
   }
 
   async findMany(applicantId: string) {
@@ -40,22 +52,29 @@ export class WorkRepository {
         where: { applicantId },
         orderBy: { startDate: 'desc' },
       });
-      return works || [];
+      return createResponse(works);
     } catch (error) {
-      console.error('Error fetching work experiences:', error);
-      return [];
+      handlePrismaError(error, 'Work');
     }
   }
 
   async deleteOne(applicantId: string, id: string) {
-    return await this.prismaWork.delete({
-      where: { applicantId, id },
-    });
+    try {
+      return await this.prismaWork.delete({
+        where: { applicantId, id },
+      });
+    } catch (error) {
+      handlePrismaError(error, 'Work');
+    }
   }
 
   async deleteMany(applicantId: string) {
-    return await this.prismaWork.deleteMany({
-      where: { applicantId },
-    });
+    try {
+      return await this.prismaWork.deleteMany({
+        where: { applicantId },
+      });
+    } catch (error) {
+      handlePrismaError(error, 'Work');
+    }
   }
 }

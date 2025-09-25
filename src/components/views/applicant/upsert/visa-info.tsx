@@ -1,5 +1,7 @@
 'use client';
 
+import { useEffect } from 'react';
+
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslations } from 'next-intl';
 import { useForm } from 'react-hook-form';
@@ -17,6 +19,8 @@ import { Visa } from '@/generated/prisma';
 import { useUpdateApplicantVisa } from '@/hooks/applicant/use-applicant-visa';
 import { TVisaDto, VisaDto } from '@/server/common/dto/visa.dto';
 
+import { applicantVisaMapper } from './applicant.helpers';
+
 interface IApplicantVisaInfoProps {
   id?: string;
   visa?: Visa[];
@@ -32,7 +36,7 @@ const ApplicantVisaInfo: React.FC<IApplicantVisaInfoProps> = ({
 
   const form = useForm({
     resolver: zodResolver(VisaDto),
-    defaultValues: visa?.[0] ?? {
+    defaultValues: {
       issued: false,
       issueDate: null,
       departureDate: null,
@@ -45,12 +49,14 @@ const ApplicantVisaInfo: React.FC<IApplicantVisaInfoProps> = ({
 
   const { mutate: updateVisa, isPending } = useUpdateApplicantVisa(id!);
 
-  const onSubmit = (data: TVisaDto) => {
-    if (!id) return;
-    updateVisa(data);
-  };
+  useEffect(() => {
+    if (visa?.[0] && !isLoading) form.reset(applicantVisaMapper(visa[0]));
+  }, [visa, isLoading, form]);
 
-  if (isLoading) return <FormSkeleton />;
+  if (isLoading || !id) return <FormSkeleton />;
+
+  const onSubmit = (data: TVisaDto) => updateVisa(data);
+
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
@@ -80,7 +86,11 @@ const ApplicantVisaInfo: React.FC<IApplicantVisaInfoProps> = ({
               render={({ field }) => (
                 <RadioGroup
                   {...field}
-                  onChange={(value) => field.onChange(value === 'true')}
+                  onChange={(value) => {
+                    field.onChange(value === 'true');
+                    if (value === 'false') form.setValue('issueDate', null);
+                    if (value === 'false') form.setValue('departureDate', null);
+                  }}
                   className="flex items-center gap-4"
                 >
                   <div className="flex items-center gap-2">
@@ -138,7 +148,10 @@ const ApplicantVisaInfo: React.FC<IApplicantVisaInfoProps> = ({
               render={({ field }) => (
                 <RadioGroup
                   {...field}
-                  onChange={(value) => field.onChange(value === 'true')}
+                  onChange={(value) => {
+                    field.onChange(value === 'true');
+                    if (value === 'false') form.setValue('arrivalDate', null);
+                  }}
                   className="flex items-center gap-4"
                 >
                   <div className="flex items-center gap-2">
@@ -186,6 +199,11 @@ const ApplicantVisaInfo: React.FC<IApplicantVisaInfoProps> = ({
               render={({ field }) => (
                 <RadioGroup
                   {...field}
+                  onChange={(value) => {
+                    field.onChange(value);
+                    if (value !== 'RETURNED')
+                      form.setValue('returnedDate', null);
+                  }}
                   className="flex flex-wrap items-center gap-4"
                 >
                   <div className="flex items-center gap-2">

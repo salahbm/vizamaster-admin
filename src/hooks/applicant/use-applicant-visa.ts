@@ -23,21 +23,9 @@ export const getApplicantVisa = async (id?: string): Promise<Visa> => {
   return data;
 };
 
-/**
- * Hook for fetching a applicant visa by ID
- */
 // ───────────────── UPDATE ────────────────── //
-export const updateApplicantVisa = async (
-  id: string,
-  data: TVisaDto,
-): Promise<Visa> => {
-  const response = await agent.put<TResponse<Visa>>(
-    `api/applicant/${id}/visa`,
-    data,
-  );
-  if (!response.data) throw new NotFoundError('Failed to update visa');
-  return response.data;
-};
+export const updateApplicantVisa = async (id: string, data: TVisaDto) =>
+  await agent.put<TResponse<Visa>>(`api/applicant/${id}/visa`, data);
 
 // ───────────────── HOOKS ────────────────── //
 export const useApplicantVisa = (id?: string) =>

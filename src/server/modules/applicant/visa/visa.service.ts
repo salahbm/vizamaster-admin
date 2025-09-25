@@ -14,7 +14,6 @@ export class VisaService {
   async update(visaData: TVisaDto, applicantId: string) {
     try {
       const res = await this.visaRepository.update(visaData, applicantId);
-      if (!res) throw new Error('Failed to update visa');
       return createResponse(res);
     } catch (error) {
       handlePrismaError(error);

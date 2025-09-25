@@ -1,6 +1,6 @@
 import { dateStringIntoDate } from '@/utils/helpers';
 
-import { ApplicantStatus } from '@/generated/prisma';
+import { ApplicantStatus, Visa } from '@/generated/prisma';
 import { TApplicantDto } from '@/server/common/dto/applicant.dto';
 import { TWorkArraySchema } from '@/server/common/dto/work.dto';
 
@@ -54,4 +54,16 @@ export const applicantWorkMapper = (
     achievements: work.achievements,
     location: work.location,
   }));
+};
+
+export const applicantVisaMapper = (visa: Visa) => {
+  return {
+    issued: visa.issued,
+    issueDate: dateStringIntoDate(visa.issueDate as unknown as string),
+    departureDate: dateStringIntoDate(visa.departureDate as unknown as string),
+    arrived: visa.arrived,
+    status: visa.status,
+    arrivalDate: dateStringIntoDate(visa.arrivalDate as unknown as string),
+    returnedDate: dateStringIntoDate(visa.returnedDate as unknown as string),
+  };
 };

@@ -13,6 +13,7 @@ import {
 import {
   AlertCircleIcon,
   ImageIcon,
+  Info,
   RotateCcw,
   UploadIcon,
 } from 'lucide-react';
@@ -59,12 +60,10 @@ interface UploaderProps {
   maxFiles?: number;
   maxSizeMB?: number;
   onChange?: (files: TFileDto[]) => void;
-  getPendingDeletes?: (fileKeys: string[]) => void;
   accept?: string;
   multiple?: boolean;
   applicantId: string;
   fileType: FileType;
-  removeType?: 'hide' | 'grayScale' | 'delete';
 }
 
 function Uploader({
@@ -72,12 +71,10 @@ function Uploader({
   maxSizeMB = 2,
   maxFiles = 6,
   onChange,
-  getPendingDeletes,
   accept = 'image/png,image/jpeg,image/jpg,image/gif,application/pdf',
   multiple = true,
   applicantId,
   fileType,
-  removeType = 'grayScale',
 }: UploaderProps) {
   const t = useTranslations();
   const maxSize = maxSizeMB * 1024 * 1024;
@@ -99,28 +96,42 @@ function Uploader({
       ...f,
       status: FileStatus.UPLOADED,
     }));
+
     setState((prev) => {
+      // Get current uploaded files
       const currentUploadedKeys = newUploaded
         .map((f) => f.fileKey)
         .filter(Boolean);
+
+      // Remove deleted files
       const removed = prev.files.filter(
         (f) =>
           f.status === FileStatus.UPLOADED &&
           !currentUploadedKeys.includes(f.fileKey),
       );
+
+      // Revoke previews for removed files
       removed.forEach((f) => {
         if (f.preview) URL.revokeObjectURL(f.preview);
       });
+
+      // Keep uploaded files
       const kept = prev.files.filter(
         (f) =>
           f.status !== FileStatus.UPLOADED ||
           currentUploadedKeys.includes(f.fileKey),
       );
+
+      // Get current keys
       const currentKeys = kept
         .map((f) => f.fileKey)
         .filter((key): key is string => !!key);
+
+      // Get files to add
       const toAdd = newUploaded.filter((f) => !currentKeys.includes(f.fileKey));
-      return { ...prev, files: [...kept, ...toAdd] };
+
+      // Update state
+      return { ...prev, files: [...kept, ...toAdd], pendingDeletes: [] };
     });
   }, [value]);
 
@@ -236,88 +247,54 @@ function Uploader({
     ],
   );
 
-  // Function to remove a file based on removeType
+  const updateFiles = useCallback(
+    (
+      files: ExtendedFileDto[],
+      pendingDeletes?: string[],
+      deletedDtos?: TFileDto[],
+    ) => {
+      const active = files.filter(
+        (f) =>
+          f.status === FileStatus.UPLOADED &&
+          !(pendingDeletes ?? state.pendingDeletes).includes(f.fileKey),
+      );
+      if (onChange) onChange(active.map(stripExtended));
+      setState((prev) => ({
+        ...prev,
+        files,
+        pendingDeletes: pendingDeletes ?? prev.pendingDeletes,
+        deletedDtos: deletedDtos ?? prev.deletedDtos,
+        errors: [],
+      }));
+    },
+    [onChange, state.pendingDeletes],
+  );
+
+  const handlePendingDeletes = useCallback(
+    (keys: string[]) => [...new Set([...state.pendingDeletes, ...keys])],
+    [state.pendingDeletes],
+  );
+
   const removeFile = useCallback(
     async (id: string) => {
-      const fileToRemove = state.files.find((f) => f.id === id);
-      if (!fileToRemove) return;
+      const file = state.files.find((f) => f.id === id);
+      if (!file) return;
 
-      if (!fileToRemove.fileKey) {
-        // Local file (not uploaded): discard and revoke preview
-        if (fileToRemove.preview) URL.revokeObjectURL(fileToRemove.preview);
-        const newFiles = state.files.filter((f) => f.id !== id);
-        const active = newFiles.filter(
-          (f) =>
-            f.status === FileStatus.UPLOADED &&
-            !state.pendingDeletes.includes(f.fileKey),
-        );
-        if (onChange) onChange(active.map(stripExtended));
-        setState((prev) => ({ ...prev, files: newFiles, errors: [] }));
+      const revoke = () => file.preview && URL.revokeObjectURL(file.preview);
+      const filteredFiles = state.files.filter((f) => f.id !== id);
+
+      if (!file.fileKey) {
+        revoke();
+        updateFiles(filteredFiles);
         return;
       }
 
-      // Uploaded file
-      if (removeType === 'delete') {
-        try {
-          await deleteFile({ fileKey: fileToRemove.fileKey, applicantId });
-          const newFiles = state.files.filter((f) => f.id !== id);
-          const active = newFiles.filter(
-            (f) =>
-              f.status === FileStatus.UPLOADED &&
-              !state.pendingDeletes.includes(f.fileKey),
-          );
-          if (onChange) onChange(active.map(stripExtended));
-          setState((prev) => ({ ...prev, files: newFiles, errors: [] }));
-        } catch (err) {
-          setState((prev) => ({
-            ...prev,
-            errors: [...prev.errors, (err as Error).message],
-          }));
-        }
-      } else {
-        // Recoverable remove
-        const newPendingDeletes = [
-          ...new Set([...state.pendingDeletes, fileToRemove.fileKey]),
-        ];
-        let newFiles = state.files;
-        let newDeletedDtos = [
-          ...state.deletedDtos,
-          stripExtended(fileToRemove),
-        ];
-        if (removeType === 'hide') {
-          newFiles = state.files.filter((f) => f.id !== id);
-          // Revoke preview if hiding (not needed for recovery)
-          if (fileToRemove.preview) URL.revokeObjectURL(fileToRemove.preview);
-        }
-        const active = newFiles.filter(
-          (f) =>
-            f.status === FileStatus.UPLOADED &&
-            !newPendingDeletes.includes(f.fileKey),
-        );
-        if (onChange) onChange(active.map(stripExtended));
-        if (getPendingDeletes) getPendingDeletes(newPendingDeletes);
-        setState((prev) => ({
-          ...prev,
-          files: newFiles,
-          deletedDtos: newDeletedDtos,
-          pendingDeletes: newPendingDeletes,
-          errors: [],
-        }));
-      }
+      const gray = handlePendingDeletes([file.fileKey]);
+      setState((p) => ({ ...p, pendingDeletes: gray, errors: [] }));
     },
-    [
-      removeType,
-      onChange,
-      getPendingDeletes,
-      deleteFile,
-      applicantId,
-      state.files,
-      state.pendingDeletes,
-      state.deletedDtos,
-    ],
+    [state, handlePendingDeletes, updateFiles],
   );
 
-  // Function to clear all files based on removeType
   const clearFiles = useCallback(async () => {
     const localFiles = state.files.filter((f) => !f.fileKey);
     const uploadedFiles = state.files.filter((f) => !!f.fileKey);
@@ -325,69 +302,31 @@ function Uploader({
     // Revoke previews for local files
     localFiles.forEach((f) => f.preview && URL.revokeObjectURL(f.preview));
 
-    if (removeType === 'delete') {
-      try {
-        await Promise.all(
-          uploadedFiles.map((f) =>
-            deleteFile({ fileKey: f.fileKey, applicantId }),
-          ),
-        );
-        if (onChange) onChange([]);
-        setState((prev) => ({
-          ...prev,
-          files: [],
-          pendingDeletes: [],
-          errors: [],
-        }));
-      } catch (err) {
-        setState((prev) => ({
-          ...prev,
-          errors: [...prev.errors, (err as Error).message],
-        }));
-      }
-    } else {
-      // Recoverable clear
-      const newPendingDeletes = [
-        ...new Set([
-          ...state.pendingDeletes,
-          ...uploadedFiles.map((f) => f.fileKey),
-        ]),
-      ];
-      let newFiles: ExtendedFileDto[] = [];
-      let newDeletedDtos = [
-        ...state.deletedDtos,
-        ...uploadedFiles.map(stripExtended),
-      ];
-      if (removeType === 'grayScale') {
-        newFiles = uploadedFiles; // Keep for display (will be added back in useEffect if needed)
-      } // For 'hide', newFiles = []
-      const active = newFiles.filter(
-        (f) =>
-          f.status === FileStatus.UPLOADED &&
-          !newPendingDeletes.includes(f.fileKey),
-      );
-      if (onChange) onChange(active.map(stripExtended));
-      if (getPendingDeletes) getPendingDeletes(newPendingDeletes);
-      setState((prev) => ({
-        ...prev,
-        files: newFiles,
-        deletedDtos: newDeletedDtos,
-        pendingDeletes: newPendingDeletes,
-        errors: [],
-      }));
-    }
+    const newPendingDeletesGray = handlePendingDeletes(
+      uploadedFiles.map((f) => f.fileKey),
+    );
+
+    setState((p) => ({
+      ...p,
+      pendingDeletes: newPendingDeletesGray,
+      errors: [],
+    }));
 
     if (inputRef.current) inputRef.current.value = '';
-  }, [
-    removeType,
-    onChange,
-    getPendingDeletes,
-    deleteFile,
-    applicantId,
-    state.files,
-    state.pendingDeletes,
-    state.deletedDtos,
-  ]);
+  }, [state, handlePendingDeletes]);
+
+  const handleDelete = useCallback(async () => {
+    if (!state.pendingDeletes.length) return;
+
+    await Promise.all(
+      state.pendingDeletes.map((key) =>
+        deleteFile({ fileKey: key, applicantId }),
+      ),
+    );
+
+    setState((p) => ({ ...p, pendingDeletes: [], errors: [] }));
+    if (inputRef.current) inputRef.current.value = '';
+  }, [state, applicantId, deleteFile]);
 
   // Function to clear pending deletes and recover files
   const clearPendingDeletes = useCallback(
@@ -397,25 +336,13 @@ function Uploader({
       const newPendingDeletes: string[] = [];
       let newFiles = state.files;
       let newDeletedDtos: TFileDto[] = [];
-      if (removeType === 'hide') {
-        // Recover by adding back to files
-        newFiles = [
-          ...state.files,
-          ...state.deletedDtos.map((d) => ({
-            ...d,
-            id: crypto.randomUUID(),
-            status: FileStatus.UPLOADED,
-          })),
-        ];
-      } else {
-        // For grayScale and delete, just clear pending (files already include or permanent)
-      }
+
       const active = newFiles.filter(
         (f) =>
           f.status === FileStatus.UPLOADED &&
           !newPendingDeletes.includes(f.fileKey),
       );
-      if (getPendingDeletes) getPendingDeletes(newPendingDeletes);
+
       if (onChange) onChange(active.map(stripExtended));
       setState((prev) => ({
         ...prev,
@@ -424,7 +351,7 @@ function Uploader({
         pendingDeletes: newPendingDeletes,
       }));
     },
-    [removeType, onChange, getPendingDeletes, state.files, state.deletedDtos],
+    [onChange, state.files],
   );
 
   const handleDragEnter = useCallback((e: DragEvent<HTMLElement>) => {
@@ -520,20 +447,6 @@ function Uploader({
             {t('Common.selectFiles')}
           </Button>
         </div>
-        {state.pendingDeletes.length > 0 && (
-          <Button
-            variant="outline"
-            size="sm"
-            type="button"
-            className="group absolute top-2 right-2 cursor-pointer gap-0"
-            onClick={clearPendingDeletes}
-          >
-            <RotateCcw aria-hidden="true" />
-            <span className="animate-in max-w-0 overflow-hidden transition-all duration-300 group-hover:ml-1 group-hover:max-w-28">
-              {t('Common.reset')}
-            </span>
-          </Button>
-        )}
       </div>
 
       {state.files.length > 0 && state.files.length < maxFiles && (
@@ -598,6 +511,31 @@ function Uploader({
           )}
         </div>
       )}
+
+      <p className="font-caption-1 text-muted-foreground text-end">
+        <Info className="mr-2 inline-block size-4 text-inherit" />
+        {t('Common.messages.uploadsSavedDeletesManual')}
+      </p>
+      <div className="mt-2 flex justify-end gap-2 border-t pt-4">
+        <Button
+          variant="outline"
+          type="button"
+          onClick={clearPendingDeletes}
+          disabled={isUploading || !state.pendingDeletes.length}
+        >
+          <RotateCcw aria-hidden="true" />
+          {t('Common.reset')}
+        </Button>
+        <Button
+          type="button"
+          variant="destructive"
+          className="w-36"
+          disabled={isUploading || !state.pendingDeletes.length}
+          onClick={handleDelete}
+        >
+          {t('Common.delete')}
+        </Button>
+      </div>
     </div>
   );
 }
