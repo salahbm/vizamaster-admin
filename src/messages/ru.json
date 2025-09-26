@@ -1,42 +1,194 @@
 {
   "Metadata": {
-    "title": "Добро пожаловать в Vizamaster Admin",
-    "description": "Это панель администратора для Vizamaster"
+    "title": "Добро пожаловать в админ-панель Vizamaster",
+    "description": "Это админ-панель для Vizamaster"
   },
   "Header": {
     "language": "Язык",
     "profile": "Профиль",
     "theme": "Тема",
-    "toggleSidebar": "Переключить боковую панель"
+    "toggleSidebar": "Свернуть боковую панель"
   },
-  "Sidebar": {
-    "dashboard": "Панель управления",
-    "users": "Пользователи",
-    "documents": "Документы",
-    "settings": "Настройки",
-    "admins": "Администраторы",
-    "profile": "Профиль",
-    "preferences": "Предпочтения"
+  "dashboard": {
+    "meta": {
+      "title": "Админ-панель",
+      "description": "Обзор заявителей, партнеров и показателей эффективности найма"
+    },
+    "charts": {
+      "visa": {
+        "title": "Статус обработки виз",
+        "description": "Отслеживание статуса обработки виз для каждого партнера, показывающее количество заявителей, которые работают, вернулись или уехали",
+        "xAxis": "Партнер",
+        "yAxis": "Заявители",
+        "tooltip": {
+          "applicants": "заявителей"
+        },
+        "statuses": {
+          "stillWorking": "Работают",
+          "returned": "Вернулись",
+          "departed": "Уехали"
+        }
+      },
+      "countries": {
+        "title": "Популярные страны трудоустройства",
+        "description": "Просмотр стран, принимающих больше всего заявителей, и определение ключевых рынков труда",
+        "xAxis": "Страна",
+        "yAxis": "Заявители",
+        "tooltip": {
+          "applicants": "заявителей"
+        }
+      },
+      "partners": {
+        "title": "Рейтинг эффективности партнеров",
+        "description": "Сравнение эффективности найма партнеров по общему количеству обработанных заявителей",
+        "xAxis": "Заявители",
+        "yAxis": "Партнер",
+        "tooltip": {
+          "applicants": "заявителей"
+        }
+      },
+      "trend": {
+        "title": "Объем заявок по месяцам",
+        "description": "Отслеживание количества новых заявок, полученных каждый месяц, для выявления сезонных закономерностей и тенденций роста",
+        "yAxis": "Заявки",
+        "xAxis": "Период времени",
+        "tooltip": {
+          "applications": "заявок",
+          "week": "Неделя",
+          "month": "Месяц"
+        }
+      },
+      "status": {
+        "title": "Обзор статуса заявок",
+        "description": "Текущее распределение статусов всех заявителей, от новых заявок до нанятых и завершенных дел"
+      }
+    },
+    "kpi": {
+      "title": "Ключевые показатели",
+      "description": "Краткий обзор важных показателей, включая общее количество заявителей, новые заявки, статус обработки и процент успеха",
+      "total": {
+        "title": "Всего заявителей",
+        "description": "Общее количество заявителей в системе"
+      },
+      "new": {
+        "title": "Новые заявки",
+        "description": "Заявители на начальном этапе"
+      },
+      "in_progress": {
+        "title": "В обработке",
+        "description": "Заявки в процессе обработки"
+      },
+      "hired": {
+        "title": "Наняты",
+        "description": "Успешно трудоустроенные заявители"
+      },
+      "rejected": {
+        "title": "Отклонены",
+        "description": "Заявки, которые не были успешными"
+      }
+    }
   },
   "Common": {
     "save": "Сохранить",
+    "ok": "ОК",
     "cancel": "Отмена",
     "delete": "Удалить",
     "edit": "Редактировать",
     "create": "Создать",
-    "search": "Поиск"
+    "view": "Просмотреть",
+    "search": "Поиск",
+    "noData": "Данные отсутствуют",
+    "date": "Дата",
+    "time": "Время",
+    "reset": "Сбросить",
+    "hide": "Скрыть",
+    "selectFiles": "Выбрать файлы",
+    "uploadMore": "Загрузить еще",
+    "removeAllFiles": "Удалить все файлы",
+    "actions": "Действия",
+    "signIn": "Войти",
+    "goBack": "Назад",
+    "name": "Имя",
+    "code": "Код",
+    "groupCode": "Код группы",
+    "createdAt": "Создано",
+    "updatedAt": "Обновлено",
+    "profile": "Профиль",
+    "logout": "Выйти",
+    "contact": "Контакт",
+    "status": "Статус",
+    "archive": "Архивировать",
+    "active": "Активен",
+    "unarchive": "Разархивировать",
+    "archived": "Архивировано",
+    "userInfo": "Информация о пользователе",
+    "professionalInfo": "Профессиональная информация",
+    "visaInfo": "Информация о визе",
+    "comments": "Комментарии",
+    "searchIdName": "Поиск по ID или имени/фамилии",
+    "jobTitle": "Должность",
+    "country": "Страна",
+    "partner": "Партнер",
+    "all": "Все",
+    "download": "Скачать",
+    "files": "Файлы",
+    "statuses": {
+      "new": "Новая",
+      "inProgress": "В обработке",
+      "confirmedProgram": "Программа подтверждена",
+      "hired": "Нанят",
+      "hotelRejected": "Отклонено отелем",
+      "applicantRejected": "Отклонено заявителем",
+      "fired": "Уволен",
+      "archived": "Архивировано"
+    },
+    "fileType": {
+      "PASSPORT": "Паспорт",
+      "VISA": "Виза",
+      "CV": "Резюме",
+      "INSURANCE": "Страховка",
+      "FLIGHT_DOCUMENT": "Авиабилет",
+      "OTHER": "Другое"
+    },
+    "placeholder": {
+      "date": "Выберите дату",
+      "time": "Выберите время",
+      "datetime": "Выберите дату и время",
+      "selectItem": "Выберите элемент",
+      "selectItems": "Выберите элементы",
+      "enterValue": "Введите значение",
+      "selectEndDate": "Выберите дату окончания"
+    },
+    "messages": {
+      "dropYourFilesHere": "Перетащите файлы сюда",
+      "fileSize": "Размер файла должен быть меньше {maxSize}",
+      "fileType": "Тип файла должен быть {accept}",
+      "fileCount": "Количество файлов должно быть меньше {maxFiles}",
+      "fileUpload": "Ошибка загрузки файла",
+      "fileAcceptType": "Тип файла должен быть {accept}",
+      "unauthorized": "Нет доступа",
+      "unauthorizedDescription": "У вас нет прав для выполнения этого действия",
+      "error": "Ошибка",
+      "deleteDescription": "Вы уверены, что хотите удалить эти данные? Это действие нельзя отменить.",
+      "archiveDescription": "Вы уверены, что хотите архивировать эти данные? Их можно восстановить позже.",
+      "notFound": "Не найдено {message}",
+      "conflict": "Конфликт {message}",
+      "unknownError": "Неизвестная ошибка",
+      "uploadsSavedDeletesManual": "Загруженные файлы сохраняются автоматически, но подтвердите удаление удаленных файлов",
+      "fileExists": "Файл уже существует"
+    }
   },
   "auth": {
     "signIn": {
       "title": "С возвращением",
       "subtitle": "Войдите в свой аккаунт, чтобы продолжить",
       "emailLabel": "Электронная почта",
-      "emailPlaceholder": "Введите вашу почту",
+      "emailPlaceholder": "Введите ваш email",
       "passwordLabel": "Пароль",
       "passwordPlaceholder": "Введите ваш пароль",
       "forgotPassword": "Забыли пароль?",
       "button": "Войти",
-      "buttonLoading": "Вход...",
+      "buttonLoading": "Входим...",
       "noAccount": "Нет аккаунта?",
       "signUpLink": "Зарегистрироваться"
     },
@@ -46,163 +198,398 @@
       "usernameLabel": "Имя пользователя",
       "usernamePlaceholder": "Введите имя пользователя",
       "emailLabel": "Электронная почта",
-      "emailPlaceholder": "Введите вашу почту",
+      "emailPlaceholder": "Введите ваш email",
       "passwordLabel": "Пароль",
       "passwordPlaceholder": "Введите ваш пароль",
       "confirmPasswordLabel": "Подтвердите пароль",
       "confirmPasswordPlaceholder": "Подтвердите ваш пароль",
       "button": "Зарегистрироваться",
-      "buttonLoading": "Создание аккаунта...",
+      "buttonLoading": "Создаем аккаунт...",
       "haveAccount": "Уже есть аккаунт?",
-      "signInLink": "Войти"
+      "signInLink": "Войти",
+      "pwdRegex": "Пароль должен содержать хотя бы одну заглавную букву, одну строчную букву, одну цифру и один специальный символ"
     },
     "forgotPassword": {
       "title": "Сбросить пароль",
-      "subtitle": "Введите адрес электронной почты, и мы отправим вам ссылку для сброса пароля",
+      "subtitle": "Введите ваш email, и мы отправим вам ссылку для сброса пароля",
       "emailLabel": "Электронная почта",
-      "emailPlaceholder": "Введите вашу почту",
-      "button": "Отправить ссылку",
-      "buttonLoading": "Отправка ссылки...",
+      "emailPlaceholder": "Введите ваш email",
+      "button": "Отправить ссылку для сброса",
+      "buttonLoading": "Отправляем ссылку...",
       "backToSignIn": "Вернуться к входу"
     },
     "success": {
       "resetLinkSent": {
         "title": "Проверьте вашу почту",
-        "message": "Мы отправили ссылку для сброса пароля на ваш адрес электронной почты",
+        "message": "Мы отправили ссылку для сброса пароля на ваш email",
         "button": "Вернуться к входу"
+      }
+    }
+  },
+  "admins": {
+    "actions": {
+      "changeRole": "Изменить роль",
+      "toggleStatus": "Изменить статус",
+      "manageSidebars": "Маршруты"
+    },
+    "columns": {
+      "active": "Статус",
+      "createdAt": "Создано",
+      "email": "Электронная почта",
+      "name": "Имя",
+      "role": "Роль",
+      "status": "Статус"
+    },
+    "description": "Управление ролями и статусом пользователей",
+    "selectSidebars": "Выберите разрешенные маршруты для этого администратора",
+    "metadata": {
+      "description": "Управление ролями и статусом пользователей",
+      "title": "Управление администраторами"
+    },
+    "roles": {
+      "admin": "Администратор",
+      "editor": "Редактор",
+      "user": "Пользователь"
+    },
+    "search": {
+      "placeholder": "Поиск по имени или email..."
+    },
+    "placeholders": {
+      "selectSidebars": "Выберите боковые панели"
+    },
+    "status": {
+      "active": "Активен",
+      "inactive": "Неактивен"
+    },
+    "title": "Управление администраторами"
+  },
+  "applicant": {
+    "metadata": {
+      "description": "Управление заявителями",
+      "title": "Заявители",
+      "createTitle": "Создать заявителя",
+      "createDescription": "Создать нового заявителя",
+      "editTitle": "Редактировать заявителя",
+      "editDescription": "Редактировать существующего заявителя"
+    },
+    "columns": {
+      "userId": "ID пользователя",
+      "preferredJobTitle": "Должность"
+    },
+    "status": {
+      "new": "Новая",
+      "in_progress": "В обработке",
+      "confirmed_program": "Программа подтверждена",
+      "hired": "Нанят",
+      "hotel_rejected": "Отклонено отелем",
+      "applicant_rejected": "Отклонено заявителем",
+      "fired": "Уволен"
+    },
+    "form": {
+      "buttons": {
+        "submit": "Отправить заявителя",
+        "cancel": "Отмена",
+        "addWork": "Добавить опыт работы"
+      },
+      "fields": {
+        "issued": {
+          "label": "Виза выдана",
+          "options": {
+            "yes": "Да",
+            "no": "Нет"
+          },
+          "message": "Укажите, выдана ли виза. Если да, необходимо указать даты выдачи и отъезда."
+        },
+        "issueDate": {
+          "label": "Дата выдачи"
+        },
+        "departureDate": {
+          "label": "Дата отъезда"
+        },
+        "arrived": {
+          "label": "Прибыл",
+          "options": {
+            "yes": "Да",
+            "no": "Нет"
+          },
+          "message": "Укажите, прибыл ли заявитель в пункт назначения."
+        },
+        "status": {
+          "label": "Статус визы",
+          "options": {
+            "still_working": "Работает",
+            "returned": "Вернулся",
+            "departed": "Уехал",
+            "not_applied": "Не подана"
+          },
+          "message": "Текущий статус визы и рабочей ситуации заявителя."
+        },
+        "flightDocuments": {
+          "label": "Авиабилеты",
+          "message": "Загрузите авиабилеты, маршрут и т.д."
+        },
+        "files": {
+          "label": "Документы для визы",
+          "message": "Загрузите копию визы и связанные документы."
+        },
+        "returnedDate": {
+          "label": "Дата возвращения"
+        },
+        "arrivalDate": {
+          "label": "Дата прибытия"
+        },
+        "firstName": {
+          "label": "Имя",
+          "placeholder": "Введите имя"
+        },
+        "lastName": {
+          "label": "Фамилия",
+          "placeholder": "Введите фамилию"
+        },
+        "middleName": {
+          "label": "Отчество",
+          "placeholder": "Введите отчество"
+        },
+        "gender": {
+          "label": "Пол",
+          "placeholder": "Выберите пол",
+          "options": {
+            "male": "Мужской",
+            "female": "Женский"
+          }
+        },
+        "dateOfBirth": {
+          "label": "Дата рождения"
+        },
+        "passportNumber": {
+          "label": "Номер паспорта",
+          "placeholder": "Введите номер паспорта"
+        },
+        "passportPhoto": {
+          "label": "Фото паспорта",
+          "message": "Загрузите четкое фото паспорта."
+        },
+        "email": {
+          "label": "Электронная почта",
+          "placeholder": "Введите email"
+        },
+        "phoneNumber": {
+          "label": "Номер телефона",
+          "placeholder": "Введите номер телефона"
+        },
+        "phoneNumberAdditional": {
+          "label": "Дополнительный номер телефона",
+          "placeholder": "Введите дополнительный номер телефона"
+        },
+        "countryOfResidence": {
+          "label": "Страна проживания",
+          "placeholder": "Выберите страну проживания"
+        },
+        "addressLine1": {
+          "label": "Адрес, строка 1",
+          "placeholder": "Введите адрес"
+        },
+        "addressLine2": {
+          "label": "Адрес, строка 2",
+          "placeholder": "Введите квартиру, номер дома и т.д."
+        },
+        "city": {
+          "label": "Город",
+          "placeholder": "Введите город"
+        },
+        "state": {
+          "label": "Штат/Область",
+          "placeholder": "Введите штат или область"
+        },
+        "zipCode": {
+          "label": "Почтовый индекс",
+          "placeholder": "Введите почтовый индекс"
+        },
+        "countryOfEmployment": {
+          "label": "Страна трудоустройства",
+          "placeholder": "Выберите страну трудоустройства"
+        },
+        "nationality": {
+          "label": "Гражданство",
+          "placeholder": "Выберите гражданство"
+        },
+        "partner": {
+          "label": "Партнер",
+          "placeholder": "Выберите партнера"
+        },
+        "languages": {
+          "label": "Языки",
+          "placeholder": "Выберите языки"
+        },
+        "jobTitle": {
+          "label": "Должность",
+          "placeholder": "например, Инженер-программист"
+        },
+        "company": {
+          "label": "Компания",
+          "placeholder": "например, ТехКорп"
+        },
+        "startDate": {
+          "label": "Дата начала"
+        },
+        "endDate": {
+          "label": "Дата окончания"
+        },
+        "location": {
+          "label": "Местоположение",
+          "placeholder": "например, Москва"
+        },
+        "responsibilities": {
+          "label": "Обязанности",
+          "placeholder": "Опишите ключевые обязанности"
+        },
+        "achievements": {
+          "label": "Достижения",
+          "placeholder": "Перечислите ключевые достижения (необязательно)"
+        },
+        "workFiles": {
+          "label": "Файлы",
+          "message": "Загрузите ваши файлы"
+        }
+      },
+      "sections": {
+        "visaInfo": {
+          "title": "Информация о визе",
+          "description": "Управление данными о визе и поездке.",
+          "empty": {
+            "title": "Информация о визе не добавлена",
+            "description": "Добавьте данные о визе и документах для поездки."
+          }
+        },
+        "personalInfo": {
+          "title": "Личная информация",
+          "description": "Основные личные данные заявителя."
+        },
+        "contactInfo": {
+          "title": "Контактная информация",
+          "description": "Как связаться с заявителем."
+        },
+        "addressInfo": {
+          "title": "Адресная информация",
+          "description": "Адрес проживания заявителя."
+        },
+        "employmentInfo": {
+          "title": "Трудоустройство и гражданство",
+          "description": "Данные о трудоустройстве и гражданстве."
+        },
+        "workInfo": {
+          "title": "Опыт работы",
+          "description": "Предыдущий опыт работы и история трудоустройства.",
+          "empty": {
+            "title": "Опыт работы не добавлен",
+            "description": "Добавьте предыдущий опыт работы, чтобы мы лучше понимали ваше прошлое."
+          }
+        }
       }
     },
     "validation": {
-      "username": {
-        "required": "Имя пользователя обязательно",
-        "minLength": "Имя пользователя должно содержать не менее {min} символов"
-      },
-      "email": {
-        "required": "Электронная почта обязательна",
-        "invalid": "Пожалуйста, введите действительный адрес электронной почты"
-      },
-      "password": {
-        "required": "Пароль обязателен",
-        "minLength": "Пароль должен содержать не менее {min} символов",
-        "containsNumber": "Пароль должен содержать хотя бы одну цифру",
-        "containsUppercase": "Пароль должен содержать хотя бы одну заглавную букву"
-      },
-      "confirmPassword": {
-        "required": "Пожалуйста, подтвердите ваш пароль",
-        "match": "Пароли не совпадают"
-      }
+      "required": "Это поле обязательно",
+      "invalid_email": "Введите корректный email"
     }
   },
-  "zod": {
-    "required": "Обязательное поле",
-    "invalid_type": "Ожидался тип - {{expected}}, получено - {{received}}",
-    "invalid_type_received_undefined": "Обязательное поле",
-    "invalid_type_received_null": "Обязательное поле",
-    "invalid_literal": "Неверное значение литерала, ожидалось {{expected}}",
-    "unrecognized_keys": "Неверные ключи в объекте: {{- keys}}",
-    "invalid_union": "Результаты пересечения не могут быть объединены",
-    "invalid_union_discriminator": "Неверное значение дискриминатора. Ожидалось {{- options}}",
-    "invalid_enum_value": "Неверное значение перечисления. Ожидалось {{- options}}, получено '{{received}}'",
-    "invalid_arguments": "Неверный тип аргументов функции",
-    "invalid_return_type": "Неверный тип возвращаемого значения функции",
-    "invalid_date": "Неверный формат даты",
-    "custom": "Неверный ввод",
-    "invalid_intersection_types": "Результаты пересечения не могут быть объединены",
-    "not_multiple_of": "Число должно быть кратно {{multipleOf}}",
-    "not_finite": "Число должно быть конечным",
-    "invalid_string": {
-      "email": "Неверный {{validation}}",
-      "url": "Неверный {{validation}}",
-      "uuid": "Неверный {{validation}}",
-      "cuid": "Неверный {{validation}}",
-      "regex": "Неверное {{validation}}",
-      "datetime": "Неверная {{validation}}",
-      "startsWith": "Неверный формат, должен начинаться с \"{{startsWith}}\"",
-      "endsWith": "Неверный формат, должен заканчиваться на \"{{endsWith}}\""
+  "sidebar": {
+    "metadata": {
+      "description": "Управление маршрутами и элементами боковой панели",
+      "title": "Управление боковой панелью"
     },
-    "too_small": {
-      "array": {
-        "exact": "Массив должен содержать ровно {{minimum}} элемента(ов)",
-        "inclusive": "Массив должен содержать не менее {{minimum}} элемента(ов)",
-        "not_inclusive": "Массив должен содержать более {{minimum}} элемента(ов)"
-      },
-      "string": {
-        "exact": "Строка должна содержать ровно {{minimum}} символа(ов)",
-        "inclusive": "Строка должна содержать не менее {{minimum}} символа(ов)",
-        "not_inclusive": "Строка должна содержать более {{minimum}} символа(ов)"
-      },
-      "number": {
-        "exact": "Число должно быть ровно {{minimum}}",
-        "inclusive": "Число должно быть больше или равно {{minimum}}",
-        "not_inclusive": "Число должно быть больше {{minimum}}"
-      },
-      "set": {
-        "exact": "Неверный ввод",
-        "inclusive": "Неверный ввод",
-        "not_inclusive": "Неверный ввод"
-      },
-      "date": {
-        "exact": "Дата должна быть {{- minimum, datetime}}",
-        "inclusive": "Дата должна быть больше или равна {{- minimum, datetime}}",
-        "not_inclusive": "Дата должна быть больше {{- minimum, datetime}}"
-      }
+    "form": {
+      "labelEn": "Название на английском",
+      "labelEnPlaceholder": "Введите название на английском",
+      "labelRu": "Название на русском",
+      "labelRuPlaceholder": "Введите название на русском",
+      "href": "URL-путь",
+      "icon": "Иконка (необязательно)",
+      "order": "Порядок отображения",
+      "parentId": "Родительский элемент (необязательно)",
+      "parentIdPlaceholder": "Выберите родительский элемент",
+      "cancel": "Отмена",
+      "create": "Создать элемент",
+      "update": "Обновить элемент",
+      "hrefMessage": "URL-путь должен быть уникальным",
+      "dependent": "Зависимый",
+      "independent": "Независимый",
+      "routeType": "Тип маршрута",
+      "childRoute": "Дочерний маршрут",
+      "parentRoute": "Родительский маршрут",
+      "country": "Страна",
+      "countryPlaceholder": "Выберите страну",
+      "availableForChildOnly": "Доступно только для дочерних маршрутов",
+      "partner": "Партнер",
+      "partnerPlaceholder": "Выберите партнера"
     },
-    "too_big": {
-      "array": {
-        "exact": "Массив должен содержать ровно {{maximum}} элемента(ов)",
-        "inclusive": "Массив должен содержать не более {{maximum}} элемента(ов)",
-        "not_inclusive": "Массив должен содержать менее {{maximum}} элемента(ов)"
-      },
-      "string": {
-        "exact": "Строка должна содержать ровно {{maximum}} символа(ов)",
-        "inclusive": "Строка должна содержать не более {{maximum}} символа(ов)",
-        "not_inclusive": "Строка должна содержать менее {{maximum}} символа(ов)"
-      },
-      "number": {
-        "exact": "Число должно быть ровно {{maximum}}",
-        "inclusive": "Число должно быть меньше или равно {{maximum}}",
-        "not_inclusive": "Число должно быть меньше {{maximum}}"
-      },
-      "set": {
-        "exact": "Неверный ввод",
-        "inclusive": "Неверный ввод",
-        "not_inclusive": "Неверный ввод"
-      },
-      "date": {
-        "exact": "Дата должна быть {{- maximum, datetime}}",
-        "inclusive": "Дата должна быть меньше или равна {{- maximum, datetime}}",
-        "not_inclusive": "Дата должна быть меньше {{- maximum, datetime}}"
-      }
+    "columns": {
+      "order": "Порядок",
+      "name": "Название",
+      "href": "URL-путь",
+      "createdAt": "Создано"
     }
   },
-  "validations": {
-    "email": "Email",
-    "url": "URL",
-    "uuid": "UUID",
-    "cuid": "CUID",
-    "regex": "регулярное выражение",
-    "datetime": "дата и время"
+  "groupCodes": {
+    "metadata": {
+      "description": "Управление кодами групп",
+      "title": "Управление кодами групп"
+    },
+    "form": {
+      "labelEn": "Название на английском",
+      "labelEnPlaceholder": "Введите название на английском",
+      "labelRu": "Название на русском",
+      "labelRuPlaceholder": "Введите название на русском",
+      "cancel": "Отмена",
+      "create": "Создать элемент",
+      "update": "Обновить элемент",
+      "code": "Код",
+      "codePlaceholder": "Введите код",
+      "codeMessage": "Код должен быть уникальным",
+      "groupCode": "Код группы",
+      "groupCodePlaceholder": "Выберите код группы",
+      "groupCodeMessage": "Код группы обязателен и должен быть уникальным"
+    }
   },
-  "types": {
-    "function": "функция",
-    "number": "число",
-    "string": "строка",
-    "nan": "NaN",
-    "integer": "целое число",
-    "float": "число с плавающей точкой",
-    "boolean": "булево значение",
-    "date": "дата",
-    "bigint": "bigint",
-    "undefined": "undefined",
-    "symbol": "символ",
-    "null": "null",
-    "array": "массив",
-    "object": "объект",
-    "unknown": "unknown",
-    "promise": "promise",
-    "void": "void",
-    "never": "never",
-    "map": "хеш-таблица",
-    "set": "множество"
+  "codes": {
+    "metadata": {
+      "description": "Управление кодами",
+      "title": "Управление кодами"
+    }
+  },
+  "errors": {
+    "somethingWentWrong": "Что-то пошло не так",
+    "generic": "Произошла непредвиденная ошибка",
+    "accountNotActive": "Ваш аккаунт неактивен или требует одобрения администратора.",
+    "notAuthorizedRole": "У вас нет прав для выполнения этого действия",
+    "unauthorized": "У вас нет прав для выполнения этого действия"
+  },
+  "preferences": {
+    "profile": "Профиль",
+    "manageYourAccount": "Управление настройками и предпочтениями аккаунта",
+    "profileInfo": "Информация о профиле",
+    "updateYourPersonalInformation": "Обновите вашу личную информацию",
+    "security": "Безопасность",
+    "name": "Имя",
+    "email": "Электронная почта",
+    "currentPassword": "Текущий пароль",
+    "newPassword": "Новый пароль",
+    "confirmPassword": "Подтвердите пароль",
+    "changePassword": "Изменить пароль",
+    "updatePassword": "Обновить пароль",
+    "updateYourPassword": "Обновите ваш пароль",
+    "saveChanges": "Сохранить изменения",
+    "success": "Успех",
+    "profileUpdated": "Ваш профиль успешно обновлен",
+    "passwordChanged": "Ваш пароль успешно изменен",
+    "ok": "ОК",
+    "cancel": "Отмена",
+    "logout": "Выйти",
+    "logoutConfirmation": "Вы уверены, что хотите выйти?",
+    "deleteAccount": "Удалить аккаунт",
+    "deleteAccountConfirmation": "Вы уверены, что хотите удалить аккаунт? Это действие нельзя отменить.",
+    "delete": "Удалить",
+    "dangerZone": "Зона риска",
+    "dangerZoneDescription": "Полное удаление аккаунта и всех ваших данных",
+    "deleteAccountWarning": "После удаления аккаунта восстановление невозможно. Будьте уверены."
   }
 }

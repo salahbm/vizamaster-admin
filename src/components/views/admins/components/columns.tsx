@@ -153,12 +153,6 @@ const ChangeRole = ({ row }: { row: Row<Users> }) => {
         <DropdownMenuLabel>{t('actions.changeRole')}</DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuItem
-          onClick={() => changeRole(row.original.id, 'USER')}
-          disabled={row.getValue('role') === 'USER'}
-        >
-          {t('roles.user')}
-        </DropdownMenuItem>
-        <DropdownMenuItem
           onClick={() => changeRole(row.original.id, 'EDITOR')}
           disabled={row.getValue('role') === 'EDITOR'}
         >

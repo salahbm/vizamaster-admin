@@ -69,7 +69,7 @@ class FilesService {
   /**
    * Create a file record in the database
    */
-  async createFileRecord(file: TFileDto) {
+  async createFileRecord(file: Omit<TFileDto, 'id' | 'preview'>) {
     try {
       return prisma.file.create({
         data: {
