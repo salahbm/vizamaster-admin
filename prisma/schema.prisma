@@ -22,7 +22,7 @@ model Users {
   updatedAt     DateTime   @default(now()) @updatedAt @map("updated_at")
   sessionss     Sessions[]
   accountss     Accounts[]
-  role          UserRole   @default(USER)
+  role          UserRole   @default(EDITOR)
   sidebar       SidebarUser[]
   active        Boolean    @default(false)
 
@@ -290,7 +290,6 @@ enum Gender {
 }
 
 enum UserRole {
-  USER
   EDITOR
   ADMIN
   CREATOR

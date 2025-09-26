@@ -4,7 +4,6 @@ export enum UserRole {
   creator = 'creator', // owner of the app
   ADMIN = 'admin',
   EDITOR = 'editor',
-  USER = 'user',
 }
 
 export enum Permission {
@@ -28,7 +27,6 @@ const rolePermissions = {
     Permission.DELETE,
   ],
   [UserRole.EDITOR]: [Permission.CREATE, Permission.READ, Permission.UPDATE],
-  [UserRole.USER]: [Permission.CREATE, Permission.READ, Permission.UPDATE],
 };
 
 export function checkPermission(
