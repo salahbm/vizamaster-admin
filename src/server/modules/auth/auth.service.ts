@@ -1,5 +1,6 @@
 import { ColumnSort } from '@tanstack/react-table';
 
+import { Prisma } from '@/generated/prisma';
 import {
   TAdminPasswordDto,
   TAdminProfileDto,
@@ -44,6 +45,11 @@ export class AuthService {
     } catch (error) {
       handlePrismaError(error);
     }
+  }
+
+  async updateUser(id: string, data: Prisma.UsersUpdateInput) {
+    const updatedUser = await this.authRepository.updateUser(id, data);
+    return createResponse(updatedUser);
   }
 
   async updatePassword(id: string, data: TAdminPasswordDto) {

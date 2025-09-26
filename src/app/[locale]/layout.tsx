@@ -28,7 +28,7 @@ export async function generateMetadata({
   return {
     title: t('title'),
     description: t('description'),
-    metadataBase: new URL(`http://localhost:3000`),
+    metadataBase: new URL(`https://admin.visamaster.uz`),
     openGraph: {
       title: t('title'),
       description: t('description'),
@@ -42,9 +42,12 @@ export async function generateMetadata({
       follow: true,
     },
     keywords: ['vizamaster', 'admin', 'dashboard'],
-    icons: {
-      icon: '/favicon.ico',
-    },
+    icons: [
+      {
+        rel: 'icon',
+        url: '/favicon.ico',
+      },
+    ],
   };
 }
 
@@ -53,8 +56,8 @@ export const viewport: Viewport = {
   initialScale: 1,
   maximumScale: 1,
   userScalable: false,
-  themeColor: '#000000',
-  colorScheme: 'dark',
+  themeColor: '#fff',
+  colorScheme: 'light',
 };
 
 export default async function IndexLayout({

@@ -18,7 +18,6 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json(result);
   } catch (error: unknown) {
-    console.error('Error creating sidebar:', error);
     return handleApiError(error);
   }
 }
@@ -41,7 +40,6 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(result);
   } catch (error: unknown) {
-    console.error('Error creating sidebar:', error);
     return handleApiError(error);
   }
 }

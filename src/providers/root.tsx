@@ -11,7 +11,7 @@ import QueryProvider from './query';
 import ThemeProvider from './theme';
 import ZodInitProvider from './zod';
 
-export default async function RootLayout({ children }: PropsWithChildren) {
+export default function RootLayout({ children }: PropsWithChildren) {
   return (
     <ThemeProvider>
       <Internationalization>

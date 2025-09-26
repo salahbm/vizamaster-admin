@@ -33,7 +33,7 @@ export default [
       import: importPlugin,
       prettier: prettierPlugin,
       'unused-imports': unusedImports,
-      '@next/next': nextPlugin,
+      next: nextPlugin,
       'jsx-a11y': jsxA11y,
     },
     languageOptions: {
@@ -88,8 +88,8 @@ export default [
       'no-console': ['warn', { allow: ['warn', 'error', 'info', 'debug'] }],
 
       // Next.js
-      '@next/next/no-html-link-for-pages': 'off',
-      '@next/next/no-img-element': 'warn',
+      'next/no-html-link-for-pages': 'off',
+      'next/no-img-element': 'warn',
 
       // Accessibility
       'jsx-a11y/alt-text': 'warn',
