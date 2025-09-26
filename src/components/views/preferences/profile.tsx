@@ -58,6 +58,7 @@ const Profile = () => {
     useUpdateAdminPassword();
   const { mutate: logout } = useLogout();
   const { mutateAsync: deleteAdmin } = useDeleteAdmin();
+
   // Profile form
   const profileForm = useForm<TAdminProfileDto>({
     resolver: zodResolver(AdminProfileDto),

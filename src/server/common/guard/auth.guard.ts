@@ -1,22 +1,10 @@
 import { headers } from 'next/headers';
 
-import { getTranslations } from 'next-intl/server';
-
-import { API_CODES } from '@/server/common/codes';
-import { UnauthorizedError } from '@/server/common/errors';
+import { UserRole } from '@/generated/prisma';
+import prisma from '@/server/db/prisma';
 import { auth } from '@/server/modules/auth/auth';
 
 export class AuthGuard {
-  async requireRole(user: { role: string }, allowedRoles: string[]) {
-    if (!allowedRoles.includes(user.role)) {
-      const t = await getTranslations();
-      throw new UnauthorizedError(
-        t('errors.notAuthorizedRole'),
-        API_CODES.NOT_AUTHORIZED_ROLE,
-      );
-    }
-  }
-
   async checkSession() {
     const res = await auth.api.getSession({
       headers: await headers(),
@@ -25,6 +13,20 @@ export class AuthGuard {
     if (!res) await auth.api.signOut({ headers: await headers() });
 
     return res;
+  }
+
+  async checkSessionAndRole() {
+    const session = await this.checkSession();
+    if (!session) return null;
+
+    const user = await prisma.users.findUnique({
+      where: { id: session.user.id },
+    });
+    if (!user) return null;
+
+    if (user.role === UserRole.EDITOR) return null;
+
+    return session;
   }
 }
 

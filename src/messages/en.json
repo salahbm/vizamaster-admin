@@ -561,7 +561,8 @@
     "somethingWentWrong": "Something went wrong",
     "generic": "An unexpected error occurred",
     "accountNotActive": "Your account is not active or requires admin approval.",
-    "notAuthorizedRole": "You are not authorized to perform this action"
+    "notAuthorizedRole": "You are not authorized to perform this action",
+    "unauthorized": "You are not authorized to perform this action"
   },
   "preferences": {
     "profile": "Profile",

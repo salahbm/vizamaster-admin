@@ -1,20 +1,13 @@
-import { NextRequest } from 'next/server';
-
 import { ColumnSort } from '@tanstack/react-table';
 
 import {
   TAdminPasswordDto,
   TAdminProfileDto,
 } from '@/server/common/dto/admin.dto';
-import {
-  NotFoundError,
-  UnauthorizedError,
-  handlePrismaError,
-} from '@/server/common/errors';
+import { handlePrismaError } from '@/server/common/errors';
 import { createPaginatedResult, createResponse } from '@/server/common/utils';
 
 import { AuthGuard } from '../../common/guard/auth.guard';
-import { auth } from './auth';
 import { AuthRepository } from './auth.repository';
 
 export class AuthService {
@@ -71,23 +64,5 @@ export class AuthService {
     } catch (error) {
       handlePrismaError(error);
     }
-  }
-
-  async checkAuth(request: NextRequest) {
-    // Check if user is authenticated
-    const session = await auth.api.getSession({
-      headers: request.headers,
-    });
-
-    if (!session) throw new UnauthorizedError();
-
-    const user = await this.findUserById(session.user.id);
-
-    if (!user) throw new NotFoundError();
-
-    // Check if user has admin role
-    await this.authGuard.requireRole({ role: user.role }, ['ADMIN', 'CREATOR']);
-
-    return user;
   }
 }

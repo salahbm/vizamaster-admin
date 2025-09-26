@@ -25,7 +25,7 @@ export default async function AdminsPage() {
   const authGuard = new AuthGuard();
 
   // Check if user is authenticated
-  const session = await authGuard.checkSession();
+  const session = await authGuard.checkSessionAndRole();
 
   if (!session) return redirect(routes.signIn);
 

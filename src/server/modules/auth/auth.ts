@@ -20,8 +20,8 @@ export const enforceActiveUser = createAuthMiddleware(async (ctx) => {
 
   if (!user) return; // user not found, let Better Auth handle it
 
-  // block if inactive AND role is USER
-  if (!user.active && user.role === 'USER') {
+  // block if inactive
+  if (!user.active) {
     // Get translations and await the promise
     const t = await getTranslations();
     throw new APIError('FORBIDDEN', {
