@@ -21,7 +21,7 @@ import { Form } from '@/components/ui/form';
 
 import { Users } from '@/generated/prisma';
 import {
-  useSidebar,
+  useSidebarOptions,
   useSidebarTable,
   useUpdateAdminSidebars,
 } from '@/hooks/settings/sidebar';
@@ -43,11 +43,15 @@ export const ManageSidebars = ({
 }: ManageSidebarsProps) => {
   const locale = useLocale();
   const t = useTranslations();
+
   const { data: sidebars = [], isLoading } = useSidebarTable({
     sort: { id: 'createdAt', desc: true },
   });
+
+  // Only fetch admin sidebars when the dialog is open to prevent unnecessary requests
   const { data: adminSidebars = [], isLoading: adminSidebarsLoading } =
-    useSidebar();
+    useSidebarOptions(isOpen ? user.id : undefined);
+
   const { mutateAsync: updateSidebars, isPending } = useUpdateAdminSidebars();
 
   const form = useForm<z.infer<typeof schema>>({
@@ -71,12 +75,15 @@ export const ManageSidebars = ({
   }, [sidebars, isLoading, locale]);
 
   useEffect(() => {
-    if (adminSidebars) {
-      form.reset({
-        sidebarIds: adminSidebars.map((sidebar) => sidebar?.id),
-      });
+    // Only reset the form when we have admin sidebars data and the dialog is open
+    if (adminSidebars && adminSidebars.length > 0 && isOpen) {
+      const sidebarIds = adminSidebars
+        .filter((sidebar) => sidebar?.id) // Filter out any null/undefined IDs
+        .map((sidebar) => sidebar.id);
+
+      form.reset({ sidebarIds });
     }
-  }, [form, adminSidebars]);
+  }, [form, adminSidebars, isOpen]);
 
   if (isLoading) return null;
 
@@ -86,7 +93,13 @@ export const ManageSidebars = ({
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
+    <Dialog
+      open={isOpen}
+      onOpenChange={(open) => {
+        onClose();
+        if (!open) form.reset();
+      }}
+    >
       <DialogContent className="h-fit">
         <DialogHeader>
           <DialogTitle>{t('admins.actions.manageSidebars')}</DialogTitle>

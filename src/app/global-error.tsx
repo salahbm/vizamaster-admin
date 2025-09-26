@@ -23,11 +23,11 @@ export default function GlobalError({
   return (
     <html>
       <body>
-        <div className="bg-background text-foreground flex h-screen w-full flex-col items-center justify-center gap-y-4">
+        <div className="bg-background text-foreground container flex h-screen w-full flex-col items-center justify-center gap-y-4">
           <h2 className="text-destructive text-5xl font-bold">
             Oops, Something Went Wrong!
           </h2>
-          <p className="text-muted-foreground text-lg">
+          <p className="text-muted-foreground text-center text-lg">
             {error?.message || 'An unexpected error occurred'}
           </p>
           <Button variant="default" onClick={() => reset()} className="mt-4">

@@ -1,12 +1,10 @@
 import { keepPreviousData, useQuery } from '@tanstack/react-query';
-import { User } from 'better-auth';
 
 import agent from '@/lib/agent';
 
 import { QueryKeys } from '@/constants/query-keys';
 
 import { Sidebar } from '@/generated/prisma';
-import { API_CODES } from '@/server/common/codes';
 import { NotFoundError } from '@/server/common/errors';
 import { TResponse } from '@/server/common/types';
 import { useAuthStore } from '@/store/use-auth-store';
@@ -14,16 +12,9 @@ import { useAuthStore } from '@/store/use-auth-store';
 export const getAllSidebar = async (id?: string): Promise<Sidebar[]> => {
   if (!id) return [];
 
-  const userRes = await agent.get<TResponse<User>>(
-    `api/admins/find-user?id=${id}`,
-    // { cache: 'force-cache' },
-  );
-
-  if (!userRes.data)
-    throw new NotFoundError('User not found', API_CODES.NOT_FOUND);
-
+  // Direct API call without the extra user lookup to avoid unnecessary requests
   const { data } = await agent.get<TResponse<Sidebar[]>>(
-    `api/settings/sidebar/admin-sidebars?userId=${userRes.data.id}`,
+    `api/settings/sidebar/admin-sidebars?userId=${id}`,
     // { cache: 'force-cache' },
   );
 
@@ -47,3 +38,15 @@ export const useSidebar = () => {
     refetchOnMount: false,
   });
 };
+
+export const useSidebarOptions = (id?: string) =>
+  useQuery({
+    queryFn: () => getAllSidebar(id),
+    queryKey: [...QueryKeys.settings.sidebar.options, { userId: id }],
+    placeholderData: keepPreviousData,
+    enabled: !!id,
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+    refetchOnMount: false,
+  });

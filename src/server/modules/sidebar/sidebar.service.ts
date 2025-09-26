@@ -1,5 +1,9 @@
 import { Sidebar } from '@/generated/prisma';
-import { BadRequestError, NotFoundError } from '@/server/common/errors';
+import {
+  BadRequestError,
+  NotFoundError,
+  handlePrismaError,
+} from '@/server/common/errors';
 import { createResponse } from '@/server/common/utils';
 import { ISort } from '@/types/data-table';
 
@@ -100,12 +104,46 @@ class SidebarService {
 
   // Update admin sidebars
   async updateAdminSidebars(userId: string, sidebarIds: string[]) {
-    const result = await this.repository.updateAdminSidebars(
-      userId,
-      sidebarIds,
-    );
+    try {
+      // Validate inputs
+      if (!userId || typeof userId !== 'string') {
+        throw new BadRequestError('Invalid user ID');
+      }
+      if (!Array.isArray(sidebarIds)) {
+        throw new BadRequestError('Sidebar IDs must be an array');
+      }
+      if (sidebarIds.some((id) => typeof id !== 'string')) {
+        throw new BadRequestError('All sidebar IDs must be strings');
+      }
 
-    return createResponse(result);
+      // Remove any duplicate IDs
+      const uniqueSidebarIds = [...new Set(sidebarIds)];
+
+      const result = await this.repository.updateAdminSidebars(
+        userId,
+        uniqueSidebarIds,
+      );
+
+      return createResponse({
+        message: `Successfully updated sidebars for user ${userId}`,
+        deleted: result.deleted,
+        created: result.created,
+        sidebarIds: result.sidebarIds,
+      });
+    } catch (error) {
+      // Check for specific error messages from the repository
+      if (error instanceof Error) {
+        if (error.message.includes('User with ID')) {
+          throw new NotFoundError(`User with ID ${userId} not found`);
+        }
+        if (error.message.includes('Sidebar items not found')) {
+          throw new BadRequestError(error.message);
+        }
+      }
+
+      // Handle other Prisma errors
+      handlePrismaError(error);
+    }
   }
 }
 

@@ -64,14 +64,44 @@ export class SidebarRepository {
   }
 
   // Update admin sidebars
-  updateAdminSidebars(userId: string, sidebarIds: string[]) {
+  async updateAdminSidebars(userId: string, sidebarIds: string[]) {
     return this.prisma.$transaction(async (tx) => {
-      // First, delete all existing sidebar entries for this user
-      await tx.sidebarUser.deleteMany({
+      // First, verify the user exists
+      const userExists = await tx.users.findUnique({
+        where: { id: userId },
+        select: { id: true },
+      });
+
+      if (!userExists) {
+        throw new Error(`User with ID ${userId} not found`);
+      }
+
+      // Verify all sidebar IDs exist if there are any
+      if (sidebarIds.length > 0) {
+        const existingSidebars = await tx.sidebar.findMany({
+          where: { id: { in: sidebarIds } },
+          select: { id: true },
+        });
+
+        const foundIds = existingSidebars.map((s) => s.id);
+        const missingIds = sidebarIds.filter((id) => !foundIds.includes(id));
+
+        if (missingIds.length > 0) {
+          throw new Error(`Sidebar items not found: ${missingIds.join(', ')}`);
+        }
+      }
+
+      // Delete all existing sidebar entries for this user
+      const deletedEntries = await tx.sidebarUser.deleteMany({
         where: { userId },
       });
 
-      // Then, create new entries for the provided sidebar IDs
+      // If no sidebar IDs are provided, just return the deleted count
+      if (sidebarIds.length === 0) {
+        return { deleted: deletedEntries.count, created: 0 };
+      }
+
+      // Create new entries for the provided sidebar IDs
       const newSidebarEntries = await tx.sidebarUser.createMany({
         data: sidebarIds.map((sidebarId) => ({
           userId,
@@ -79,7 +109,12 @@ export class SidebarRepository {
         })),
       });
 
-      return newSidebarEntries;
+      // Return a more informative result
+      return {
+        deleted: deletedEntries.count,
+        created: newSidebarEntries.count,
+        sidebarIds,
+      };
     });
   }
 

@@ -26,12 +26,19 @@ export const useUpdateAdminSidebars = () => {
   return useMutation({
     mutationFn: update,
     options: {
-      onSuccess: () => {
+      onSuccess: (data, variable) => {
         queryClient.invalidateQueries({
-          queryKey: QueryKeys.admins.all,
+          queryKey: [
+            ...QueryKeys.settings.sidebar.all,
+            { userId: variable.id },
+          ],
+          type: 'all',
         });
         queryClient.invalidateQueries({
-          queryKey: QueryKeys.settings.sidebar.all,
+          queryKey: [
+            ...QueryKeys.settings.sidebar.options,
+            { userId: variable.id },
+          ],
           type: 'all',
         });
       },
