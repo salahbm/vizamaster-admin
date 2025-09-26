@@ -11,7 +11,7 @@ import { z } from 'zod';
 import { FormFields } from '@/components/shared/form-fields';
 import { Button } from '@/components/ui/button';
 import { Form } from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
+import { Input, PasswordInput } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
@@ -86,6 +86,7 @@ const Profile = () => {
           title: t('success'),
           description: t('profileUpdated'),
           confirmText: t('ok'),
+          cancelButton: null,
         });
       },
     });
@@ -98,6 +99,7 @@ const Profile = () => {
           title: t('success'),
           description: t('passwordChanged'),
           confirmText: t('ok'),
+          cancelButton: null,
         });
         passwordForm.reset();
       },
@@ -110,6 +112,7 @@ const Profile = () => {
       description: t('logoutConfirmation'),
       onConfirm: () => logout(),
       confirmText: t('logout'),
+      cancelText: t('cancel'),
     });
   };
 
@@ -119,6 +122,7 @@ const Profile = () => {
       description: t('deleteAccountConfirmation'),
       onConfirm: () => deleteAdmin(user?.id!),
       confirmText: t('delete'),
+      cancelText: t('cancel'),
     });
   };
 
@@ -242,39 +246,21 @@ const Profile = () => {
                       label={t('currentPassword')}
                       required
                       control={passwordForm.control}
-                      render={({ field }) => (
-                        <Input
-                          placeholder="••••••••"
-                          type="password"
-                          {...field}
-                        />
-                      )}
+                      render={({ field }) => <PasswordInput {...field} />}
                     />
                     <FormFields
                       name="newPassword"
                       label={t('newPassword')}
                       required
                       control={passwordForm.control}
-                      render={({ field }) => (
-                        <Input
-                          placeholder="••••••••"
-                          type="password"
-                          {...field}
-                        />
-                      )}
+                      render={({ field }) => <PasswordInput {...field} />}
                     />
                     <FormFields
                       name="confirmPassword"
                       label={t('confirmPassword')}
                       required
                       control={passwordForm.control}
-                      render={({ field }) => (
-                        <Input
-                          placeholder="••••••••"
-                          type="password"
-                          {...field}
-                        />
-                      )}
+                      render={({ field }) => <PasswordInput {...field} />}
                     />
                     <Button
                       type="submit"

@@ -35,6 +35,7 @@ const ApplicantFiles: React.FC<IApplicantFilesProps> = ({
         className="flex w-full flex-wrap items-center gap-6"
         defaultValue={FileType.OTHER}
         onChange={(value) => setFileType(value as FileType)}
+        value={fileType}
       >
         {Object.values(FileType).map((option) => (
           <div

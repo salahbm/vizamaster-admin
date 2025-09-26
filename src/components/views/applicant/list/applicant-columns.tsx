@@ -34,6 +34,7 @@ import {
   useUnarchiveApplicant,
 } from '@/hooks/applicant/use-archive';
 import { useAlert } from '@/providers/alert';
+import { useAuthStore } from '@/store/use-auth-store';
 import { useCodesStore } from '@/store/use-codes-store';
 
 export const APPLICANT_COLUMNS = (country?: string): ColumnDef<Applicant>[] => {
@@ -296,7 +297,7 @@ const ActionsCell = ({ row }: { row: Row<Applicant> }) => {
   const alert = useAlert();
   const router = useRouter();
   const t = useTranslations();
-
+  const { user } = useAuthStore();
   const { mutateAsync: deleteApplicants } = useDeleteApplicant();
   const { mutateAsync: archiveApplicants } = useArchiveApplicant();
   const { mutateAsync: unarchiveApplicants } = useUnarchiveApplicant();
@@ -320,44 +321,48 @@ const ActionsCell = ({ row }: { row: Row<Applicant> }) => {
             {t('Common.edit')}
             <Pencil className="size-4" />
           </DropdownMenuItem>
-          <DropdownMenuItem
-            onClick={async () =>
-              alert({
-                title: t('Common.delete'),
-                description: t('Common.messages.deleteDescription'),
-                onConfirm: async () =>
-                  await deleteApplicants([row.original.id]),
-                confirmText: t('Common.delete'),
-              })
-            }
-            className="flex-between"
-          >
-            {t('Common.delete')}
-            <Trash className="size-4" />
-          </DropdownMenuItem>
-          <DropdownMenuItem
-            onClick={async () =>
-              row.original.isArchived
-                ? await unarchiveApplicants([row.original.id])
-                : alert({
-                    title: t('Common.archive'),
-                    description: t('Common.messages.archiveDescription'),
+          {user?.role !== 'EDITOR' ? (
+            <Fragment>
+              <DropdownMenuItem
+                onClick={async () =>
+                  alert({
+                    title: t('Common.delete'),
+                    description: t('Common.messages.deleteDescription'),
                     onConfirm: async () =>
-                      await archiveApplicants([row.original.id]),
-                    confirmText: t('Common.archive'),
+                      await deleteApplicants([row.original.id]),
+                    confirmText: t('Common.delete'),
                   })
-            }
-            className="flex-between"
-          >
-            {row.original.isArchived
-              ? t('Common.unarchive')
-              : t('Common.archive')}
-            {row.original.isArchived ? (
-              <FolderOpenDot className="size-4" />
-            ) : (
-              <Archive className="size-4" />
-            )}
-          </DropdownMenuItem>
+                }
+                className="flex-between"
+              >
+                {t('Common.delete')}
+                <Trash className="size-4" />
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={async () =>
+                  row.original.isArchived
+                    ? await unarchiveApplicants([row.original.id])
+                    : alert({
+                        title: t('Common.archive'),
+                        description: t('Common.messages.archiveDescription'),
+                        onConfirm: async () =>
+                          await archiveApplicants([row.original.id]),
+                        confirmText: t('Common.archive'),
+                      })
+                }
+                className="flex-between"
+              >
+                {row.original.isArchived
+                  ? t('Common.unarchive')
+                  : t('Common.archive')}
+                {row.original.isArchived ? (
+                  <FolderOpenDot className="size-4" />
+                ) : (
+                  <Archive className="size-4" />
+                )}
+              </DropdownMenuItem>
+            </Fragment>
+          ) : null}
         </DropdownMenuContent>
       </DropdownMenu>
     </Fragment>

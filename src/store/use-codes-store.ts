@@ -45,8 +45,10 @@ export const useCodesStore = create<CodesStore>()(
         );
         return (
           codes?.map((item) => ({
+            id: item.id,
             value: item.code,
             label: locale === 'ru' ? item.labelRu : item.labelEn,
+            className: 'capitalize',
           })) ?? []
         );
       },

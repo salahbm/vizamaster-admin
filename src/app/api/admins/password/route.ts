@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest } from 'next/server';
 
 import { AdminPasswordDto } from '@/server/common/dto/admin.dto';
 import { UnauthorizedError, handleApiError } from '@/server/common/errors';
@@ -20,7 +20,7 @@ export const PUT = async (req: NextRequest) => {
       session.user.id,
       validatedData,
     );
-    return NextResponse.json(result);
+    return result;
   } catch (error) {
     return handleApiError(error);
   }

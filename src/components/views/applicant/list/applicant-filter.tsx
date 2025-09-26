@@ -1,6 +1,6 @@
 'use client';
 
-import { Fragment, useMemo } from 'react';
+import { Fragment } from 'react';
 
 import { RefreshCw, Search } from 'lucide-react';
 import { useLocale, useTranslations } from 'next-intl';
@@ -14,11 +14,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 
-import { mapOptions } from '@/lib/utils';
-
-import { useCodes } from '@/hooks/settings/codes';
-
-import { applicantQueries } from '../upsert/applicant.helpers';
+import { useCodesStore } from '@/store/use-codes-store';
 
 export type TApplicantFilter = {
   search: string;
@@ -68,23 +64,10 @@ const ApplicantFilter: React.FC<IApplicantFilterProps> = ({
   const t = useTranslations();
 
   // QUERIES
-  const { data: countries, isLoading: isLoadingCountries } = useCodes(
-    applicantQueries('group-countries'),
-  );
-  const { data: partners, isLoading: isLoadingPartners } = useCodes(
-    applicantQueries('group-partners'),
-  );
-  const { data: vacancies, isLoading: isLoadingVacancies } = useCodes(
-    applicantQueries('group-vacancies'),
-  );
+  const { options: countryOptions } = useCodesStore();
+  const { options: partnerOptions } = useCodesStore();
+  const { options: vacancyOptions } = useCodesStore();
 
-  const { memoCountries, memoPartners, memoVacancies } = useMemo(() => {
-    return {
-      memoCountries: mapOptions(countries?.data, locale),
-      memoPartners: mapOptions(partners?.data, locale),
-      memoVacancies: mapOptions(vacancies?.data, locale),
-    };
-  }, [countries, partners, vacancies, locale]);
   return (
     <Form {...form}>
       <form
@@ -122,12 +105,11 @@ const ApplicantFilter: React.FC<IApplicantFilterProps> = ({
                 name="country"
                 control={form.control}
                 className="shrink-0 md:w-[30rem]"
-                loading={isLoadingCountries}
                 render={({ field }) => (
                   <Combobox
                     id="country"
                     placeholder={t('Common.country')}
-                    options={memoCountries}
+                    options={countryOptions('group-countries', locale)}
                     value={field.value}
                     onChange={field.onChange}
                     onBlur={field.onBlur}
@@ -143,12 +125,11 @@ const ApplicantFilter: React.FC<IApplicantFilterProps> = ({
                 name="partner"
                 control={form.control}
                 className="shrink-0 md:w-[30rem]"
-                loading={isLoadingPartners}
                 render={({ field }) => (
                   <Combobox
                     id="partner"
                     placeholder={t('Common.partner')}
-                    options={memoPartners}
+                    options={partnerOptions('group-partners', locale)}
                     value={field.value}
                     onChange={field.onChange}
                     onBlur={field.onBlur}
@@ -166,12 +147,11 @@ const ApplicantFilter: React.FC<IApplicantFilterProps> = ({
             name="jobTitle"
             className="shrink-0 md:w-[30rem]"
             control={form.control}
-            loading={isLoadingVacancies}
             render={({ field }) => (
               <Combobox
                 id="jobTitle"
                 placeholder={t('Common.jobTitle')}
-                options={memoVacancies}
+                options={vacancyOptions('group-vacancies', locale)}
                 value={field.value}
                 onChange={field.onChange}
                 onBlur={field.onBlur}

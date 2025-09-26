@@ -582,6 +582,7 @@
     "profileUpdated": "Your profile has been updated successfully",
     "passwordChanged": "Your password has been changed successfully",
     "ok": "OK",
+    "cancel": "Cancel",
     "logout": "Logout",
     "logoutConfirmation": "Are you sure you want to log out?",
     "deleteAccount": "Delete Account",

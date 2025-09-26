@@ -42,6 +42,9 @@ export const useUpdateAdminProfile = () => {
         queryKey: QueryKeys.admin.profile,
       });
     },
+    meta: {
+      toast: false,
+    },
   });
 };
 

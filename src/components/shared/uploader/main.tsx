@@ -106,8 +106,7 @@ function Uploader({
       valueKeys.size === stateKeys.size &&
       [...valueKeys].every((key) => stateKeys.has(key));
 
-    // If the keys match and we're not in the initial render, skip processing
-    if (keysMatch && state.files.length > 0) return;
+    if (keysMatch) return;
 
     const newUploaded = value.map((f) => ({
       ...f,
