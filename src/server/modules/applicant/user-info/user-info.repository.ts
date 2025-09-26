@@ -7,16 +7,10 @@ import { ApplicantHelper } from './user-info.helper';
 
 export class ApplicantRepository {
   private readonly prismaApplicant: PrismaClient['applicant'];
-  private readonly prismaWork: PrismaClient['work'];
-  private readonly prismaFile: PrismaClient['file'];
-  private readonly prismaVisa: PrismaClient['visa'];
   private readonly applicantHelper: ApplicantHelper;
 
   constructor() {
     this.prismaApplicant = prisma.applicant;
-    this.prismaWork = prisma.work;
-    this.prismaFile = prisma.file;
-    this.prismaVisa = prisma.visa;
     this.applicantHelper = new ApplicantHelper();
   }
 
@@ -115,6 +109,43 @@ export class ApplicantRepository {
     return await this.prismaApplicant.updateMany({
       where: { id: { in: ids } },
       data: { isArchived: false },
+    });
+  }
+
+  // ───────────────── GET APPLICANT CSV ────────────────── //
+  async getApplicantCsv(id: string) {
+    return await this.prismaApplicant.findUnique({
+      where: { id },
+      include: { work: true, visa: true, files: true },
+    });
+  }
+
+  async findAllApplicantsForXml() {
+    return this.prismaApplicant.findMany({
+      where: { isArchived: false }, // Optional: Exclude archived applicants for active data
+      include: {
+        visa: {
+          select: {
+            status: true,
+            issueDate: true,
+            departureDate: true,
+            arrived: true,
+            arrivalDate: true,
+            returnedDate: true,
+          },
+        },
+        work: {
+          select: {
+            jobTitle: true,
+            company: true,
+            startDate: true,
+            endDate: true,
+            responsibilities: true,
+            achievements: true,
+            location: true,
+          },
+        },
+      },
     });
   }
 }

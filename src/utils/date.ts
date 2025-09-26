@@ -17,11 +17,13 @@ const dateLocales: Record<SupportedLocale, Locale> = {
  * @returns The formatted date string
  */
 export function formatDate(
-  date: Date | number,
-  formatStr: string,
+  date?: Date | number,
+  formatStr?: string,
   locale?: SupportedLocale,
 ): string {
-  return format(date, formatStr, { locale: dateLocales[locale ?? 'ru'] });
+  return format(date ?? '', formatStr ?? 'yyyy-MM-dd', {
+    locale: dateLocales[locale ?? 'ru'],
+  });
 }
 
 /**

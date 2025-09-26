@@ -1,7 +1,7 @@
 {
   "Metadata": {
-    "title": "Welcome to Vizamaster Admin",
-    "description": "This is the admin panel for Vizamaster"
+    "title": "Welcome to Viza Master Admin",
+    "description": "This is the admin panel for Viza Master"
   },
   "Header": {
     "language": "Language",
@@ -132,6 +132,7 @@
     "all": "All",
     "download": "Download",
     "files": "Files",
+    "audits": "Audits",
     "statuses": {
       "new": "New",
       "inProgress": "In Progress",
@@ -194,7 +195,7 @@
     },
     "signUp": {
       "title": "Create an account",
-      "subtitle": "Sign up to get started with VizaMaster",
+      "subtitle": "Sign up to get started with Viza Master",
       "usernameLabel": "Username",
       "usernamePlaceholder": "Enter your username",
       "emailLabel": "Email",
@@ -491,6 +492,14 @@
     "validation": {
       "required": "This field is required",
       "invalid_email": "Please enter a valid email address"
+    },
+    "audit": {
+      "information": "Information",
+      "created": "Created",
+      "lastUpdated": "Last Updated",
+      "status": "Status",
+      "by": "Updated By",
+      "at": "Updated At"
     }
   },
   "sidebar": {

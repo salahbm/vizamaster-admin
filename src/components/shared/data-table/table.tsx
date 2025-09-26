@@ -17,6 +17,9 @@ import {
 import { getCommonPinningStyles } from '@/lib/data-table-func';
 import { cn } from '@/lib/utils';
 
+import { downloadCsv } from '@/utils/helpers';
+
+import { useGetCsv } from '@/hooks/csv';
 import { DataTableProps } from '@/types/data-table';
 
 import { Excel } from '../icons';
@@ -38,6 +41,8 @@ export function DataTable<TData>({
   children,
 }: DataTableProps<TData>) {
   const t = useTranslations();
+
+  const { mutateAsync: download, isPending } = useGetCsv();
 
   if (isLoading)
     return (
@@ -63,6 +68,12 @@ export function DataTable<TData>({
               role="button"
               variant="ghost"
               size="sm"
+              disabled={isPending}
+              onClick={async () =>
+                await download(undefined).then((res) =>
+                  downloadCsv((res as { data: string })?.data),
+                )
+              }
             >
               <Excel className="size-4" />
               {t('Common.download')}

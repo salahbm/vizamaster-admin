@@ -8,6 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 import { useApplicantDetail } from '@/hooks/applicant';
 
+import ApplicantAudits from './applicant-audits';
 import ApplicantFiles from './user-files';
 import ApplicantUserInfo from './user-info';
 import ApplicantVisaInfo from './visa-info';
@@ -75,6 +76,13 @@ export const UpsertApplicant: React.FC<IUpsertApplicantProps> = ({
           >
             {t('Common.comments')}
           </TabsTrigger>
+          <TabsTrigger
+            value="audits"
+            variant="outline"
+            className="w-32 max-w-fit"
+          >
+            {t('Common.audits')}
+          </TabsTrigger>
         </TabsList>
       )}
       <TabsContent value="user-info">
@@ -111,6 +119,9 @@ export const UpsertApplicant: React.FC<IUpsertApplicantProps> = ({
           files={applicant?.files}
           isLoading={isLoading}
         />
+      </TabsContent>
+      <TabsContent value="audits">
+        <ApplicantAudits applicant={applicant} isLoading={isLoading} />
       </TabsContent>
     </Tabs>
   );
