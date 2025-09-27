@@ -226,7 +226,7 @@ const AlertContent: React.FC<IAlertContent> = memo(
               <AlertDialogDescription
                 id="alert-dialog-description"
                 {...alertDialogDescription}
-                className="mt-1"
+                className="mt-1 text-center"
               >
                 {description ?? title}
               </AlertDialogDescription>

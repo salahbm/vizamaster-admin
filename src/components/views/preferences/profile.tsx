@@ -116,7 +116,7 @@ const Profile = () => {
     alert({
       title: t('deleteAccount'),
       description: t('deleteAccountConfirmation'),
-      onConfirm: () => deleteAdmin(user?.id!),
+      onConfirm: async () => await deleteAdmin(user?.id!).then(() => logout()),
       confirmText: t('delete'),
       cancelText: t('cancel'),
     });
