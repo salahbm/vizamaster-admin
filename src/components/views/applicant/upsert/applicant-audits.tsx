@@ -45,7 +45,7 @@ const ApplicantAudits: React.FC<ApplicantAuditsProps> = ({
   const { mutateAsync: getSingleCsv, isPending: isPendingGetSingleCsv } =
     useGetSingleCsv();
 
-  if (isLoading || !applicant) return <FormSkeleton />;
+  if (isLoading) return <FormSkeleton />;
 
   return (
     <div className="space-y-6">
