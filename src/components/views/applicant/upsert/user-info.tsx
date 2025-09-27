@@ -74,7 +74,8 @@ const ApplicantUserInfo: React.FC<IApplicantUserInfoProps> = ({
       });
   }, [applicant, form]);
 
-  if (isLoading || isPendingUpdateApplicant) return <FormSkeleton />;
+  if (isLoading || isPendingUpdateApplicant || !applicant)
+    return <FormSkeleton />;
 
   const onSubmit = (data: TApplicantDto) => {
     if (id) {

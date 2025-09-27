@@ -133,6 +133,7 @@
     "download": "Download",
     "files": "Files",
     "audits": "Audits",
+    "alerts": "Alerts",
     "statuses": {
       "new": "New",
       "inProgress": "In Progress",
@@ -271,7 +272,14 @@
       "createTitle": "Create Applicant",
       "createDescription": "Create a new applicant ",
       "editTitle": "Edit Applicant",
-      "editDescription": "Edit an existing applicant "
+      "editDescription": "Edit applicant information"
+    },
+    "comments": {
+      "title": "Comments",
+      "placeholder": "Type your comment...",
+      "loading": "Loading comments...",
+      "noComments": "No comments yet",
+      "submit": "Send"
     },
     "columns": {
       "userId": "User ID",

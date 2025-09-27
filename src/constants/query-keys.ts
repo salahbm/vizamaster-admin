@@ -13,6 +13,9 @@ export const QueryKeys = {
     files: ['applicants', 'files'],
     visa: ['applicants', 'visa'],
   },
+  alerts: {
+    unread: ['alerts', 'unread'],
+  },
 
   settings: {
     sidebar: {

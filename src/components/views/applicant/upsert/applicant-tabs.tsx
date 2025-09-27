@@ -3,12 +3,12 @@
 import { useTranslations } from 'next-intl';
 import { parseAsString, useQueryState } from 'nuqs';
 
-import { Empty } from '@/components/shared/icons';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 import { useApplicantDetail } from '@/hooks/applicant';
 
 import ApplicantAudits from './applicant-audits';
+import ApplicantComments from './applicant-comments';
 import ApplicantFiles from './user-files';
 import ApplicantUserInfo from './user-info';
 import ApplicantVisaInfo from './visa-info';
@@ -39,47 +39,47 @@ export const UpsertApplicant: React.FC<IUpsertApplicantProps> = ({
       {id && (
         <TabsList
           variant="outline"
-          className="no-scrollbar mb-10 justify-start overflow-x-auto"
+          className="no-scrollbar mb-10 flex items-center justify-start overflow-x-auto"
         >
           <TabsTrigger
             value="user-info"
             variant="outline"
-            className="w-32 max-w-fit"
+            className="w-auto lg:max-w-fit lg:min-w-32"
           >
             {t('Common.userInfo')}
           </TabsTrigger>
           <TabsTrigger
             value="professional-info"
             variant="outline"
-            className="w-32 max-w-fit"
+            className="w-auto lg:max-w-fit lg:min-w-32"
           >
             {t('Common.professionalInfo')}
           </TabsTrigger>
           <TabsTrigger
             value="visa-info"
             variant="outline"
-            className="w-32 max-w-fit"
+            className="w-auto lg:max-w-fit lg:min-w-32"
           >
             {t('Common.visaInfo')}
           </TabsTrigger>
           <TabsTrigger
             value="files"
             variant="outline"
-            className="w-32 max-w-fit"
+            className="w-auto lg:max-w-fit lg:min-w-32"
           >
             {t('Common.files')}
           </TabsTrigger>
           <TabsTrigger
             value="comments"
             variant="outline"
-            className="w-32 max-w-fit"
+            className="w-auto lg:max-w-fit lg:min-w-32"
           >
             {t('Common.comments')}
           </TabsTrigger>
           <TabsTrigger
             value="audits"
             variant="outline"
-            className="w-32 max-w-fit"
+            className="w-auto lg:max-w-fit lg:min-w-32"
           >
             {t('Common.audits')}
           </TabsTrigger>
@@ -108,10 +108,7 @@ export const UpsertApplicant: React.FC<IUpsertApplicantProps> = ({
         />
       </TabsContent>
       <TabsContent value="comments">
-        <div className="flex-center h-[calc(100vh-10rem)] flex-col gap-4">
-          <Empty className="mx-auto h-[250px] w-[250px]" />
-          <h1 className="font-header text-center">{t('Common.noData')}</h1>
-        </div>
+        <ApplicantComments id={id} />
       </TabsContent>
       <TabsContent value="files">
         <ApplicantFiles

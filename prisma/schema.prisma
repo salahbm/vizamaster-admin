@@ -24,6 +24,8 @@ model Users {
   accountss     Accounts[]
   role          UserRole   @default(EDITOR)
   sidebar       SidebarUser[]
+  comments      Comment[]
+  alerts        Alert[]
   active        Boolean    @default(false)
 
 
@@ -168,6 +170,7 @@ model Applicant {
   work                Work[]
   visa                Visa[]
   files               File[]
+  comments            Comment[]
 
   // Audit
   createdBy           String   @default("System") // Ideally set to user ID
@@ -250,6 +253,54 @@ model File {
   @@index([fileType])
 }
 
+// COMMENTS
+model Comment {
+  id          String    @id @default(cuid())
+  content     String    // The comment text
+  applicantId String    @map("applicant_id")
+  applicant   Applicant @relation(fields: [applicantId], references: [id], onDelete: Cascade)
+  
+  // Who created the comment
+  authorId    String    @map("author_id")
+  author      Users     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  
+  // Timestamps
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  
+  // Related alerts
+  alerts      Alert[]
+
+  @@map("comments")
+  @@index([applicantId])
+  @@index([authorId])
+}
+
+// Alerts model for unread notifications
+model Alert {
+  id          String    @id @default(cuid())
+  
+  // The comment that triggered this alert
+  commentId   String    @map("comment_id")
+  comment     Comment   @relation(fields: [commentId], references: [id], onDelete: Cascade)
+  
+  // The user who should see this alert
+  userId      String    @map("user_id")
+  user        Users     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  // Alert status
+  isRead      Boolean   @default(false) @map("is_read")
+  
+  // Timestamps
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@map("alerts")
+  @@index([commentId])
+  @@index([userId])
+  @@index([isRead])
+  @@unique([commentId, userId]) // Each comment creates only one alert per user
+}
 
 // ENUMS
 

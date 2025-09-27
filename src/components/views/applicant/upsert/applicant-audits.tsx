@@ -114,7 +114,7 @@ const ApplicantAudits: React.FC<ApplicantAuditsProps> = ({
         </div>
       </div>
 
-      <div className="flex justify-between gap-4 border-t border-gray-200 pt-4">
+      <div className="lex flex-wrap justify-between gap-4 border-t pt-4">
         <Button
           variant="outline"
           className="w-36"
@@ -133,7 +133,7 @@ const ApplicantAudits: React.FC<ApplicantAuditsProps> = ({
           <div className="flex gap-2">
             <Button
               variant="outline"
-              className="w-36"
+              className="px-4"
               disabled={isPendingArchive || isPendingUnarchive}
               onClick={async () =>
                 applicant?.isArchived
