@@ -139,19 +139,19 @@
   }
 
   .filter-box {
-    @apply flex min-h-10 w-full items-center justify-normal gap-5;
+    @apply flex min-h-10 w-full items-center justify-start gap-5;
   }
 
   .card {
-    @apply bg-card text-card-foreground rounded lg:border lg:p-4 lg:shadow-sm;
+    @apply bg-card text-card-foreground rounded p-2 lg:border lg:p-4 lg:shadow-sm;
   }
 
   .card-md {
-    @apply bg-card text-card-foreground rounded-md lg:border lg:p-4 lg:shadow-md;
+    @apply bg-card text-card-foreground rounded-md p-2 lg:border lg:p-4 lg:shadow-md;
   }
 
   .card-lg {
-    @apply bg-card text-card-foreground rounded-lg lg:border lg:p-4 lg:shadow-lg;
+    @apply bg-card text-card-foreground rounded-lg p-2 lg:border lg:p-4 lg:shadow-lg;
   }
 
   .create-btn {

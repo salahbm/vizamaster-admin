@@ -23,7 +23,7 @@ const DashboardView: React.FC = () => {
     to: new Date(),
   });
   return (
-    <div className="space-y-12 pb-8 sm:space-y-12">
+    <div className="space-y-12 overflow-x-hidden pb-8 sm:space-y-12">
       <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
         <div className="ml-2 text-left sm:ml-4">
           <h2 className="font-header text-2xl sm:text-3xl">

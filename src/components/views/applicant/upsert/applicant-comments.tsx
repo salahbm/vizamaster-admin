@@ -88,7 +88,7 @@ export default function ApplicantComments({ id }: ApplicantCommentsProps) {
       </div>
 
       {/* New comment form */}
-      <form onSubmit={handleSubmit} className="flex gap-2">
+      <form onSubmit={handleSubmit} className="flex gap-2" id="">
         <Textarea
           placeholder={t('applicant.comments.placeholder')}
           value={newComment}

@@ -71,7 +71,7 @@ const ApplicantFilter: React.FC<IApplicantFilterProps> = ({
   return (
     <Form {...form}>
       <form
-        className="card my-5 space-y-6 md:my-10"
+        className="card my-5 w-full space-y-6 overflow-hidden md:my-10"
         onSubmit={form.handleSubmit(onSubmit)}
       >
         <fieldset className="filter-box">
@@ -81,7 +81,7 @@ const ApplicantFilter: React.FC<IApplicantFilterProps> = ({
           <FormFields
             name="search"
             control={form.control}
-            className="shrink-0 md:w-[30rem]"
+            className="w-full md:max-w-[30rem]"
             render={({ field }) => (
               <Input
                 id="search"
@@ -104,7 +104,7 @@ const ApplicantFilter: React.FC<IApplicantFilterProps> = ({
               <FormFields
                 name="country"
                 control={form.control}
-                className="shrink-0 md:w-[30rem]"
+                className="w-full md:max-w-[30rem]"
                 render={({ field }) => (
                   <Combobox
                     id="country"
@@ -124,7 +124,7 @@ const ApplicantFilter: React.FC<IApplicantFilterProps> = ({
               <FormFields
                 name="partner"
                 control={form.control}
-                className="shrink-0 md:w-[30rem]"
+                className="w-full md:max-w-[30rem]"
                 render={({ field }) => (
                   <Combobox
                     id="partner"
@@ -145,7 +145,7 @@ const ApplicantFilter: React.FC<IApplicantFilterProps> = ({
           </label>
           <FormFields
             name="jobTitle"
-            className="shrink-0 md:w-[30rem]"
+            className="w-full md:max-w-[30rem]"
             control={form.control}
             render={({ field }) => (
               <Combobox

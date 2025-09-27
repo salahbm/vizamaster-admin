@@ -45,7 +45,7 @@ const ApplicantAudits: React.FC<ApplicantAuditsProps> = ({
   const { mutateAsync: getSingleCsv, isPending: isPendingGetSingleCsv } =
     useGetSingleCsv();
 
-  if (isLoading) return <FormSkeleton />;
+  if (isLoading || !applicant) return <FormSkeleton />;
 
   return (
     <div className="space-y-6">
@@ -114,7 +114,7 @@ const ApplicantAudits: React.FC<ApplicantAuditsProps> = ({
         </div>
       </div>
 
-      <div className="lex flex-wrap justify-between gap-4 border-t pt-4">
+      <div className="border- flex flex-wrap justify-between gap-4 border-t pt-4">
         <Button
           variant="outline"
           className="w-36"
