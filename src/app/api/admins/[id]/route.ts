@@ -30,8 +30,9 @@ export async function DELETE(
   const { id } = await params;
 
   try {
-    const deletedUser = await authService.deleteUser(id);
-    return NextResponse.json(deletedUser);
+    const result = await authService.deleteUser(id);
+    // The result should now always be defined since we're throwing errors in the service
+    return NextResponse.json(result);
   } catch (error) {
     return handleApiError(error);
   }

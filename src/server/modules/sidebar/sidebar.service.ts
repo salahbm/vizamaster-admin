@@ -80,26 +80,34 @@ class SidebarService {
   }
 
   async getUserSidebars(userId: string) {
-    const sidebars = await this.repository.getUserSidebars(userId);
+    try {
+      const sidebars = await this.repository.getUserSidebars(userId);
 
-    if (!sidebars || !Array.isArray(sidebars)) {
-      throw this.notFoundError;
+      if (!sidebars || !Array.isArray(sidebars)) {
+        throw this.notFoundError;
+      }
+
+      const mappedSidebars = sidebars.map((sidebar) => {
+        return {
+          id: sidebar.sidebarItem.id,
+          labelEn: sidebar.sidebarItem.labelEn,
+          labelRu: sidebar.sidebarItem.labelRu,
+          href: sidebar.sidebarItem.href
+            ? sidebar.sidebarItem.href?.trim()
+            : '',
+          icon: sidebar.sidebarItem.icon
+            ? sidebar.sidebarItem.icon?.trim()
+            : '',
+          parentId: sidebar.sidebarItem.parentId,
+          order: Number(sidebar.sidebarItem.order),
+        };
+      });
+
+      // Ensure we're returning an array of sidebar items
+      return createResponse(mappedSidebars);
+    } catch (error) {
+      throw handlePrismaError(error);
     }
-
-    const mappedSidebars = sidebars.map((sidebar) => {
-      return {
-        id: sidebar.sidebarItem.id,
-        labelEn: sidebar.sidebarItem.labelEn,
-        labelRu: sidebar.sidebarItem.labelRu,
-        href: sidebar.sidebarItem.href ? sidebar.sidebarItem.href?.trim() : '',
-        icon: sidebar.sidebarItem.icon ? sidebar.sidebarItem.icon?.trim() : '',
-        parentId: sidebar.sidebarItem.parentId,
-        order: Number(sidebar.sidebarItem.order),
-      };
-    });
-
-    // Ensure we're returning an array of sidebar items
-    return createResponse(mappedSidebars);
   }
 
   // Update admin sidebars
@@ -142,7 +150,7 @@ class SidebarService {
       }
 
       // Handle other Prisma errors
-      handlePrismaError(error);
+      throw handlePrismaError(error);
     }
   }
 }

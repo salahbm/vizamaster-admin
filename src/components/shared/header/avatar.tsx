@@ -10,14 +10,18 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 
 import { useLogout } from '@/hooks/auth/use-logout';
+import { useAuthStore } from '@/store/use-auth-store';
 
 const Avatar = () => {
   const router = useRouter();
   const t = useTranslations('Common');
+  const { user } = useAuthStore();
   const { mutateAsync: logout } = useLogout();
 
   return (
@@ -29,6 +33,8 @@ const Avatar = () => {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" forceMount className="w-40">
+        <DropdownMenuLabel>{user?.name}</DropdownMenuLabel>
+        <DropdownMenuSeparator />
         <DropdownMenuItem onClick={() => router.push('/settings/preferences')}>
           <button type="button">{t('profile')}</button>
         </DropdownMenuItem>

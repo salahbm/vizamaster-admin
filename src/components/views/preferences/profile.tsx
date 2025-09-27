@@ -6,20 +6,15 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Loader2, LogOut, Save, Trash2, User } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useForm } from 'react-hook-form';
-import { z } from 'zod';
 
 import { FormFields } from '@/components/shared/form-fields';
 import { Button } from '@/components/ui/button';
 import { Form } from '@/components/ui/form';
-import { Input, PasswordInput } from '@/components/ui/input';
+import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
-import {
-  useDeleteAdmin,
-  useUpdateAdminPassword,
-  useUpdateAdminProfile,
-} from '@/hooks/admins';
+import { useDeleteAdmin, useUpdateAdminProfile } from '@/hooks/admins';
 import { useLogout } from '@/hooks/auth/use-logout';
 import { useAlert } from '@/providers/alert';
 import {
@@ -28,24 +23,24 @@ import {
 } from '@/server/common/dto/admin.dto';
 import { useAuthStore } from '@/store/use-auth-store';
 
-const passwordFormSchema = z
-  .object({
-    currentPassword: z
-      .string()
-      .min(8, { message: 'Password must be at least 8 characters' }),
-    newPassword: z
-      .string()
-      .min(8, { message: 'Password must be at least 8 characters' }),
-    confirmPassword: z
-      .string()
-      .min(8, { message: 'Password must be at least 8 characters' }),
-  })
-  .refine((data) => data.newPassword === data.confirmPassword, {
-    message: "Passwords don't match",
-    path: ['confirmPassword'],
-  });
+// const passwordFormSchema = z
+//   .object({
+//     currentPassword: z
+//       .string()
+//       .min(8, { message: 'Password must be at least 8 characters' }),
+//     newPassword: z
+//       .string()
+//       .min(8, { message: 'Password must be at least 8 characters' }),
+//     confirmPassword: z
+//       .string()
+//       .min(8, { message: 'Password must be at least 8 characters' }),
+//   })
+//   .refine((data) => data.newPassword === data.confirmPassword, {
+//     message: "Passwords don't match",
+//     path: ['confirmPassword'],
+//   });
 
-type PasswordFormValues = z.infer<typeof passwordFormSchema>;
+// type PasswordFormValues = z.infer<typeof passwordFormSchema>;
 
 const Profile = () => {
   const t = useTranslations('preferences');
@@ -54,8 +49,8 @@ const Profile = () => {
 
   const { mutate: updateProfile, isPending: isUpdating } =
     useUpdateAdminProfile();
-  const { mutate: updatePassword, isPending: isUpdatingPassword } =
-    useUpdateAdminPassword();
+  // const { mutate: updatePassword, isPending: isUpdatingPassword } =
+  //   useUpdateAdminPassword();
   const { mutate: logout } = useLogout();
   const { mutateAsync: deleteAdmin } = useDeleteAdmin();
 
@@ -69,14 +64,14 @@ const Profile = () => {
   });
 
   // Password form
-  const passwordForm = useForm<PasswordFormValues>({
-    resolver: zodResolver(passwordFormSchema),
-    defaultValues: {
-      currentPassword: '',
-      newPassword: '',
-      confirmPassword: '',
-    },
-  });
+  // const passwordForm = useForm<PasswordFormValues>({
+  //   resolver: zodResolver(passwordFormSchema),
+  //   defaultValues: {
+  //     currentPassword: '',
+  //     newPassword: '',
+  //     confirmPassword: '',
+  //   },
+  // });
 
   // Form submission handlers
 
@@ -93,19 +88,19 @@ const Profile = () => {
     });
   };
 
-  const onPasswordSubmit = async (data: PasswordFormValues) => {
-    updatePassword(data, {
-      onSuccess: () => {
-        alert({
-          title: t('success'),
-          description: t('passwordChanged'),
-          confirmText: t('ok'),
-          cancelButton: null,
-        });
-        passwordForm.reset();
-      },
-    });
-  };
+  // const onPasswordSubmit = async (data: PasswordFormValues) => {
+  //   updatePassword(data, {
+  //     onSuccess: () => {
+  //       alert({
+  //         title: t('success'),
+  //         description: t('passwordChanged'),
+  //         confirmText: t('ok'),
+  //         cancelButton: null,
+  //       });
+  //       passwordForm.reset();
+  //     },
+  //   });
+  // };
 
   const handleLogout = () => {
     alert({
@@ -202,6 +197,7 @@ const Profile = () => {
                       render={({ field }) => (
                         <Input
                           placeholder={t('email')}
+                          disabled
                           type="email"
                           {...field}
                         />
@@ -229,7 +225,7 @@ const Profile = () => {
 
           {/* Security Tab */}
           <TabsContent value="security">
-            <div className="card-md from-card to-card/95 bg-gradient-to-br">
+            {/* <div className="card-md from-card to-card/95 bg-gradient-to-br">
               <div className="mb-6">
                 <h3 className="font-header text-lg">{t('changePassword')}</h3>
                 <p className="text-muted-foreground text-sm">
@@ -278,11 +274,11 @@ const Profile = () => {
                   </form>
                 </Form>
               </div>
-            </div>
+            </div> */}
 
             <Separator className="my-6" />
 
-            <div className="card-md border-destructive from-destructive/5 to-destructive/10 bg-gradient-to-br">
+            <div className="border-destructive from-destructive/5 to-destructive/10 rounded-md border bg-gradient-to-br p-4">
               <div className="mb-6">
                 <h3 className="font-header text-destructive text-lg">
                   {t('dangerZone')}

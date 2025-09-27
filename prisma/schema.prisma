@@ -28,7 +28,6 @@ model Users {
 
 
   @@unique([email])
-  @@index([role])
   @@index([active])
   @@map("users")    
 }

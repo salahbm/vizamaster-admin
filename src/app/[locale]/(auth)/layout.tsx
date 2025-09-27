@@ -2,6 +2,8 @@ import { Fragment } from 'react';
 
 import { Viewport } from 'next';
 
+import HeaderLogin from '@/components/shared/header/login-header';
+
 export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
@@ -16,5 +18,10 @@ export default function AuthLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return <Fragment>{children}</Fragment>;
+  return (
+    <Fragment>
+      <HeaderLogin />
+      {children}
+    </Fragment>
+  );
 }

@@ -16,7 +16,7 @@ export class VisaService {
       const res = await this.visaRepository.update(visaData, applicantId);
       return createResponse(res);
     } catch (error) {
-      handlePrismaError(error);
+      throw handlePrismaError(error);
     }
   }
 
@@ -25,7 +25,7 @@ export class VisaService {
       const visa = await this.visaRepository.findOne(applicantId);
       return createResponse(visa);
     } catch (error) {
-      handlePrismaError(error);
+      throw handlePrismaError(error);
     }
   }
 
@@ -34,7 +34,7 @@ export class VisaService {
       const visa = await this.visaRepository.delete(applicantId);
       return createResponse(visa);
     } catch (error) {
-      handlePrismaError(error);
+      throw handlePrismaError(error);
     }
   }
 }

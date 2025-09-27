@@ -82,7 +82,7 @@ class FilesService {
         },
       });
     } catch (error) {
-      handlePrismaError(error);
+      throw handlePrismaError(error);
     }
   }
 
@@ -101,8 +101,12 @@ class FilesService {
    * Delete a file from R2
    */
   async deleteFileFromR2(fileKeys: string[]) {
-    await this.fileRepository.deleteFileFromR2(fileKeys);
-    return createResponse(true);
+    try {
+      await this.fileRepository.deleteFileFromR2(fileKeys);
+      return createResponse(true);
+    } catch (error) {
+      throw handlePrismaError(error);
+    }
   }
 }
 

@@ -104,6 +104,15 @@ export class AuthRepository {
     return this.prisma.users.delete({ where: { id } });
   }
 
+  // DELETE FROM ACCOUNTS
+  async deleteAccount(userId: string) {
+    const deletedAccount = await this.prisma.accounts.deleteMany({
+      where: { userId },
+    });
+
+    return deletedAccount; // Returns { count: number } indicating how many accounts were deleted
+  }
+
   updateProfile(id: string, data: TAdminProfileDto) {
     return this.prisma.users.update({
       where: { id },

@@ -80,7 +80,7 @@ export class ApplicantService {
       });
       return createResponse(csv);
     } catch (error) {
-      handlePrismaError(error);
+      throw handlePrismaError(error);
     }
   }
   async getAllApplicantsCsv() {
@@ -124,7 +124,7 @@ export class ApplicantService {
 
       return createResponse(csv);
     } catch (error) {
-      handlePrismaError(error);
+      throw handlePrismaError(error);
     }
   }
 }
