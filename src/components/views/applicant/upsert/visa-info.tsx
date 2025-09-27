@@ -53,7 +53,7 @@ const ApplicantVisaInfo: React.FC<IApplicantVisaInfoProps> = ({
     if (visa?.[0] && !isLoading) form.reset(applicantVisaMapper(visa[0]));
   }, [visa, isLoading, form]);
 
-  if (isLoading || !id) return <FormSkeleton />;
+  if (isLoading) return <FormSkeleton />;
 
   const onSubmit = (data: TVisaDto) => updateVisa(data);
 
