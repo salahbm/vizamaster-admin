@@ -12,9 +12,9 @@ export default async function ProtectedLayout({
   return (
     <Suspense fallback={<Loader />}>
       <Header />
-      <div className="flex flex-1 overflow-hidden">
+      <div className="flex flex-1">
         <Sidebar />
-        <div className="h-[calc(100vh-4rem)] w-full overflow-y-auto">
+        <div className="h-[calc(100svh-4rem)] w-full flex-1 overflow-y-auto">
           <main className="px-4 py-6 md:px-6">{children}</main>
         </div>
       </div>

@@ -134,6 +134,7 @@
     "files": "Files",
     "audits": "Audits",
     "alerts": "Alerts",
+    "total": "Total Applicants",
     "statuses": {
       "new": "New",
       "inProgress": "In Progress",
@@ -279,7 +280,9 @@
       "placeholder": "Type your comment...",
       "loading": "Loading comments...",
       "noComments": "No comments yet",
-      "submit": "Send"
+      "submit": "Send",
+      "fetchError": "Failed to fetch comments. Please try again.",
+      "createError": "Failed to create comment. Please try again."
     },
     "columns": {
       "userId": "User ID",

@@ -6,13 +6,14 @@ export const QueryKeys = {
     all: ['admins'],
     details: ['admins', 'details'],
   },
-
   applicants: {
     all: ['applicants'],
     details: ['applicants', 'details'],
     files: ['applicants', 'files'],
     visa: ['applicants', 'visa'],
+    comments: ['applicants', 'comments'],
   },
+
   alerts: {
     unread: ['alerts', 'unread'],
   },

@@ -23,6 +23,18 @@ export function createResponse<T>(
   };
 }
 
+export function createInfinityResponse<T>(
+  data: T[],
+  nextCursor: string | null,
+  hasMore: boolean,
+) {
+  return {
+    data,
+    nextCursor,
+    hasMore,
+  };
+}
+
 /**
  * Builds pagination parameters for database queries
  */

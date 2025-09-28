@@ -27,6 +27,12 @@ export type TResponse<T> = {
   data?: T;
 };
 
+export type TInfinityResponse<T> = {
+  data: T[];
+  nextCursor: string | null;
+  hasMore: boolean;
+};
+
 type ErrorTypes = Partial<
   Record<
     keyof typeof authClient.$ERROR_CODES,

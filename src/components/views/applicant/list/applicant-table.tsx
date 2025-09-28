@@ -8,7 +8,7 @@ import * as nuqs from 'nuqs';
 import { useQueryState } from 'nuqs';
 import { useForm } from 'react-hook-form';
 
-import { DataTable } from '@/components/shared/data-table';
+import { DataTable, TableAudit } from '@/components/shared/data-table';
 import { DataTableSkeleton } from '@/components/skeletons/data-table-skeleton';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -188,6 +188,7 @@ export const ApplicantTable = ({
         handleReset={handleReset}
         country={country}
       />
+      <TableAudit meta={applicants?.meta!} t={t} />
       <DataTable table={table} isLoading={isLoading || isFetching}>
         {table.getFilteredSelectedRowModel()?.rows?.length > 0 && (
           <div className="flex gap-2">

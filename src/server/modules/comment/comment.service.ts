@@ -1,5 +1,5 @@
 import { handlePrismaError } from '@/server/common/errors';
-import { createResponse } from '@/server/common/utils';
+import { createInfinityResponse, createResponse } from '@/server/common/utils';
 
 import { commentRepository } from './comment.repository';
 
@@ -18,11 +18,11 @@ export class CommentService {
         cursor,
       );
 
-      return createResponse({
-        comments: result.comments,
-        nextCursor: result.nextCursor,
-        hasMore: result.hasMore,
-      });
+      return createInfinityResponse(
+        result.comments,
+        result.nextCursor,
+        result.hasMore,
+      );
     } catch (error) {
       throw handlePrismaError(error);
     }

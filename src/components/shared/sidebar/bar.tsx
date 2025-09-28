@@ -97,7 +97,7 @@ const SidebarNav: FC = () => {
 
   const navItemClasses = (isActive: boolean) =>
     cn(
-      'flex items-center capitalize gap-2 rounded px-4 py-3 w-full duration-300 cursor-pointer transition-colors truncate hover:bg-accent hover:text-sidebar-accent-foreground',
+      'flex items-center gap-2 rounded px-4 py-3 w-full duration-300 cursor-pointer transition-colors truncate hover:bg-accent hover:text-sidebar-accent-foreground',
       isActive
         ? 'bg-sidebar-primary/10 text-sidebar-primary font-medium hover:bg-sidebar-primary/20'
         : 'text-sidebar-foreground',
@@ -136,7 +136,7 @@ const SidebarNav: FC = () => {
                     )}
                     title={item.label}
                   >
-                    <span className="flex items-center gap-2">
+                    <span className="flex items-center gap-2 capitalize">
                       <DynamicIcon
                         name={item.icon}
                         className="size-5 text-current"
