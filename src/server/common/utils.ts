@@ -138,14 +138,23 @@ export const getErrorMessage = (code: string, lang: 'en' | 'ru') => {
 };
 
 /**
- * Generate 6 character string containing numbers and letters for userId
+ * Generate random user id
+ * @returns random user id  2 letters and 4 digits
  */
 export const generateUserId = () => {
-  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-  let userId = '';
-  for (let i = 0; i < 6; i++) {
-    const randomIndex = Math.floor(Math.random() * characters.length);
-    userId += characters.charAt(randomIndex);
-  }
-  return userId;
+  const randBytes = (n: number) => {
+    const buf = new Uint8Array(n);
+    if (typeof crypto !== 'undefined' && crypto.getRandomValues)
+      crypto.getRandomValues(buf);
+    else for (let i = 0; i < n; i++) buf[i] = Math.floor(Math.random() * 256);
+    return buf;
+  };
+
+  const letters = Array.from(randBytes(2))
+    .map((b) => String.fromCharCode(65 + (b % 26)))
+    .join('');
+  const digits = Array.from(randBytes(4))
+    .map((b) => String.fromCharCode(48 + (b % 10)))
+    .join('');
+  return letters + digits;
 };

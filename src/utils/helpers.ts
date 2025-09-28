@@ -20,3 +20,23 @@ export const downloadCsv = (data: string) => {
   link.click();
   URL.revokeObjectURL(url);
 };
+
+/**
+ * Formats a passport number by removing non-alphanumeric characters
+ * @param passportNumber The passport number to format
+ * @returns The formatted passport number only numbers and english letters
+ */
+export const formatPassportNumber = (passportNumber: string) => {
+  const formatted = passportNumber.replace(/[^A-Z0-9]/g, '');
+  return formatted;
+};
+
+/**
+ * Formats a name by removing non-alphabetic characters
+ * @param name The name to format
+ * @returns The formatted name only letters and spaces
+ */
+export const formatName = (name: string) => {
+  const formatted = name.replace(/[^A-Za-z ]/g, '');
+  return formatted;
+};

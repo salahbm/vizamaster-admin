@@ -55,14 +55,43 @@ export const getCountries = (): Array<{ value: string; label: string }> => {
     .sort((a, b) => a.label.localeCompare(b.label));
 };
 
-export const getLanguages = (): Array<{ value: string; label: string }> => {
+/**
+ * Returns a list of languages with their ISO codes and localized names
+ * @returns array of languages
+ */
+export const getLanguages = (): Array<{
+  value: string;
+  label: string;
+  className?: string;
+}> => {
   const getLocale = Cookies.get(COOKIE_KEYS.LANGUAGE) ?? 'ru';
 
-  return Object.keys(i18nLanguages.getNames(getLocale)) // all codes
-    .map((code) => ({
-      value: code,
-      label: i18nLanguages.getName(code, getLocale) ?? code,
-      className: 'capitalize',
-    }))
-    .sort((a, b) => a.label.localeCompare(b.label));
+  // manually chosen 15 languages (adjust if you want different ones)
+  const manualTop15 = [
+    'en',
+    'zh',
+    'es',
+    'ar',
+    'fr',
+    'ru',
+    'pt',
+    'bn',
+    'id',
+    'ur',
+    'de',
+    'ja',
+    'pa',
+  ];
+
+  const extras = ['uz', 'ne', 'hi', 'tg'];
+
+  const codes = Array.from(new Set([...manualTop15, ...extras]))?.sort((a, b) =>
+    a.localeCompare(b),
+  ); // keep manual order, then extras
+
+  return codes.map((code) => ({
+    value: code,
+    label: i18nLanguages.getName(code, getLocale) ?? code,
+    className: 'capitalize',
+  }));
 };

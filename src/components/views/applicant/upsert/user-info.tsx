@@ -17,6 +17,7 @@ import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Separator } from '@/components/ui/separator';
 
+import { formatName, formatPassportNumber } from '@/utils/helpers';
 import { getCountries, getLanguages } from '@/utils/intl';
 
 import { Applicant } from '@/generated/prisma';
@@ -106,6 +107,7 @@ const ApplicantUserInfo: React.FC<IApplicantUserInfoProps> = ({
                 <Input
                   placeholder={t('applicant.form.fields.firstName.placeholder')}
                   {...field}
+                  onChange={(e) => field.onChange(formatName(e.target.value))}
                 />
               )}
             />
@@ -118,6 +120,7 @@ const ApplicantUserInfo: React.FC<IApplicantUserInfoProps> = ({
                 <Input
                   placeholder={t('applicant.form.fields.lastName.placeholder')}
                   {...field}
+                  onChange={(e) => field.onChange(formatName(e.target.value))}
                 />
               )}
             />
@@ -131,6 +134,7 @@ const ApplicantUserInfo: React.FC<IApplicantUserInfoProps> = ({
                     'applicant.form.fields.middleName.placeholder',
                   )}
                   {...field}
+                  onChange={(e) => field.onChange(formatName(e.target.value))}
                 />
               )}
             />
@@ -173,6 +177,9 @@ const ApplicantUserInfo: React.FC<IApplicantUserInfoProps> = ({
                     'applicant.form.fields.passportNumber.placeholder',
                   )}
                   {...field}
+                  onChange={(e) =>
+                    field.onChange(formatPassportNumber(e.target.value))
+                  }
                 />
               )}
             />
