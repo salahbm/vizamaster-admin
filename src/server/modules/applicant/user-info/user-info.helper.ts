@@ -6,6 +6,7 @@ export class ApplicantHelper {
     country,
     partner,
     isArchived,
+    isAlert,
     status,
     jobTitle,
   }: {
@@ -13,6 +14,7 @@ export class ApplicantHelper {
     country?: string;
     partner?: string;
     isArchived?: boolean;
+    isAlert?: boolean;
     status?: string;
     jobTitle?: string;
   }): Prisma.ApplicantWhereInput {
@@ -29,6 +31,10 @@ export class ApplicantHelper {
 
     if (isArchived !== undefined && typeof isArchived === 'boolean') {
       where.isArchived = isArchived;
+    }
+
+    if (isAlert !== undefined && typeof isAlert === 'boolean') {
+      where.isAlert = isAlert; // return only applicants with alerts true
     }
 
     if (

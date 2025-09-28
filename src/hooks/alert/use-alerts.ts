@@ -1,10 +1,12 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 
 import agent from '@/lib/agent';
 
 import { QueryKeys } from '@/constants/query-keys';
 
 import { TResponse } from '@/server/common/types';
+
+import useMutation from '../common/use-mutation';
 
 // Type for alert with nested comment and applicant
 interface AlertWithDetails {
@@ -49,33 +51,13 @@ export const useUnreadAlerts = (userId?: string) => {
   return useQuery({
     queryKey: [...QueryKeys.alerts.unread, { userId }],
     queryFn: async () => {
-      const { data } = await agent.get<AlertsResponse>('/api/alerts');
+      const { data } = await agent.get<AlertsResponse>(
+        `/api/alerts?userId=${userId}`,
+      );
       return data;
     },
     enabled: !!userId,
     refetchInterval: 30000, // Refetch every 30 seconds
-  });
-};
-
-/**
- * Hook for marking a specific alert as read
- */
-export const useMarkAlertRead = () => {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: async (alertId: string) => {
-      const { data } = await agent.patch<TResponse<boolean>>(
-        `/api/alerts/${alertId}`,
-      );
-      return data;
-    },
-    onSuccess: () => {
-      // Invalidate and refetch alerts
-      queryClient.invalidateQueries({
-        queryKey: QueryKeys.alerts.unread,
-      });
-    },
   });
 };
 
@@ -86,15 +68,27 @@ export const useMarkAllAlertsRead = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async () => {
-      const { data } = await agent.patch<TResponse<boolean>>('/api/alerts');
-      return data;
-    },
-    onSuccess: () => {
-      // Invalidate and refetch alerts
-      queryClient.invalidateQueries({
-        queryKey: QueryKeys.alerts.unread,
-      });
+    mutationFn: async ({
+      applicantId,
+      userId,
+    }: {
+      applicantId: string;
+      userId: string;
+    }) =>
+      await agent.patch<TResponse<boolean>>(
+        `/api/alerts?applicantId=${applicantId}&userId=${userId}`,
+      ),
+    options: {
+      onSuccess: () => {
+        // Invalidate and refetch alerts
+        queryClient.invalidateQueries({
+          queryKey: QueryKeys.alerts.unread,
+          type: 'all',
+        });
+      },
+      meta: {
+        toast: false,
+      },
     },
   });
 };

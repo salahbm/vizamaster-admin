@@ -29,7 +29,7 @@ const createApplicant = (
   const userId = generateUserId();
   const mappedData: Omit<
     Applicant,
-    'id' | 'createdAt' | 'updatedAt' | 'isArchived'
+    'id' | 'createdAt' | 'updatedAt' | 'isArchived' | 'isAlert'
   > = {
     ...data,
     userId,
@@ -77,6 +77,7 @@ export interface IGetAllApplicantsParams {
   country?: string;
   partner?: string;
   isArchived?: boolean;
+  isAlert?: boolean;
   status?: string;
   jobTitle?: string;
 }

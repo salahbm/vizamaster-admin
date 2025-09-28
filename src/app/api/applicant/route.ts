@@ -28,6 +28,16 @@ export async function GET(request: NextRequest) {
     const status = searchParams.get('status') || undefined;
     const jobTitle = searchParams.get('jobTitle') || undefined;
 
+    // Only set isAlert if it's explicitly provided in the query
+    // This way, if it's undefined, it won't filter by isAlert at all
+    const isAlertParam = searchParams.get('isAlert');
+    const isAlert =
+      isAlertParam === 'true'
+        ? true
+        : isAlertParam === 'false'
+          ? false
+          : undefined;
+
     const { page, size, sort } = parsePaginationAndSortParams(searchParams);
 
     // Get users
@@ -39,6 +49,7 @@ export async function GET(request: NextRequest) {
       country,
       partner,
       isArchived,
+      isAlert,
       status,
       jobTitle,
     );

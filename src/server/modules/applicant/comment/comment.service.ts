@@ -35,10 +35,7 @@ export class CommentService {
   }) {
     try {
       // Start a transaction
-      const comment = await this.repository.createComment(data);
-
-      // Create alerts for other users
-      await this.repository.createAlertsForComment(comment.id, data.authorId);
+      const comment = await this.repository.createCommentWithAlerts(data);
 
       return createResponse(comment);
     } catch (error) {

@@ -4,7 +4,7 @@ export class AlertRepository {
   private readonly prisma = prisma;
 
   async getUnreadAlertsByUserId(userId: string) {
-    return this.prisma.alert.findMany({
+    return await this.prisma.alert.findMany({
       where: {
         userId,
         isRead: false,
@@ -16,16 +16,7 @@ export class AlertRepository {
             author: {
               select: {
                 id: true,
-                name: true,
-              },
-            },
-            applicant: {
-              select: {
-                id: true,
-                firstName: true,
-                lastName: true,
-                countryOfEmployment: true,
-                partner: true,
+                email: true,
               },
             },
           },
@@ -46,8 +37,8 @@ export class AlertRepository {
     });
   }
 
-  async markAllAlertsAsRead(userId: string) {
-    return this.prisma.alert.updateMany({
+  async markAllAlertsAsRead(userId: string, applicantId: string) {
+    await this.prisma.alert.updateMany({
       where: {
         userId,
         isRead: false,
@@ -56,29 +47,11 @@ export class AlertRepository {
         isRead: true,
       },
     });
-  }
 
-  async getUnreadAlertCount(userId: string) {
-    return this.prisma.alert.count({
-      where: {
-        userId,
-        isRead: false,
-      },
+    await this.prisma.applicant.update({
+      where: { id: applicantId },
+      data: { isAlert: false },
     });
-  }
-
-  async hasUnreadAlerts(applicantId: string, userId: string) {
-    const count = await this.prisma.alert.count({
-      where: {
-        userId,
-        isRead: false,
-        comment: {
-          applicantId,
-        },
-      },
-    });
-
-    return count > 0;
   }
 }
 

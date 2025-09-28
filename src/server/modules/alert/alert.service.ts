@@ -29,31 +29,10 @@ export class AlertService {
     }
   }
 
-  async markAllAlertsAsRead(userId: string) {
+  async markAllAlertsAsRead(userId: string, applicantId: string) {
     try {
-      const result = await this.repository.markAllAlertsAsRead(userId);
-      return createResponse({ count: result.count });
-    } catch (error) {
-      throw handlePrismaError(error);
-    }
-  }
-
-  async getUnreadAlertCount(userId: string) {
-    try {
-      const count = await this.repository.getUnreadAlertCount(userId);
-      return createResponse({ count });
-    } catch (error) {
-      throw handlePrismaError(error);
-    }
-  }
-
-  async hasUnreadAlerts(applicantId: string, userId: string) {
-    try {
-      const hasAlerts = await this.repository.hasUnreadAlerts(
-        applicantId,
-        userId,
-      );
-      return createResponse({ hasAlerts });
+      await this.repository.markAllAlertsAsRead(userId, applicantId);
+      return createResponse({ success: true });
     } catch (error) {
       throw handlePrismaError(error);
     }

@@ -30,6 +30,7 @@ export class ApplicantRepository {
     country?: string,
     partner?: string,
     isArchived?: boolean,
+    isAlert?: boolean,
     status?: string,
     jobTitle?: string,
   ) {
@@ -42,6 +43,7 @@ export class ApplicantRepository {
         country,
         partner,
         isArchived,
+        isAlert,
         status,
         jobTitle,
       });
@@ -59,6 +61,7 @@ export class ApplicantRepository {
     country?: string,
     partner?: string,
     isArchived?: boolean,
+    isAlert?: boolean,
     status?: string,
     jobTitle?: string,
   ) {
@@ -69,6 +72,7 @@ export class ApplicantRepository {
         country,
         partner,
         isArchived,
+        isAlert,
         status,
         jobTitle,
       });

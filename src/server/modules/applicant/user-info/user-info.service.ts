@@ -38,6 +38,7 @@ class ApplicantService {
     country?: string,
     partner?: string,
     isArchived?: boolean,
+    isAlert?: boolean,
     status?: string,
     jobTitle?: string,
   ) {
@@ -54,10 +55,19 @@ class ApplicantService {
           country,
           partner,
           isArchived,
+          isAlert,
           status,
           jobTitle,
         ),
-        this.repository.countApplicants(search, country, partner, isArchived),
+        this.repository.countApplicants(
+          search,
+          country,
+          partner,
+          isArchived,
+          isAlert,
+          status,
+          jobTitle,
+        ),
       ]);
 
       if (!applicants || !Array.isArray(applicants)) {

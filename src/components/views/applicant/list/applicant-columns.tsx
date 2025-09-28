@@ -9,6 +9,7 @@ import { Column, ColumnDef, Row, Table } from '@tanstack/react-table';
 import { format } from 'date-fns';
 import {
   Archive,
+  Dot,
   EllipsisVertical,
   FolderOpenDot,
   Pencil,
@@ -78,6 +79,14 @@ export const APPLICANT_COLUMNS = (country?: string): ColumnDef<Applicant>[] => {
               : 'User ID'
           }
         />
+      ),
+      cell: ({ row }) => (
+        <p className="relative">
+          <span>{row.original.userId}</span>
+          {row.original.isAlert && (
+            <Dot className="absolute -top-2 -left-4 size-8 -translate-y-1.5 animate-pulse text-red-500" />
+          )}
+        </p>
       ),
       meta: {
         label: 'applicant.columns.userId',

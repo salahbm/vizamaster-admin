@@ -6,18 +6,13 @@ import {
   handleApiError,
 } from '@/server/common/errors';
 import { AuthGuard } from '@/server/common/guard/auth.guard';
-import { commentService } from '@/server/modules/comment/comment.service';
+import { commentService } from '@/server/modules/applicant/comment/comment.service';
 
 // Get comments for an applicant with pagination
 export async function GET(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> },
 ) {
-  const authGuard = new AuthGuard();
-  const session = await authGuard.checkSession();
-
-  if (!session) throw new UnauthorizedError('Unauthorized');
-
   try {
     // Get query parameters for pagination
     const { id } = await params;

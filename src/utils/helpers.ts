@@ -1,3 +1,5 @@
+import { Applicant } from '@/generated/prisma';
+
 export const downloadFile = (url: string, name: string) => {
   const link = document.createElement('a');
   link.href = url;
@@ -39,4 +41,16 @@ export const formatPassportNumber = (passportNumber: string) => {
 export const formatName = (name: string) => {
   const formatted = name.replace(/[^A-Za-z ]/g, '');
   return formatted;
+};
+
+/**
+ * return number of alerts total applicants have
+ * @param alerts
+ */
+export const alertGroupper = (applicants?: Applicant[]): number => {
+  if (!applicants) return 0;
+
+  const alerts = applicants.filter((applicant) => applicant.isAlert);
+
+  return alerts.length;
 };

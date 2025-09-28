@@ -13,6 +13,7 @@ import { Button } from '@/components/ui/button';
 import LotteLoading from '@/components/ui/loading';
 import { Textarea } from '@/components/ui/textarea';
 
+import { useMarkAllAlertsRead } from '@/hooks/alert/use-alerts';
 import { useCreateComment, useInfiniteComments } from '@/hooks/comment';
 import { useAlert } from '@/providers/alert';
 import { useAuthStore } from '@/store/use-auth-store';
@@ -38,6 +39,8 @@ export default function ApplicantComments({ id }: { id?: string }) {
   const { mutateAsync: createComment, isPending: isCreatingComment } =
     useCreateComment();
 
+  const { mutateAsync: markAllAlertsAsRead } = useMarkAllAlertsRead();
+
   // Extract all comments from the paginated data
   const allComments = useMemo(() => {
     if (!data?.pages) return [];
@@ -59,6 +62,17 @@ export default function ApplicantComments({ id }: { id?: string }) {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
   }, [allComments, isCommentsLoading, isCommentsFetching, isFetchingNextPage]);
+
+  useEffect(() => {
+    if (id && user) {
+      // Add a delay before marking alerts as read
+      const timer = setTimeout(() => {
+        markAllAlertsAsRead({ applicantId: id, userId: user.id });
+      }, 3000); // 3 seconds delay
+
+      return () => clearTimeout(timer); // Clean up on unmount
+    }
+  }, [id, user, markAllAlertsAsRead]);
 
   // Load more comments
   const loadMoreComments = () => {

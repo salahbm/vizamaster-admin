@@ -1,18 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-import { UnauthorizedError, handleApiError } from '@/server/common/errors';
-import { AuthGuard } from '@/server/common/guard/auth.guard';
+import { handleApiError } from '@/server/common/errors';
 import { alertService } from '@/server/modules/alert/alert.service';
 
 // Get unread alerts for current user
 export async function GET(req: NextRequest) {
-  const authGuard = new AuthGuard();
-  const session = await authGuard.checkSession();
+  const userId = req.nextUrl.searchParams.get('userId');
 
-  if (!session) throw new UnauthorizedError('Unauthorized');
+  if (!userId) throw new Error('User ID is required');
 
   try {
-    const alerts = await alertService.getUnreadAlertsByUserId(session.user.id);
+    const alerts = await alertService.getUnreadAlertsByUserId(userId);
     return NextResponse.json(alerts);
   } catch (error: unknown) {
     return handleApiError(error);
@@ -21,13 +19,15 @@ export async function GET(req: NextRequest) {
 
 // Mark all alerts as read
 export async function PATCH(req: NextRequest) {
-  const authGuard = new AuthGuard();
-  const session = await authGuard.checkSession();
+  const searchParams = req.nextUrl.searchParams;
 
-  if (!session) throw new UnauthorizedError('Unauthorized');
+  const userId = searchParams.get('userId');
+  const applicantId = searchParams.get('applicantId');
+
+  if (!applicantId || !userId) throw new Error('Applicant ID is required');
 
   try {
-    const result = await alertService.markAllAlertsAsRead(session.user.id);
+    const result = await alertService.markAllAlertsAsRead(userId, applicantId);
     return NextResponse.json(result);
   } catch (error: unknown) {
     return handleApiError(error);

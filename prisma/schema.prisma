@@ -178,12 +178,14 @@ model Applicant {
   createdAt           DateTime @default(now())
   updatedAt           DateTime @updatedAt
   isArchived          Boolean  @default(false) // For soft deletes
+  isAlert             Boolean  @default(false) // For alerts
 
   @@map("applicants")
   @@index([userId])
   @@index([countryOfEmployment])
   @@index([partner])
   @@index([isArchived])    // New: for active applicant lists
+  @@index([isAlert])       // New: for alert lists
 }
 
 

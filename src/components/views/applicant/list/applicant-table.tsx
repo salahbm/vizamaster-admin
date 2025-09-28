@@ -2,7 +2,7 @@
 
 import { Fragment, useMemo } from 'react';
 
-import { Archive, FolderOpenDot, Trash2 } from 'lucide-react';
+import { Archive, FolderOpenDot, Loader2, Trash2 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import * as nuqs from 'nuqs';
 import { useQueryState } from 'nuqs';
@@ -13,7 +13,10 @@ import { DataTableSkeleton } from '@/components/skeletons/data-table-skeleton';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
+import { alertGroupper } from '@/utils/helpers';
+
 import { Applicant } from '@/generated/prisma';
+import { useUnreadAlerts } from '@/hooks/alert/use-alerts';
 import { useDeleteApplicant, useGetAllApplicants } from '@/hooks/applicant';
 import {
   useArchiveApplicant,
@@ -22,6 +25,7 @@ import {
 import { useDataTable } from '@/hooks/common/use-data-table';
 import { useQueryReader } from '@/hooks/common/use-query-reader';
 import { useAlert } from '@/providers/alert';
+import { useAuthStore } from '@/store/use-auth-store';
 
 import { APPLICANT_COLUMNS } from './applicant-columns';
 import ApplicantFilter, { TApplicantFilter } from './applicant-filter';
@@ -35,7 +39,11 @@ export const ApplicantTable = ({
 }) => {
   const alert = useAlert();
   const t = useTranslations();
+  const { user } = useAuthStore();
   const columns = useMemo(() => APPLICANT_COLUMNS(country), [country]);
+
+  const { data: unreadAlerts } = useUnreadAlerts(user?.id);
+  console.log(`file: applicant-table.tsx:47 ~ unreadAlerts:`, unreadAlerts);
 
   const { mutateAsync: deleteApplicants, isPending: isDeleting } =
     useDeleteApplicant();
@@ -57,7 +65,7 @@ export const ApplicantTable = ({
   // Form filters - these update only on form submission
   const [tabParam, setTabParam] = useQueryState(
     'tab',
-    nuqs.parseAsString.withDefault('false'),
+    nuqs.parseAsString.withDefault('active'),
   );
   const [searchParam, setSearchParam] = useQueryState(
     'search',
@@ -99,7 +107,13 @@ export const ApplicantTable = ({
     page: instantQuery.page,
     size: instantQuery.size,
     sort: instantQuery.sort,
-    isArchived: tabParam === 'true',
+    isArchived:
+      tabParam === 'archived'
+        ? true
+        : tabParam === 'active'
+          ? false
+          : undefined,
+    isAlert: tabParam === 'alerts' ? true : undefined,
     // Form filters
     search: searchParam,
     country: countryParam,
@@ -123,6 +137,11 @@ export const ApplicantTable = ({
     },
     meta: { t, includeResetSortings: false, includeDownload: true },
   });
+
+  const alertCount = useMemo(
+    () => alertGroupper(applicants?.data),
+    [applicants?.data],
+  );
 
   const onSubmit = async (data: TApplicantFilter) => {
     // Update URL params for form filters
@@ -160,25 +179,42 @@ export const ApplicantTable = ({
   return (
     <Fragment>
       <Tabs
-        defaultValue="false"
+        defaultValue="active"
         className="mb-5 md:mb-10"
         value={tabParam}
         onValueChange={(value) => setTabParam(value)}
       >
         <TabsList variant="outline" className="justify-start">
           <TabsTrigger
-            value="false"
+            value="active"
             variant="outline"
             className="w-32 max-w-fit"
           >
             {t('Common.active')}
           </TabsTrigger>
           <TabsTrigger
-            value="true"
+            value="archived"
             variant="outline"
             className="w-32 max-w-fit"
           >
             {t('Common.archived')}
+          </TabsTrigger>
+          <TabsTrigger
+            value="alerts"
+            variant="outline"
+            className="relative w-32 max-w-fit"
+          >
+            {t('Common.alerts')}
+            {isLoading ||
+              (alertCount > 0 && (
+                <span className="bg-primary flex-center absolute top-0 right-2 aspect-square size-4 -translate-y-1.5 rounded-full p-0.5 text-xs text-white">
+                  {isLoading ? (
+                    <Loader2 className="size-4 animate-spin" />
+                  ) : (
+                    alertCount
+                  )}
+                </span>
+              ))}
           </TabsTrigger>
         </TabsList>
       </Tabs>
