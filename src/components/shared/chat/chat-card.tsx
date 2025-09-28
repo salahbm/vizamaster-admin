@@ -12,7 +12,7 @@ export function ChatCard({
   isSent: boolean;
 }) {
   return (
-    <div
+    <li
       className={cn(
         'mb-3 max-w-[80%] rounded-lg p-3 shadow-sm lg:max-w-2/5',
         isSent
@@ -20,13 +20,13 @@ export function ChatCard({
           : 'bg-secondary/10 text-secondary-foreground',
       )}
     >
-      <div className="border-border/40 mb-2 flex items-center justify-between gap-2 border-b pb-1">
-        <span className="font-caption-1">{author}</span>
+      <div className="border-border/70 mb-2 flex items-center justify-between gap-2 border-b pb-1">
+        <span className="text-sm font-bold">{author}</span>
         <span className="font-caption-2">{time}</span>
       </div>
       <article className="font-caption-1 break-words whitespace-pre-wrap">
         {content}
       </article>
-    </div>
+    </li>
   );
 }

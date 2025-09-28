@@ -13,7 +13,7 @@ export function ChatGroup({
   }[];
 }) {
   return (
-    <div className="my-6">
+    <li className="my-6">
       <div className="relative mb-4">
         <div className="absolute inset-0 flex items-center">
           <div className="border-border/30 w-full border-t" />
@@ -24,7 +24,7 @@ export function ChatGroup({
           </span>
         </div>
       </div>
-      <div className="space-y-1">
+      <ul className="space-y-1">
         {messages.map((msg, index) => (
           <ChatCard
             key={index}
@@ -34,7 +34,7 @@ export function ChatGroup({
             isSent={msg.isSent}
           />
         ))}
-      </div>
-    </div>
+      </ul>
+    </li>
   );
 }

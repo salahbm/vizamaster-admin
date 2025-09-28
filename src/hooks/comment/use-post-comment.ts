@@ -15,13 +15,11 @@ const postComment = async ({
 }: {
   content: string;
   applicantId: string;
-}) => {
-  const { data } = await agent.post<TResponse<CommentWithAuthor>>(
+}) =>
+  await agent.post<TResponse<CommentWithAuthor>>(
     `/api/applicant/${applicantId}/comments`,
     { content },
   );
-  return data;
-};
 
 /**
  * Hook for creating a new comment

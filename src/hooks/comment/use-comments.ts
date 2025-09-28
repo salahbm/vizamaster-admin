@@ -5,7 +5,7 @@ import agent from '@/lib/agent';
 import { QueryKeys } from '@/constants/query-keys';
 
 import { NotFoundError } from '@/server/common/errors';
-import { TInfinityResponse, TResponse } from '@/server/common/types';
+import { TInfinityResponse } from '@/server/common/types';
 
 // Type for comment with author
 export interface CommentWithAuthor {
@@ -28,12 +28,12 @@ const getComments = async (
   cursor?: string,
 ) => {
   const url = `/api/applicant/${applicantId}/comments?limit=${limit}${cursor ? `&cursor=${cursor}` : ''}`;
-  const { data } =
-    await agent.get<TResponse<TInfinityResponse<CommentWithAuthor>>>(url);
+  const res = await agent.get<TInfinityResponse<CommentWithAuthor>>(url);
 
-  if (!data) throw new NotFoundError('Comments not found');
+  if (!res.data) throw new NotFoundError('Comments not found');
 
-  return data;
+  // Return only the data portion, not the entire response
+  return res;
 };
 
 /**

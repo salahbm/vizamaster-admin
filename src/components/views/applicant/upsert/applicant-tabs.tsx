@@ -5,6 +5,8 @@ import { parseAsString, useQueryState } from 'nuqs';
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
+import { cn } from '@/lib/utils';
+
 import { useApplicantDetail } from '@/hooks/applicant';
 
 import ApplicantAudits from './applicant-audits';
@@ -39,7 +41,11 @@ export const UpsertApplicant: React.FC<IUpsertApplicantProps> = ({
       {id && (
         <TabsList
           variant="outline"
-          className="no-scrollbar mb-10 flex items-center justify-start overflow-x-auto"
+          className={cn(
+            'no-scrollbar mb-4 flex items-center justify-start overflow-x-auto lg:mb-10',
+            step === 'comments' && 'mb-0',
+            isLoading && 'animate-pulse',
+          )}
         >
           <TabsTrigger
             value="user-info"

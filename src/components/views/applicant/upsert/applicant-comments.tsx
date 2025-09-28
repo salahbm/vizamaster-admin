@@ -7,18 +7,17 @@ import { Send } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
 import { ChatGroup } from '@/components/shared/chat/chat-group';
+import { Empty } from '@/components/shared/icons';
+import { ChatSkeleton } from '@/components/skeletons';
 import { Button } from '@/components/ui/button';
+import LotteLoading from '@/components/ui/loading';
 import { Textarea } from '@/components/ui/textarea';
 
 import { useCreateComment, useInfiniteComments } from '@/hooks/comment';
 import { useAlert } from '@/providers/alert';
 import { useAuthStore } from '@/store/use-auth-store';
 
-interface ApplicantCommentsProps {
-  id?: string;
-}
-
-export default function ApplicantComments({ id }: ApplicantCommentsProps) {
+export default function ApplicantComments({ id }: { id?: string }) {
   const t = useTranslations();
   const alert = useAlert();
   const { user } = useAuthStore();
@@ -33,7 +32,7 @@ export default function ApplicantComments({ id }: ApplicantCommentsProps) {
     hasNextPage,
     fetchNextPage,
     isFetchingNextPage,
-  } = useInfiniteComments(id || '', 1);
+  } = useInfiniteComments(id!, 10);
 
   // Create comment mutation
   const { mutateAsync: createComment, isPending: isCreatingComment } =
@@ -43,10 +42,9 @@ export default function ApplicantComments({ id }: ApplicantCommentsProps) {
   const allComments = useMemo(() => {
     if (!data?.pages) return [];
 
-    // The data structure is an array of arrays of comments
+    // Each page contains a data array with comments
     return data.pages.flatMap((page) => {
-      // Each page is an array of comments
-      return Array.isArray(page) ? page : [];
+      return page.data || [];
     });
   }, [data?.pages]);
 
@@ -85,8 +83,7 @@ export default function ApplicantComments({ id }: ApplicantCommentsProps) {
       console.error('Error creating comment:', error);
       alert({
         title: t('Common.messages.error'),
-        description:
-          t('applicant.comments.createError') || 'Failed to create comment',
+        description: t('applicant.comments.createError'),
         icon: 'error',
       });
     }
@@ -100,7 +97,16 @@ export default function ApplicantComments({ id }: ApplicantCommentsProps) {
       (a, b) =>
         new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
     );
-    const groups: Record<string, any[]> = {};
+
+    // Define the correct type for the chat messages
+    type ChatMessage = {
+      author: string;
+      time: string;
+      content: string;
+      isSent: boolean;
+    };
+
+    const groups: Record<string, ChatMessage[]> = {};
 
     sortedComments.forEach((comment) => {
       const date = format(new Date(comment.createdAt), 'yyyy-MM-dd');
@@ -123,11 +129,11 @@ export default function ApplicantComments({ id }: ApplicantCommentsProps) {
   }, [allComments, user?.id]);
 
   return (
-    <div>
-      <div className="card-lg mb-4 flex-1">
+    <div className="flex h-full flex-col">
+      <div className="card flex-1 lg:mb-4">
         <ul
           ref={scrollRef}
-          className="h-[calc(100vh-350px)] overflow-y-auto lg:h-[calc(100vh-600px)]"
+          className="no-scrollbar h-[calc(100vh-400px)] overflow-y-auto lg:h-[calc(100vh-500px)]"
           onScroll={(e) => {
             const target = e.currentTarget;
             if (target.scrollTop === 0 && hasNextPage && !isFetchingNextPage) {
@@ -136,23 +142,20 @@ export default function ApplicantComments({ id }: ApplicantCommentsProps) {
           }}
         >
           {isCommentsLoading && !allComments.length ? (
-            <div className="flex h-full items-center justify-center">
-              <p className="text-muted-foreground">
-                {t('applicant.comments.loading')}
-              </p>
-            </div>
+            <ChatSkeleton messageCount={5} />
           ) : allComments.length === 0 ? (
-            <div className="flex h-full items-center justify-center">
-              <p className="text-muted-foreground">
+            <li className="flex h-full items-center justify-center">
+              <p className="text-muted-foreground flex items-center">
+                <Empty className="mr-2 h-4 w-4" />
                 {t('applicant.comments.noComments')}
               </p>
-            </div>
+            </li>
           ) : (
             <>
               {isFetchingNextPage && (
-                <div className="text-muted-foreground py-2 text-center text-sm">
-                  {t('applicant.comments.loading')}
-                </div>
+                <li className="flex-center">
+                  <LotteLoading />
+                </li>
               )}
               {groupedComments.map((group, index) => (
                 <ChatGroup
@@ -174,6 +177,8 @@ export default function ApplicantComments({ id }: ApplicantCommentsProps) {
           onChange={(e) => setNewComment(e.target.value)}
           className="flex-1 resize-none"
           disabled={isCreatingComment}
+          maxLength={500}
+          required
         />
         <Button
           type="submit"
