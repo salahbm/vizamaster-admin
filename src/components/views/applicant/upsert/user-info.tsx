@@ -52,6 +52,7 @@ const ApplicantUserInfo: React.FC<IApplicantUserInfoProps> = ({
 
   // MEMOS
   const countryOfResidenceOptions = useMemo(() => getCountries(), []);
+  console.log(`🚀 ~ countryOfResidenceOptions:`, countryOfResidenceOptions);
   const languagesOptions = useMemo(() => getLanguages(), []);
 
   // MUTATIONS

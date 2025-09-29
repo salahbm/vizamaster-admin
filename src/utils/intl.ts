@@ -26,27 +26,24 @@ export const validatePhone = (value: string, country = 'US') => {
  * @description should be central asian country codes and india, nepal, russia
  */
 export const COUNTRY_CODE_MAP: Record<string, string> = {
-  uzbekistan: 'UZ',
-  india: 'IN',
-  nepal: 'NP',
-  russia: 'RU',
-  kazakhstan: 'KZ',
-  kyrgyzstan: 'KG',
-  turkmenistan: 'TM',
-  ukraine: 'UA',
-  tajikistan: 'TJ',
+  UZ: 'UZ',
+  IN: 'IN',
+  NP: 'NP',
+  RU: 'RU',
+  KZ: 'KZ',
+  KG: 'KG',
+  TM: 'TM',
+  UA: 'UA',
+  TJ: 'TJ',
 };
 
-/**
- * Returns a list of countries with their ISO codes and localized names
- * @returns Array of country objects with value (ISO code) and label (localized name)
- */
 export const getCountries = (): Array<{ value: string; label: string }> => {
   const getLocale = Cookies.get(COOKIE_KEYS.LANGUAGE) ?? 'ru';
 
   const countriesList = countries.getNames(getLocale, { select: 'official' });
+
   return Object.entries(countriesList)
-    .filter(([code]) => COUNTRY_CODE_MAP[code])
+    .filter(([code]) => COUNTRY_CODE_MAP[code]) // now matches ISO codes
     .map(([code, name]) => ({
       value: code,
       label: name,
