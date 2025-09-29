@@ -178,7 +178,10 @@
       "conflict": "Conflict {message}",
       "unknownError": "Unknown error",
       "uploadsSavedDeletesManual": "Uploads saved automatically, but please confirm to delete removed files",
-      "fileExists": "File already exists"
+      "fileExists": "File already exists",
+      "success": "Success",
+      "totalApplicants": "from {totalApplicants, plural, one {# applicant} other {# applicants}}",
+      "totalComments": "{comments, plural, one {# comment} other {# comments}}"
     }
   },
   "auth": {

@@ -1,4 +1,4 @@
-import { Applicant } from '@/generated/prisma';
+import { Alert } from '@/generated/prisma';
 
 export const downloadFile = (url: string, name: string) => {
   const link = document.createElement('a');
@@ -47,10 +47,21 @@ export const formatName = (name: string) => {
  * return number of alerts total applicants have
  * @param alerts
  */
-export const alertGroupper = (applicants?: Applicant[]): number => {
-  if (!applicants) return 0;
+export const alertGrouper = (
+  alerts?: Alert[],
+): { totalComments: number; totalApplicants: number } => {
+  if (!alerts?.length) return { totalComments: 0, totalApplicants: 0 };
 
-  const alerts = applicants.filter((applicant) => applicant.isAlert);
+  const commentSet = new Set<string>();
+  const applicantSet = new Set<string>();
 
-  return alerts.length;
+  for (const alert of alerts) {
+    if (alert.commentId) commentSet.add(alert.commentId);
+    if (alert.applicantId) applicantSet.add(alert.applicantId);
+  }
+
+  return {
+    totalComments: commentSet.size,
+    totalApplicants: applicantSet.size,
+  };
 };

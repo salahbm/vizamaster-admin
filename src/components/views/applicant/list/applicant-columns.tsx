@@ -28,7 +28,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 
-import { Applicant } from '@/generated/prisma';
+import { Alert, Applicant } from '@/generated/prisma';
 import { useDeleteApplicant } from '@/hooks/applicant';
 import {
   useArchiveApplicant,
@@ -38,7 +38,10 @@ import { useAlert } from '@/providers/alert';
 import { useAuthStore } from '@/store/use-auth-store';
 import { useCodesStore } from '@/store/use-codes-store';
 
-export const APPLICANT_COLUMNS = (country?: string): ColumnDef<Applicant>[] => {
+export const APPLICANT_COLUMNS = (
+  country?: string,
+  alerts?: Alert[],
+): ColumnDef<Applicant>[] => {
   const columns: ColumnDef<Applicant>[] = [
     {
       id: 'select',
@@ -83,7 +86,7 @@ export const APPLICANT_COLUMNS = (country?: string): ColumnDef<Applicant>[] => {
       cell: ({ row }) => (
         <p className="relative">
           <span>{row.original.userId}</span>
-          {row.original.isAlert && (
+          {alerts?.some((alert) => alert.applicantId === row.original.id) && (
             <Dot className="absolute -top-2 -left-4 size-8 -translate-y-1.5 animate-pulse text-red-500" />
           )}
         </p>

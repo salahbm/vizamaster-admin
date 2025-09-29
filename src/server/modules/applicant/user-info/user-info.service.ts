@@ -41,6 +41,7 @@ class ApplicantService {
     isAlert?: boolean,
     status?: string,
     jobTitle?: string,
+    userId?: string,
   ) {
     try {
       const skip = Math.max(0, (page - 1) * size);
@@ -58,6 +59,7 @@ class ApplicantService {
           isAlert,
           status,
           jobTitle,
+          userId,
         ),
         this.repository.countApplicants(
           search,
@@ -67,6 +69,7 @@ class ApplicantService {
           isAlert,
           status,
           jobTitle,
+          userId,
         ),
       ]);
 

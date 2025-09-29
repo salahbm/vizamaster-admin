@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
   output   = "../generated/prisma"
@@ -13,31 +10,29 @@ datasource db {
 }
 
 model Users {
-  id            String     @id @default(cuid())
+  id            String        @id @default(cuid())
   name          String
-  email         String
-  emailVerified Boolean    @default(false)
+  email         String        @unique
+  emailVerified Boolean       @default(false)
   image         String?
-  createdAt     DateTime   @default(now()) @map("created_at")
-  updatedAt     DateTime   @default(now()) @updatedAt @map("updated_at")
-  sessionss     Sessions[]
+  createdAt     DateTime      @default(now()) @map("created_at")
+  updatedAt     DateTime      @default(now()) @updatedAt @map("updated_at")
+  role          UserRole      @default(EDITOR)
+  active        Boolean       @default(false)
   accountss     Accounts[]
-  role          UserRole   @default(EDITOR)
-  sidebar       SidebarUser[]
-  comments      Comment[]
   alerts        Alert[]
-  active        Boolean    @default(false)
+  comments      Comment[]
+  sessionss     Sessions[]
+  sidebar       SidebarUser[]
 
-
-  @@unique([email])
   @@index([active])
-  @@map("users")    
+  @@map("users")
 }
 
 model Sessions {
   id        String   @id
   expiresAt DateTime
-  token     String
+  token     String   @unique
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   ipAddress String?
@@ -45,7 +40,6 @@ model Sessions {
   userId    String
   users     Users    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@unique([token])
   @@map("sessions")
 }
 
@@ -54,7 +48,6 @@ model Accounts {
   accountId             String
   providerId            String
   userId                String
-  users                 Users     @relation(fields: [userId], references: [id], onDelete: Cascade)
   accessToken           String?
   refreshToken          String?
   idToken               String?
@@ -64,34 +57,34 @@ model Accounts {
   password              String?
   createdAt             DateTime  @default(now())
   updatedAt             DateTime  @updatedAt
+  users                 Users     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("accounts")
 }
 
-
 model Sidebar {
-  id        String   @id @default(cuid())
+  id        String        @id @default(cuid())
   labelEn   String
   labelRu   String
-  href      String   @unique
+  href      String        @unique
   icon      String?
-  parentId  String?  
-  parent    Sidebar? @relation("ParentChild", fields: [parentId], references: [id], onDelete: SetNull)
-  children  Sidebar[] @relation("ParentChild")
+  parentId  String?
   order     Int
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+  parent    Sidebar?      @relation("ParentChild", fields: [parentId], references: [id])
+  children  Sidebar[]     @relation("ParentChild")
+  users     SidebarUser[]
 
-  users SidebarUser[] // pivot table
   @@map("sidebar")
 }
 
 model SidebarUser {
-  id            String   @id @default(cuid())
+  id            String  @id @default(cuid())
   userId        String
   sidebarItemId String
-  user          Users    @relation(fields: [userId], references: [id])
-  sidebarItem   Sidebar  @relation(fields: [sidebarItemId], references: [id])
+  sidebarItem   Sidebar @relation(fields: [sidebarItemId], references: [id])
+  user          Users   @relation(fields: [userId], references: [id])
 
   @@unique([userId, sidebarItemId])
   @@index([userId])
@@ -103,208 +96,161 @@ model GroupCodes {
   code      String   @unique
   labelEn   String
   labelRu   String
-
-  codes Codes[]
-
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  codes     Codes[]
 
-  @@map("group_codes")
   @@index([code])
+  @@map("group_codes")
 }
 
 model Codes {
-  id        String   @id @default(cuid())
-  code      String   @unique
-  labelEn   String
-  labelRu   String
+  id          String     @id @default(cuid())
+  code        String     @unique
+  labelEn     String
+  labelRu     String
   groupCodeId String
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  groupCode   GroupCodes @relation(fields: [groupCodeId], references: [id], onDelete: Cascade)
 
-  groupCode GroupCodes @relation(fields: [groupCodeId], references: [id], onDelete: Cascade)
-  
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@map("codes")
   @@index([code])
   @@index([groupCodeId])
+  @@map("codes")
 }
 
-
-  
-
 model Applicant {
-  id                  String   @id @default(cuid())
-  userId              String   @unique // Enforce 6-char format in app/migration
+  id                    String          @id @default(cuid())
+  userId                String          @unique
+  firstName             String          @map("first_name")
+  lastName              String          @map("last_name")
+  middleName            String?         @map("middle_name")
+  gender                Gender          @default(MALE)
+  passportNumber        String          @map("passport_number")
+  phoneNumber           String          @map("phone_number")
+  phoneNumberAdditional String?         @map("phone_number_additional")
+  email                 String
+  countryOfResidence    String          @map("country_of_residence")
+  addressLine1          String          @map("address_line_1")
+  addressLine2          String?         @map("address_line_2")
+  city                  String?         @map("city")
+  state                 String?         @map("state")
+  zipCode               String?         @map("zip_code")
+  nationality           String?
+  dateOfBirth           DateTime?
+  preferredJobTitle     String?         @default("Worker")
+  countryOfEmployment   String          @map("country_of_employment")
+  partner               String
+  status                ApplicantStatus @default(NEW)
+  languages             String[]        @map("languages")
+  createdBy             String          @default("System")
+  updatedBy             String          @default("System")
+  createdAt             DateTime        @default(now())
+  updatedAt             DateTime        @updatedAt
+  isArchived            Boolean         @default(false)
+  isAlert               Boolean         @default(false)
+  alerts                Alert[]
+  comments              Comment[]
+  files                 File[]
+  visa                  Visa[]
+  work                  Work[]
 
-  firstName           String   @map("first_name")
-  lastName            String   @map("last_name")
-  middleName          String?  @map("middle_name")
-  gender              Gender   @default(MALE)
-
-  passportNumber      String   @map("passport_number") // Encrypt in DB/app
-
-  phoneNumber         String   @map("phone_number")
-  phoneNumberAdditional String? @map("phone_number_additional")
-  email               String   // Made required for contact
-
-  // Address structured for better querying
-  countryOfResidence  String   @map("country_of_residence") // Use enum if possible
-  addressLine1        String   @map("address_line_1") // Main street
-  addressLine2        String?  @map("address_line_2") // Details/apt
-  city                String?  @map("city")
-  state               String?  @map("state")
-  zipCode             String?  @map("zip_code")
-
-  nationality         String?  // ISO code or full name
-  dateOfBirth         DateTime? // For age/eligibility checks
-  preferredJobTitle   String?  @default("Worker")  // Quick filter for matching
-
-  countryOfEmployment String   @map("country_of_employment")
-  partner             String   // e.g., recruiting agency
-
-  status              ApplicantStatus @default(NEW)
-  languages           String[] @map("languages")
-
-  // Relations
-  work                Work[]
-  visa                Visa[]
-  files               File[]
-  comments            Comment[]
-
-  // Audit
-  createdBy           String   @default("System") // Ideally set to user ID
-  updatedBy           String   @default("System")
-  createdAt           DateTime @default(now())
-  updatedAt           DateTime @updatedAt
-  isArchived          Boolean  @default(false) // For soft deletes
-  isAlert             Boolean  @default(false) // For alerts
-
-  @@map("applicants")
   @@index([userId])
   @@index([countryOfEmployment])
   @@index([partner])
-  @@index([isArchived])    // New: for active applicant lists
-  @@index([isAlert])       // New: for alert lists
+  @@index([isArchived])
+  @@index([isAlert])
+  @@map("applicants")
 }
-
-
 
 model Visa {
-  id              String      @id @default(cuid())
-  applicantId     String      @map("applicant_id")
-  applicant       Applicant   @relation(fields: [applicantId], references: [id], onDelete: Cascade)
-  
-  issued          Boolean     @default(false)
-  issueDate       DateTime?   @map("issue_date") // When visa was issued
-  departureDate   DateTime?   @map("departure_date") // Only if issued
-  arrived         Boolean     @default(false)
-  arrivalDate     DateTime?   @map("arrival_date") // Only if arrived
-  status          VisaStatus  @default(STILL_WORKING) // still_working, returned, departed
-  returnedDate    DateTime?   @map("returned_date") // Only if returned
+  id            String     @id @default(cuid())
+  applicantId   String     @map("applicant_id")
+  issued        Boolean    @default(false)
+  issueDate     DateTime?  @map("issue_date")
+  departureDate DateTime?  @map("departure_date")
+  arrived       Boolean    @default(false)
+  arrivalDate   DateTime?  @map("arrival_date")
+  status        VisaStatus @default(STILL_WORKING)
+  returnedDate  DateTime?  @map("returned_date")
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+  applicant     Applicant  @relation(fields: [applicantId], references: [id], onDelete: Cascade)
 
-
-  createdAt       DateTime    @default(now())
-  updatedAt       DateTime    @updatedAt
-
-  @@map("visas")
   @@index([applicantId])
   @@index([status])
+  @@map("visas")
 }
-
 
 model Work {
-  id              String    @id @default(cuid())
-  applicantId     String    @map("applicant_id")
-  applicant       Applicant @relation(fields: [applicantId], references: [id], onDelete: Cascade)
-  
-  jobTitle        String    @map("job_title") // e.g., "Software Engineer"
-  company         String    @map("company") // e.g., "Tech Corp"
-  startDate       DateTime  @map("start_date")
-  endDate         DateTime? @map("end_date") // Null if current
-  responsibilities String    @map("responsibilities") // Text description
-  achievements    String?   @map("achievements") // Optional text for key wins
-  location        String?   @map("location") // e.g., "New York, NY"
+  id               String    @id @default(cuid())
+  applicantId      String    @map("applicant_id")
+  jobTitle         String    @map("job_title")
+  company          String    @map("company")
+  startDate        DateTime  @map("start_date")
+  endDate          DateTime? @map("end_date")
+  responsibilities String    @map("responsibilities")
+  achievements     String?   @map("achievements")
+  location         String?   @map("location")
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+  applicant        Applicant @relation(fields: [applicantId], references: [id], onDelete: Cascade)
 
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
-
-  @@map("work_history")
   @@index([applicantId])
+  @@map("work_history")
 }
-
 
 model File {
-  id              String    @id @default(cuid())
-  
-  applicantId     String    @map("applicant_id")
-  applicant       Applicant @relation(fields: [applicantId], references: [id], onDelete: Cascade)
+  id          String    @id @default(cuid())
+  applicantId String    @map("applicant_id")
+  fileType    FileType  @map("file_type")
+  fileKey     String    @map("file_key")
+  fileName    String    @map("file_name")
+  fileSize    Int?      @map("file_size")
+  mimeType    String?   @map("mime_type")
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  applicant   Applicant @relation(fields: [applicantId], references: [id], onDelete: Cascade)
 
-  
-  fileType        FileType  @map("file_type") // e.g., PASSPORT, VISA, CV
-  fileKey         String    @map("file_key") // Path in R2 (applicantId/fileType/filename)
-  fileName        String    @map("file_name") // Original file name
-  fileSize        Int?      @map("file_size") // Size in bytes
-  mimeType        String?   @map("mime_type") // e.g., "application/pdf"
-
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
-
-  @@map("files")
   @@index([applicantId])
   @@index([fileType])
+  @@map("files")
 }
 
-// COMMENTS
 model Comment {
   id          String    @id @default(cuid())
-  content     String    // The comment text
+  content     String
   applicantId String    @map("applicant_id")
-  applicant   Applicant @relation(fields: [applicantId], references: [id], onDelete: Cascade)
-  
-  // Who created the comment
   authorId    String    @map("author_id")
-  author      Users     @relation(fields: [authorId], references: [id], onDelete: Cascade)
-  
-  // Timestamps
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
-  
-  // Related alerts
   alerts      Alert[]
+  applicant   Applicant @relation(fields: [applicantId], references: [id], onDelete: Cascade)
+  author      Users     @relation(fields: [authorId], references: [id], onDelete: Cascade)
 
-  @@map("comments")
   @@index([applicantId])
   @@index([authorId])
+  @@map("comments")
 }
 
-// Alerts model for unread notifications
 model Alert {
-  id          String    @id @default(cuid())
-  
-  // The comment that triggered this alert
-  commentId   String    @map("comment_id")
-  comment     Comment   @relation(fields: [commentId], references: [id], onDelete: Cascade)
-  
-  // The user who should see this alert
-  userId      String    @map("user_id")
-  user        Users     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
-  // Alert status
-  isRead      Boolean   @default(false) @map("is_read")
-  
-  // Timestamps
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  id          String     @id @default(cuid())
+  commentId   String     @map("comment_id")
+  userId      String     @map("user_id")
+  isRead      Boolean    @default(false) @map("is_read")
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  applicantId String    @map("applicant_id")
+  applicant   Applicant @relation(fields: [applicantId], references: [id], onDelete: Cascade)
+  comment     Comment    @relation(fields: [commentId], references: [id], onDelete: Cascade)
+  user        Users      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@map("alerts")
+  @@unique([commentId, userId])
   @@index([commentId])
   @@index([userId])
   @@index([isRead])
-  @@unique([commentId, userId]) // Each comment creates only one alert per user
+  @@map("alerts")
 }
-
-// ENUMS
 
 enum FileType {
   PASSPORT
@@ -315,19 +261,15 @@ enum FileType {
   OTHER
 }
 
-
 enum ApplicantStatus {
-  NEW                 
-  IN_PROGRESS 
+  NEW
+  IN_PROGRESS
   CONFIRMED_PROGRAM
-
- 
-  HIRED             
-  HOTEL_REJECTED  
+  HIRED
+  HOTEL_REJECTED
   APPLICANT_REJECTED
-  FIRED             
+  FIRED
 }
-
 
 enum VisaStatus {
   NOT_APPLIED

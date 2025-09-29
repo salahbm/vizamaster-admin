@@ -110,8 +110,8 @@ export const useCreateComment = () => {
 
         // Also invalidate alerts since a new comment creates alerts
         queryClient.invalidateQueries({
-          queryKey: QueryKeys.alerts.unread,
-          exact: true,
+          queryKey: [...QueryKeys.alerts.unread, { userId: user?.id }],
+          type: 'all',
         });
       },
 

@@ -9,6 +9,7 @@ import {
   QueryClientProvider,
 } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+import { useTranslations } from 'next-intl';
 import { toast } from 'sonner';
 
 import { useError } from '@/hooks/common/use-error';
@@ -32,6 +33,7 @@ const isErrorData = (error: unknown): error is ApiError => {
 
 const QueryProvider = ({ children }: PropsWithChildren) => {
   const { errorHandler } = useError();
+  const t = useTranslations();
   const [queryClient] = useState(
     () =>
       new QueryClient({
@@ -67,11 +69,13 @@ const QueryProvider = ({ children }: PropsWithChildren) => {
             _context: unknown,
             mutation: { meta?: { toast?: boolean } },
           ) => {
-            console.info(`🚀 ~ data:`, data);
-            console.info('Mutation success:', data);
             // pass toast: false to disable toast default behavior is true
             if (data && mutation.meta?.toast !== false)
-              return toast.success((data as ApiError).message);
+              return toast.success(
+                t('Common.messages.success', {
+                  fallback: (data as ApiError).message,
+                }),
+              );
           },
         }),
       }),

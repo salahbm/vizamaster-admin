@@ -33,6 +33,7 @@ export class ApplicantRepository {
     isAlert?: boolean,
     status?: string,
     jobTitle?: string,
+    userId?: string,
   ) {
     const orderBy = buildOrderBy(sort);
 
@@ -46,6 +47,7 @@ export class ApplicantRepository {
         isAlert,
         status,
         jobTitle,
+        userId,
       });
 
     return await this.prismaApplicant.findMany({
@@ -64,6 +66,7 @@ export class ApplicantRepository {
     isAlert?: boolean,
     status?: string,
     jobTitle?: string,
+    userId?: string,
   ) {
     // Build where conditions
     const where: Prisma.ApplicantWhereInput =
@@ -75,6 +78,7 @@ export class ApplicantRepository {
         isAlert,
         status,
         jobTitle,
+        userId,
       });
 
     return this.prismaApplicant.count({ where });

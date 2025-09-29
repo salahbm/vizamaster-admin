@@ -10,18 +10,6 @@ export class AlertRepository {
         isRead: false,
       },
       orderBy: { createdAt: 'desc' },
-      include: {
-        comment: {
-          include: {
-            author: {
-              select: {
-                id: true,
-                email: true,
-              },
-            },
-          },
-        },
-      },
     });
   }
 
@@ -41,6 +29,7 @@ export class AlertRepository {
     await this.prisma.alert.updateMany({
       where: {
         userId,
+        applicantId,
         isRead: false,
       },
       data: {

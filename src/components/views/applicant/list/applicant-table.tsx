@@ -12,8 +12,13 @@ import { DataTable, TableAudit } from '@/components/shared/data-table';
 import { DataTableSkeleton } from '@/components/skeletons/data-table-skeleton';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 
-import { alertGroupper } from '@/utils/helpers';
+import { alertGrouper } from '@/utils/helpers';
 
 import { Applicant } from '@/generated/prisma';
 import { useUnreadAlerts } from '@/hooks/alert/use-alerts';
@@ -40,16 +45,14 @@ export const ApplicantTable = ({
   const alert = useAlert();
   const t = useTranslations();
   const { user } = useAuthStore();
-  const columns = useMemo(() => APPLICANT_COLUMNS(country), [country]);
 
-  const { data: unreadAlerts } = useUnreadAlerts(user?.id);
-  console.log(`file: applicant-table.tsx:47 ~ unreadAlerts:`, unreadAlerts);
+  const { data: unreadAlerts, refetch } = useUnreadAlerts(user?.id);
 
   const { mutateAsync: deleteApplicants, isPending: isDeleting } =
     useDeleteApplicant();
   const { mutateAsync: archiveApplicants, isPending: isArchiving } =
     useArchiveApplicant();
-  const { mutateAsync: unarchiveApplicants, isPending: isUnarchiving } =
+  const { mutateAsync: unarchiveApplicants, isPending: isUnArchiving } =
     useUnarchiveApplicant();
 
   // Instant filters - these update immediately
@@ -98,12 +101,20 @@ export const ApplicantTable = ({
     },
   });
 
+  // ───────────────── COLUMNS ────────────────── //
+  const columns = useMemo(
+    () => APPLICANT_COLUMNS(country, unreadAlerts),
+    [country, unreadAlerts],
+  );
+
+  // ───────────────── TABLE ────────────────── //
   const {
     data: applicants,
     isLoading,
     isFetching,
   } = useGetAllApplicants({
     // Instant filters
+    userId: user?.id,
     page: instantQuery.page,
     size: instantQuery.size,
     sort: instantQuery.sort,
@@ -138,11 +149,10 @@ export const ApplicantTable = ({
     meta: { t, includeResetSortings: false, includeDownload: true },
   });
 
-  const alertCount = useMemo(
-    () => alertGroupper(applicants?.data),
-    [applicants?.data],
-  );
+  // ───────────────── ALERT ────────────────── //
+  const alertCount = useMemo(() => alertGrouper(unreadAlerts), [unreadAlerts]);
 
+  // ───────────────── FORM ────────────────── //
   const onSubmit = async (data: TApplicantFilter) => {
     // Update URL params for form filters
     await Promise.all([
@@ -182,7 +192,10 @@ export const ApplicantTable = ({
         defaultValue="active"
         className="mb-5 md:mb-10"
         value={tabParam}
-        onValueChange={(value) => setTabParam(value)}
+        onValueChange={(value) => {
+          refetch();
+          setTabParam(value);
+        }}
       >
         <TabsList variant="outline" className="justify-start">
           <TabsTrigger
@@ -199,23 +212,46 @@ export const ApplicantTable = ({
           >
             {t('Common.archived')}
           </TabsTrigger>
-          <TabsTrigger
-            value="alerts"
-            variant="outline"
-            className="relative w-32 max-w-fit"
-          >
-            {t('Common.alerts')}
-            {isLoading ||
-              (alertCount > 0 && (
-                <span className="bg-primary flex-center absolute top-0 right-2 aspect-square size-4 -translate-y-1.5 rounded-full p-0.5 text-xs text-white">
-                  {isLoading ? (
-                    <Loader2 className="size-4 animate-spin" />
-                  ) : (
-                    alertCount
-                  )}
-                </span>
-              ))}
-          </TabsTrigger>
+          <Tooltip delayDuration={300}>
+            <TabsTrigger
+              value="alerts"
+              variant="outline"
+              className="relative w-32 max-w-fit"
+              asChild
+            >
+              <TooltipTrigger>
+                {t('Common.alerts')}
+                {isLoading ||
+                  (alertCount.totalComments > 0 && (
+                    <span className="bg-primary flex-center absolute top-0 right-2 aspect-square size-4 -translate-y-1.5 rounded-full p-0.5 text-xs text-white">
+                      {isLoading ? (
+                        <Loader2 className="size-4 animate-spin" />
+                      ) : (
+                        alertCount.totalComments
+                      )}
+                    </span>
+                  ))}
+              </TooltipTrigger>
+            </TabsTrigger>
+            <TooltipContent>
+              <p className="font-body-2 flex items-center justify-normal gap-2">
+                {alertCount.totalComments > 0 && (
+                  <span>
+                    {t('Common.messages.totalComments', {
+                      comments: alertCount.totalComments,
+                    })}
+                  </span>
+                )}
+                {alertCount.totalApplicants > 0 && (
+                  <span>
+                    {t('Common.messages.totalApplicants', {
+                      totalApplicants: alertCount.totalApplicants,
+                    })}
+                  </span>
+                )}
+              </p>
+            </TooltipContent>
+          </Tooltip>
         </TabsList>
       </Tabs>
       <ApplicantFilter
@@ -224,7 +260,7 @@ export const ApplicantTable = ({
         handleReset={handleReset}
         country={country}
       />
-      <TableAudit meta={applicants?.meta!} t={t} />
+      <TableAudit t={t} meta={applicants?.meta!} />
       <DataTable table={table} isLoading={isLoading || isFetching}>
         {table.getFilteredSelectedRowModel()?.rows?.length > 0 && (
           <div className="flex gap-2">
@@ -254,7 +290,7 @@ export const ApplicantTable = ({
               type="button"
               size="sm"
               variant="outline"
-              disabled={isArchiving || isUnarchiving}
+              disabled={isArchiving || isUnArchiving}
               onClick={async () =>
                 // if tab is true then unarchive else archive
                 tabParam === 'true'

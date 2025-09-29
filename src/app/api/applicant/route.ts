@@ -27,6 +27,7 @@ export async function GET(request: NextRequest) {
     const isArchived = searchParams.get('isArchived') === 'true';
     const status = searchParams.get('status') || undefined;
     const jobTitle = searchParams.get('jobTitle') || undefined;
+    const userId = searchParams.get('userId') || undefined;
 
     // Only set isAlert if it's explicitly provided in the query
     // This way, if it's undefined, it won't filter by isAlert at all
@@ -52,6 +53,7 @@ export async function GET(request: NextRequest) {
       isAlert,
       status,
       jobTitle,
+      userId,
     );
     return NextResponse.json(result);
   } catch (error: unknown) {

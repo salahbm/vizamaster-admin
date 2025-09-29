@@ -80,6 +80,7 @@ export interface IGetAllApplicantsParams {
   isAlert?: boolean;
   status?: string;
   jobTitle?: string;
+  userId?: string;
 }
 
 const getAllApplicants = async (

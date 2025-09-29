@@ -9,6 +9,7 @@ export class ApplicantHelper {
     isAlert,
     status,
     jobTitle,
+    userId,
   }: {
     search?: string;
     country?: string;
@@ -17,6 +18,7 @@ export class ApplicantHelper {
     isAlert?: boolean;
     status?: string;
     jobTitle?: string;
+    userId?: string;
   }): Prisma.ApplicantWhereInput {
     const where: Prisma.ApplicantWhereInput = {};
 
@@ -33,8 +35,13 @@ export class ApplicantHelper {
       where.isArchived = isArchived;
     }
 
-    if (isAlert !== undefined && typeof isAlert === 'boolean') {
-      where.isAlert = isAlert; // return only applicants with alerts true
+    if (isAlert !== undefined && typeof isAlert === 'boolean' && userId) {
+      where.alerts = {
+        some: {
+          userId: userId,
+          isRead: false,
+        },
+      };
     }
 
     if (

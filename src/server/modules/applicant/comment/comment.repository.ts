@@ -1,3 +1,4 @@
+import { NotFoundError } from '@/server/common/errors';
 import prisma from '@/server/db/prisma';
 
 export class CommentRepository {
@@ -69,38 +70,49 @@ export class CommentRepository {
         include: { author: { select: { id: true, name: true } } },
       });
 
-      // 2. Update applicant + get its creator
+      // 2. Get applicant and its creator's user account
       const applicant = await tx.applicant.update({
         where: { id: data.applicantId },
-        data: { isAlert: true }, // make sure field matches schema
-        select: { id: true, createdBy: true }, // createdBy is applicant author's email address
+        data: { isAlert: true },
+        select: { id: true, createdBy: true },
       });
 
-      // 3. find the author from users table
-      const author = await tx.users.findUnique({
-        where: { id: data.authorId },
-        select: { id: true, email: true },
+      if (!applicant) throw new NotFoundError('Applicant not found');
+
+      // 3. Find the user account for the applicant creator
+      const creatorUser = await tx.users.findUnique({
+        where: { email: applicant.createdBy },
+        select: { id: true },
       });
 
-      // 4. Find the user ID for the applicant creator
-      if (applicant.createdBy !== author?.email) {
-        // Find the user by email to get their ID
-        const creatorUser = await tx.users.findUnique({
-          where: { email: applicant.createdBy },
-          select: { id: true },
+      // 4. Collect alert recipients (other commentators)
+      const commentators = await tx.comment.findMany({
+        where: {
+          applicantId: data.applicantId,
+          authorId: { not: data.authorId },
+        },
+        select: { authorId: true },
+        distinct: ['authorId'],
+      });
+
+      // Start with commentator IDs
+      const recipients = new Set(commentators.map((c) => c.authorId));
+
+      // Add creator's user ID if they exist and aren't the current author
+      if (creatorUser && creatorUser.id !== data.authorId) {
+        recipients.add(creatorUser.id);
+      }
+
+      // 5. Create alerts
+      if (recipients.size > 0) {
+        await tx.alert.createMany({
+          data: Array.from(recipients).map((userId) => ({
+            userId,
+            isRead: false,
+            commentId: comment.id,
+            applicantId: applicant.id,
+          })),
         });
-
-        // Only create alert if we found the user
-        if (creatorUser) {
-          // Create alert with proper relations
-          await tx.alert.create({
-            data: {
-              userId: creatorUser.id,
-              isRead: false,
-              commentId: comment.id,
-            },
-          });
-        }
       }
 
       return comment;

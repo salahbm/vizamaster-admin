@@ -4,45 +4,10 @@ import agent from '@/lib/agent';
 
 import { QueryKeys } from '@/constants/query-keys';
 
+import { Alert } from '@/generated/prisma';
 import { TResponse } from '@/server/common/types';
 
 import useMutation from '../common/use-mutation';
-
-// Type for alert with nested comment and applicant
-interface AlertWithDetails {
-  id: string;
-  commentId: string;
-  userId: string;
-  isRead: boolean;
-  createdAt: string;
-  updatedAt: string;
-  comment: {
-    id: string;
-    content: string;
-    applicantId: string;
-    authorId: string;
-    createdAt: string;
-    updatedAt: string;
-    author: {
-      id: string;
-      name: string;
-    };
-    applicant: {
-      id: string;
-      firstName: string;
-      lastName: string;
-      countryOfEmployment: string;
-      partner: string;
-    };
-  };
-}
-
-// Response type for alerts
-interface AlertsResponse {
-  data: AlertWithDetails[];
-  statusCode: number;
-  message: string;
-}
 
 /**
  * Hook for fetching unread alerts
@@ -50,10 +15,13 @@ interface AlertsResponse {
 export const useUnreadAlerts = (userId?: string) => {
   return useQuery({
     queryKey: [...QueryKeys.alerts.unread, { userId }],
-    queryFn: async () => {
-      const { data } = await agent.get<AlertsResponse>(
+    queryFn: async (): Promise<Alert[]> => {
+      const { data } = await agent.get<TResponse<Alert[]>>(
         `/api/alerts?userId=${userId}`,
       );
+
+      if (!data) throw new Error('Alerts not found');
+
       return data;
     },
     enabled: !!userId,

@@ -1,3 +1,6 @@
+-- CreateSchema
+CREATE SCHEMA IF NOT EXISTS "public";
+
 -- CreateEnum
 CREATE TYPE "public"."FileType" AS ENUM ('PASSPORT', 'VISA', 'CV', 'INSURANCE', 'FLIGHT_DOCUMENT', 'OTHER');
 
@@ -140,6 +143,7 @@ CREATE TABLE "public"."applicants" (
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
     "isArchived" BOOLEAN NOT NULL DEFAULT false,
+    "isAlert" BOOLEAN NOT NULL DEFAULT false,
 
     CONSTRAINT "applicants_pkey" PRIMARY KEY ("id")
 );
@@ -193,14 +197,36 @@ CREATE TABLE "public"."files" (
     CONSTRAINT "files_pkey" PRIMARY KEY ("id")
 );
 
--- CreateIndex
-CREATE INDEX "users_role_idx" ON "public"."users"("role");
+-- CreateTable
+CREATE TABLE "public"."comments" (
+    "id" TEXT NOT NULL,
+    "content" TEXT NOT NULL,
+    "applicant_id" TEXT NOT NULL,
+    "author_id" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
 
--- CreateIndex
-CREATE INDEX "users_active_idx" ON "public"."users"("active");
+    CONSTRAINT "comments_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "public"."alerts" (
+    "id" TEXT NOT NULL,
+    "comment_id" TEXT NOT NULL,
+    "user_id" TEXT NOT NULL,
+    "is_read" BOOLEAN NOT NULL DEFAULT false,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+    "applicant_id" TEXT,
+
+    CONSTRAINT "alerts_pkey" PRIMARY KEY ("id")
+);
 
 -- CreateIndex
 CREATE UNIQUE INDEX "users_email_key" ON "public"."users"("email");
+
+-- CreateIndex
+CREATE INDEX "users_active_idx" ON "public"."users"("active");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "sessions_token_key" ON "public"."sessions"("token");
@@ -245,6 +271,9 @@ CREATE INDEX "applicants_partner_idx" ON "public"."applicants"("partner");
 CREATE INDEX "applicants_isArchived_idx" ON "public"."applicants"("isArchived");
 
 -- CreateIndex
+CREATE INDEX "applicants_isAlert_idx" ON "public"."applicants"("isAlert");
+
+-- CreateIndex
 CREATE INDEX "visas_applicant_id_idx" ON "public"."visas"("applicant_id");
 
 -- CreateIndex
@@ -259,6 +288,24 @@ CREATE INDEX "files_applicant_id_idx" ON "public"."files"("applicant_id");
 -- CreateIndex
 CREATE INDEX "files_file_type_idx" ON "public"."files"("file_type");
 
+-- CreateIndex
+CREATE INDEX "comments_applicant_id_idx" ON "public"."comments"("applicant_id");
+
+-- CreateIndex
+CREATE INDEX "comments_author_id_idx" ON "public"."comments"("author_id");
+
+-- CreateIndex
+CREATE INDEX "alerts_comment_id_idx" ON "public"."alerts"("comment_id");
+
+-- CreateIndex
+CREATE INDEX "alerts_user_id_idx" ON "public"."alerts"("user_id");
+
+-- CreateIndex
+CREATE INDEX "alerts_is_read_idx" ON "public"."alerts"("is_read");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "alerts_comment_id_user_id_key" ON "public"."alerts"("comment_id", "user_id");
+
 -- AddForeignKey
 ALTER TABLE "public"."sessions" ADD CONSTRAINT "sessions_userId_fkey" FOREIGN KEY ("userId") REFERENCES "public"."users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
@@ -269,10 +316,10 @@ ALTER TABLE "public"."accounts" ADD CONSTRAINT "accounts_userId_fkey" FOREIGN KE
 ALTER TABLE "public"."sidebar" ADD CONSTRAINT "sidebar_parentId_fkey" FOREIGN KEY ("parentId") REFERENCES "public"."sidebar"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "public"."sidebar_user" ADD CONSTRAINT "sidebar_user_userId_fkey" FOREIGN KEY ("userId") REFERENCES "public"."users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "public"."sidebar_user" ADD CONSTRAINT "sidebar_user_sidebarItemId_fkey" FOREIGN KEY ("sidebarItemId") REFERENCES "public"."sidebar"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "public"."sidebar_user" ADD CONSTRAINT "sidebar_user_sidebarItemId_fkey" FOREIGN KEY ("sidebarItemId") REFERENCES "public"."sidebar"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "public"."sidebar_user" ADD CONSTRAINT "sidebar_user_userId_fkey" FOREIGN KEY ("userId") REFERENCES "public"."users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "public"."codes" ADD CONSTRAINT "codes_groupCodeId_fkey" FOREIGN KEY ("groupCodeId") REFERENCES "public"."group_codes"("id") ON DELETE CASCADE ON UPDATE CASCADE;
@@ -285,3 +332,19 @@ ALTER TABLE "public"."work_history" ADD CONSTRAINT "work_history_applicant_id_fk
 
 -- AddForeignKey
 ALTER TABLE "public"."files" ADD CONSTRAINT "files_applicant_id_fkey" FOREIGN KEY ("applicant_id") REFERENCES "public"."applicants"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "public"."comments" ADD CONSTRAINT "comments_applicant_id_fkey" FOREIGN KEY ("applicant_id") REFERENCES "public"."applicants"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "public"."comments" ADD CONSTRAINT "comments_author_id_fkey" FOREIGN KEY ("author_id") REFERENCES "public"."users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "public"."alerts" ADD CONSTRAINT "alerts_applicant_id_fkey" FOREIGN KEY ("applicant_id") REFERENCES "public"."applicants"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "public"."alerts" ADD CONSTRAINT "alerts_comment_id_fkey" FOREIGN KEY ("comment_id") REFERENCES "public"."comments"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "public"."alerts" ADD CONSTRAINT "alerts_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
