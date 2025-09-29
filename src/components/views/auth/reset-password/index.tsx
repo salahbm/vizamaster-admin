@@ -91,7 +91,6 @@ export function ResetPasswordView() {
               label={t('newPasswordLabel')}
               render={({ field }) => (
                 <PasswordInput
-                  type="password"
                   placeholder={t('newPasswordPlaceholder')}
                   disabled={isSubmitting}
                   {...field}
@@ -105,7 +104,6 @@ export function ResetPasswordView() {
               label={t('confirmPasswordLabel')}
               render={({ field }) => (
                 <PasswordInput
-                  type="password"
                   placeholder={t('confirmPasswordPlaceholder')}
                   disabled={isSubmitting}
                   {...field}
