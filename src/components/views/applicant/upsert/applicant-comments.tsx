@@ -10,7 +10,7 @@ import { ChatGroup } from '@/components/shared/chat/chat-group';
 import { Empty } from '@/components/shared/icons';
 import { ChatSkeleton } from '@/components/skeletons';
 import { Button } from '@/components/ui/button';
-import LotteLoading from '@/components/ui/loading';
+import LottieLoading from '@/components/ui/loading';
 import { Textarea } from '@/components/ui/textarea';
 
 import { useMarkAllAlertsRead } from '@/hooks/alert/use-alerts';
@@ -76,9 +76,7 @@ export default function ApplicantComments({ id }: { id?: string }) {
 
   // Load more comments
   const loadMoreComments = () => {
-    if (hasNextPage && !isFetchingNextPage) {
-      fetchNextPage();
-    }
+    if (hasNextPage && !isFetchingNextPage) fetchNextPage();
   };
 
   // Create a new comment
@@ -144,10 +142,10 @@ export default function ApplicantComments({ id }: { id?: string }) {
 
   return (
     <div className="flex h-full flex-col">
-      <div className="card flex-1 lg:mb-4">
+      <div className="card flex-1">
         <ul
           ref={scrollRef}
-          className="no-scrollbar h-[calc(100vh-400px)] overflow-y-auto lg:h-[calc(100vh-500px)]"
+          className="no-scrollbar relative h-[calc(100vh-400px)] overflow-y-auto lg:h-[calc(100vh-500px)]"
           onScroll={(e) => {
             const target = e.currentTarget;
             if (target.scrollTop === 0 && hasNextPage && !isFetchingNextPage) {
@@ -167,8 +165,8 @@ export default function ApplicantComments({ id }: { id?: string }) {
           ) : (
             <>
               {isFetchingNextPage && (
-                <li className="flex-center">
-                  <LotteLoading />
+                <li className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+                  <LottieLoading />
                 </li>
               )}
               {groupedComments.map((group, index) => (
@@ -181,27 +179,26 @@ export default function ApplicantComments({ id }: { id?: string }) {
             </>
           )}
         </ul>
+        {/* New comment form */}
+        <form onSubmit={handleSubmit} className="mt-2 flex gap-2">
+          <Textarea
+            placeholder={t('applicant.comments.placeholder')}
+            value={newComment}
+            onChange={(e) => setNewComment(e.target.value)}
+            className="flex-1 resize-none"
+            disabled={isCreatingComment}
+            maxLength={500}
+            required
+          />
+          <Button
+            type="submit"
+            size="icon"
+            disabled={!newComment.trim() || isCreatingComment}
+          >
+            <Send className="h-4 w-4" />
+          </Button>
+        </form>
       </div>
-
-      {/* New comment form */}
-      <form onSubmit={handleSubmit} className="flex gap-2">
-        <Textarea
-          placeholder={t('applicant.comments.placeholder')}
-          value={newComment}
-          onChange={(e) => setNewComment(e.target.value)}
-          className="flex-1 resize-none"
-          disabled={isCreatingComment}
-          maxLength={500}
-          required
-        />
-        <Button
-          type="submit"
-          size="icon"
-          disabled={!newComment.trim() || isCreatingComment}
-        >
-          <Send className="h-4 w-4" />
-        </Button>
-      </form>
     </div>
   );
 }

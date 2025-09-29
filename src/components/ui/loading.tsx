@@ -2,7 +2,7 @@ import Lottie from 'lottie-react';
 
 import animationData from '../../../public/loading.json';
 
-const LotteLoading = () => {
+const LottieLoading = () => {
   const defaultOptions = {
     loop: true,
     autoplay: true,
@@ -15,8 +15,8 @@ const LotteLoading = () => {
   return (
     <div
       style={{
-        width: 100,
-        height: 100,
+        width: 60,
+        height: 20,
       }}
     >
       <Lottie {...defaultOptions} />
@@ -24,4 +24,4 @@ const LotteLoading = () => {
   );
 };
 
-export default LotteLoading;
+export default LottieLoading;
