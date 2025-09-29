@@ -62,6 +62,17 @@ model Accounts {
   @@map("accounts")
 }
 
+model Verification {
+  id            String        @id @default(cuid())
+  identifier    String
+  value         String
+  expiresAt     DateTime
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  @@map("verification")
+}
+
 model Sidebar {
   id        String        @id @default(cuid())
   labelEn   String

@@ -216,13 +216,33 @@
       "pwdRegex": "Пароль должен содержать хотя бы одну заглавную букву, одну строчную букву, одну цифру и один специальный символ"
     },
     "forgotPassword": {
-      "title": "Сбросить пароль",
-      "subtitle": "Введите ваш email, и мы отправим вам ссылку для сброса пароля",
-      "emailLabel": "Электронная почта",
+      "title": "Сброс пароля",
+      "subtitle": "Введите ваш email и мы отправим вам ссылку для сброса пароля",
+      "emailLabel": "Email",
       "emailPlaceholder": "Введите ваш email",
-      "button": "Отправить ссылку для сброса",
-      "buttonLoading": "Отправляем ссылку...",
+      "resetButton": "Сбросить пароль",
       "backToSignIn": "Вернуться к входу"
+    },
+    "resetPassword": {
+      "title": "Сброс пароля",
+      "description": "Введите новый пароль",
+      "emailSubject": "Сброс пароля - Viza Master Admin",
+      "emailTitle": "Запрос на сброс пароля",
+      "emailDescription": "Вы запросили сброс пароля для вашей учетной записи Viza Master Admin.",
+      "emailInstructions": "Нажмите на кнопку ниже, чтобы сбросить пароль:",
+      "resetButton": "Сбросить пароль",
+      "emailDisclaimer": "Если вы не запрашивали сброс пароля, проигнорируйте это письмо.",
+      "emailExpiry": "Эта ссылка истечет через 1 час.",
+      "emailFooter": "Это автоматическое письмо, пожалуйста, не отвечайте на него.",
+      "newPasswordLabel": "Новый пароль",
+      "newPasswordPlaceholder": "Введите новый пароль",
+      "confirmPasswordLabel": "Подтвердите пароль",
+      "confirmPasswordPlaceholder": "Подтвердите новый пароль",
+      "loading": "Сброс пароля...",
+      "invalidToken": "Недействительный или просроченный токен сброса",
+      "passwordsDoNotMatch": "Пароли не совпадают",
+      "passwordResetSuccess": "Ваш пароль был успешно сброшен",
+      "passwordResetError": "Не удалось сбросить пароль. Пожалуйста, попробуйте снова."
     },
     "success": {
       "resetLinkSent": {

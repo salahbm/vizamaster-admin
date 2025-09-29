@@ -8,6 +8,10 @@ import { nextCookies } from 'better-auth/next-js';
 
 import prisma from '@/server/db/prisma';
 
+import { EmailService } from '../email/email.service';
+
+const emailService = new EmailService();
+
 export const enforceActiveUser = createAuthMiddleware(async (ctx) => {
   // Only run on email sign-in
   if (ctx.path !== '/sign-in/email') return;
@@ -52,6 +56,9 @@ export const auth = betterAuth({
     requireEmailVerification: false,
     minPasswordLength: 8,
     maxPasswordLength: 20,
+
+    sendResetPassword: async ({ user, url, token: _ }, _request) =>
+      await emailService.sendPasswordResetEmail(user.email, url),
   },
 
   hooks: {

@@ -22,20 +22,19 @@ export const validatePhone = (value: string, country = 'US') => {
   return phone?.isValid() ? phone.formatInternational() : null;
 };
 
+/**
+ * @description should be central asian country codes and india, nepal, russia
+ */
 export const COUNTRY_CODE_MAP: Record<string, string> = {
-  UK: 'GB', // United Kingdom
-  EL: 'GR', // Greece
-  TP: 'TL', // Timor-Leste
-  BU: 'MM', // Myanmar/Burma
-  ZR: 'CD', // Congo (Kinshasa)
-  LP: 'LA', // Laos
-  BJ: 'BO', // Bolivia
-  BRU: 'BN', // Brunei
-  KS: 'XK', // Kosovo (not officially ISO, sometimes used)
-  SF: 'ZA', // South Africa (old code SF → ZA)
-  YU: 'RS', // Yugoslavia → Serbia
-  SU: 'RU', // Soviet Union → Russia
-  AN: 'CW', // Netherlands Antilles → Curaçao
+  uzbekistan: 'UZ',
+  india: 'IN',
+  nepal: 'NP',
+  russia: 'RU',
+  kazakhstan: 'KZ',
+  kyrgyzstan: 'KG',
+  turkmenistan: 'TM',
+  ukraine: 'UA',
+  tajikistan: 'TJ',
 };
 
 /**
@@ -47,6 +46,7 @@ export const getCountries = (): Array<{ value: string; label: string }> => {
 
   const countriesList = countries.getNames(getLocale, { select: 'official' });
   return Object.entries(countriesList)
+    .filter(([code]) => COUNTRY_CODE_MAP[code])
     .map(([code, name]) => ({
       value: code,
       label: name,

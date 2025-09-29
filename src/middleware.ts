@@ -7,7 +7,13 @@ import { getSessionCookie } from 'better-auth/cookies';
 import { routes } from './constants/routes';
 import { Locale, routing } from './i18n/routing';
 
-const PUBLIC_ROUTES = ['/sign-in', '/sign-up', '/forgot-password', '/success'];
+const PUBLIC_ROUTES = [
+  '/sign-in',
+  '/sign-up',
+  '/forgot-password',
+  '/reset-password',
+  '/success',
+];
 
 const intlMiddleware = createIntlMiddleware(routing);
 

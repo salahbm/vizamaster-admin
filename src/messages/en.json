@@ -220,9 +220,29 @@
       "subtitle": "Enter your email address and we'll send you a link to reset your password",
       "emailLabel": "Email",
       "emailPlaceholder": "Enter your email",
-      "button": "Send reset link",
-      "buttonLoading": "Sending reset link...",
+      "resetButton": "Reset password",
       "backToSignIn": "Back to sign in"
+    },
+    "resetPassword": {
+      "title": "Reset Your Password",
+      "description": "Enter your new password below",
+      "emailSubject": "Reset Your Password - Viza Master Admin",
+      "emailTitle": "Password Reset Request",
+      "emailDescription": "You requested a password reset for your Viza Master Admin account.",
+      "emailInstructions": "Click the button below to reset your password:",
+      "resetButton": "Reset Password",
+      "emailDisclaimer": "If you didn't request this, please ignore this email.",
+      "emailExpiry": "This link will expire in 1 hour.",
+      "emailFooter": "This is an automated email, please do not reply.",
+      "newPasswordLabel": "New Password",
+      "newPasswordPlaceholder": "Enter your new password",
+      "confirmPasswordLabel": "Confirm Password",
+      "confirmPasswordPlaceholder": "Confirm your new password",
+      "loading": "Resetting password...",
+      "invalidToken": "Invalid or expired reset token",
+      "passwordsDoNotMatch": "Passwords do not match",
+      "passwordResetSuccess": "Your password has been reset successfully",
+      "passwordResetError": "Failed to reset password. Please try again."
     },
     "success": {
       "resetLinkSent": {
