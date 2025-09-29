@@ -1,17 +1,24 @@
 'use client';
 
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 
 import { useTranslations } from 'next-intl';
 
 import { DatePicker } from '@/components/shared/date-pickers';
 import { Separator } from '@/components/ui/separator';
 
+import {
+  groupKPIData,
+  groupStatusData,
+  groupTrendData,
+  groupVisaData,
+} from '@/utils/analytics';
 import { getLastSixMonths } from '@/utils/date';
 
-import CountryDistributionChart from './country-chart';
+import { useAnalytics } from '@/hooks/analytics';
+import { useDebounceValue } from '@/hooks/common/use-debounce-val';
+
 import ApplicantKPICards from './kpi-cards';
-import PartnerPerformanceChart from './partner-chart';
 import ApplicantStatusChart from './status-chart';
 import ApplicantTrendChart from './trend-chart';
 import VisaStatusChart from './visa-chart';
@@ -22,6 +29,27 @@ const DashboardView: React.FC = () => {
     from: getLastSixMonths(),
     to: new Date(),
   });
+
+  const debouncedRange = useDebounceValue(range, 500);
+
+  const { data, isLoading } = useAnalytics(debouncedRange);
+
+  const { kpi, status, visa, trend } = useMemo(() => {
+    if (!data)
+      return {
+        kpi: undefined,
+        status: undefined,
+        visa: undefined,
+        trend: undefined,
+      };
+    return {
+      kpi: groupKPIData(data),
+      status: groupStatusData(data),
+      visa: groupVisaData(data),
+      trend: groupTrendData(data),
+    };
+  }, [data]);
+
   return (
     <div className="space-y-12 overflow-x-hidden pb-8 sm:space-y-12">
       <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
@@ -48,7 +76,7 @@ const DashboardView: React.FC = () => {
             {t('dashboard.kpi.description')}
           </p>
         </div>
-        <ApplicantKPICards />
+        <ApplicantKPICards data={kpi} isLoading={isLoading} />
       </div>
 
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 sm:gap-4">
@@ -60,19 +88,18 @@ const DashboardView: React.FC = () => {
               {t('dashboard.charts.status.description')}
             </p>
           </div>
-          <ApplicantStatusChart />
+          <ApplicantStatusChart data={status} isLoading={isLoading} />
         </div>
+
         <div className="space-y-3 sm:space-y-4">
-          {/* Partner Performance */}
+          {/* Visa Status */}
           <div>
-            <h2 className="font-title">
-              {t('dashboard.charts.partners.title')}
-            </h2>
+            <h2 className="font-title">{t('dashboard.charts.visa.title')}</h2>
             <p className="font-caption-2 text-muted-foreground">
-              {t('dashboard.charts.partners.description')}
+              {t('dashboard.charts.visa.description')}
             </p>
           </div>
-          <PartnerPerformanceChart />
+          <VisaStatusChart data={visa} isLoading={isLoading} />
         </div>
       </div>
 
@@ -84,11 +111,13 @@ const DashboardView: React.FC = () => {
             {t('dashboard.charts.trend.description')}
           </p>
         </div>
-        <ApplicantTrendChart />
+        <ApplicantTrendChart data={trend} isLoading={isLoading} />
       </div>
-      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 sm:gap-4">
+
+      {/* currently no need for this keep commented for future use */}
+      {/* <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 sm:gap-4">
+
         <div className="space-y-3 sm:space-y-4">
-          {/* Country Distribution */}
           <div>
             <h2 className="font-title">
               {t('dashboard.charts.countries.title')}
@@ -99,17 +128,19 @@ const DashboardView: React.FC = () => {
           </div>
           <CountryDistributionChart />
         </div>
+
         <div className="space-y-3 sm:space-y-4">
-          {/* Visa Status */}
           <div>
-            <h2 className="font-title">{t('dashboard.charts.visa.title')}</h2>
+            <h2 className="font-title">
+              {t('dashboard.charts.partners.title')}
+            </h2>
             <p className="font-caption-2 text-muted-foreground">
-              {t('dashboard.charts.visa.description')}
+              {t('dashboard.charts.partners.description')}
             </p>
           </div>
-          <VisaStatusChart />
+          <PartnerPerformanceChart />
         </div>
-      </div>
+      </div> */}
     </div>
   );
 };

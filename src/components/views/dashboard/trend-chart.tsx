@@ -1,6 +1,5 @@
 'use client';
 
-import { format, subMonths } from 'date-fns';
 import { useTranslations } from 'next-intl';
 import {
   Area,
@@ -12,47 +11,43 @@ import {
   YAxis,
 } from 'recharts';
 
-interface TrendData {
-  date: string;
-  count: number;
+import { Skeleton } from '@/components/ui/skeleton';
+
+import { TrendData } from '@/utils/analytics';
+
+interface IApplicantTrendChartProps {
+  data?: TrendData[];
+  isLoading?: boolean;
 }
 
-interface IApplicantTrendChartProps {}
-
-const ApplicantTrendChart: React.FC<IApplicantTrendChartProps> = () => {
+const ApplicantTrendChart: React.FC<IApplicantTrendChartProps> = ({
+  data,
+  isLoading,
+}) => {
   const t = useTranslations();
+  if (isLoading) return <Skeleton className="h-[350px] w-full" />;
 
-  // Mock data - replace with real data later
-  const generateMockData = () => {
-    const data: TrendData[] = [];
-    const today = new Date();
-
-    // Generate last 6 months of data
-    for (let i = 5; i >= 0; i--) {
-      const date = subMonths(today, i);
-      data.push({
-        date: format(date, 'MMM yyyy'),
-        count: Math.floor(Math.random() * 50) + 20, // Random between 20-70
-      });
-    }
-
-    return data;
-  };
-
-  const data = generateMockData();
+  const chartData = data || [];
 
   return (
     <div className="card-md h-[350px]">
       <ResponsiveContainer width="100%" height="100%">
         <AreaChart
-          data={data}
+          data={chartData}
           margin={{ top: 10, right: 5, left: -30, bottom: 0 }}
         >
           <defs>
             <linearGradient id="colorCount" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%" stopColor="#38bdf8" stopOpacity={0.8} />{' '}
-              {/* cyan-400 */}
-              <stop offset="95%" stopColor="#38bdf8" stopOpacity={0} />
+              <stop
+                offset="5%"
+                stopColor="oklch(0.56 0.25 296.2)"
+                stopOpacity={0.2}
+              />
+              <stop
+                offset="95%"
+                stopColor="oklch(0.56 0.25 296.2)"
+                stopOpacity={0}
+              />
             </linearGradient>
           </defs>
           <XAxis
@@ -81,7 +76,7 @@ const ApplicantTrendChart: React.FC<IApplicantTrendChartProps> = () => {
                   <div className="bg-background rounded-lg border p-2 shadow-md">
                     <div className="grid gap-2">
                       <div className="flex items-center gap-2">
-                        <div className="h-2 w-2 rounded-full bg-blue-500" />
+                        <div className="bg-secondary h-2 w-2 rounded-full" />
                         <span className="font-medium">{data.date}</span>
                       </div>
                       <div className="text-muted-foreground text-xs">
@@ -98,7 +93,7 @@ const ApplicantTrendChart: React.FC<IApplicantTrendChartProps> = () => {
           <Area
             type="monotone"
             dataKey="count"
-            stroke="oklch(0.80 0.13 220)"
+            stroke="oklch(0.56 0.25 296.2)"
             fillOpacity={1}
             fill="url(#colorCount)"
           />

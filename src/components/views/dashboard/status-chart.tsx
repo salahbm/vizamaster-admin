@@ -10,105 +10,80 @@ import {
   Tooltip,
 } from 'recharts';
 
+import { Skeleton } from '@/components/ui/skeleton';
+
+import { StatusData } from '@/utils/analytics';
+
 import { useIsMobile } from '@/hooks/common/use-mobile';
 
-type CustomTooltipProps = {
-  active?: boolean;
-  payload?: Array<{
-    payload: StatusData;
-  }>;
-};
+interface ChartDataInput {
+  [key: string]: string | number;
+}
 
-type CustomLegendProps = {
-  payload?: Array<{
-    value: string;
-    payload: StatusData;
-  }>;
-};
-
-interface StatusData {
-  [key: string]: string | number; // Index signature for ChartDataInput
-  // Specific fields
+interface ChartStatusData extends ChartDataInput {
   id: string;
   name: string;
   value: number;
   color: string;
 }
 
-interface IApplicantStatusChartProps {}
+type CustomTooltipProps = {
+  active?: boolean;
+  payload?: Array<{
+    payload: ChartStatusData;
+  }>;
+};
 
-const ApplicantStatusChart: React.FC<IApplicantStatusChartProps> = () => {
+type CustomLegendProps = {
+  payload?: Array<{
+    value: string;
+    payload: ChartStatusData;
+  }>;
+};
+
+interface IApplicantStatusChartProps {
+  data?: StatusData[];
+  isLoading?: boolean;
+}
+
+const ApplicantStatusChart: React.FC<IApplicantStatusChartProps> = ({
+  data = [],
+  isLoading,
+}) => {
   const t = useTranslations();
   const isMobile = useIsMobile();
 
+  if (isLoading) return <Skeleton className="h-[350px] w-full" />;
+
+  // Use primary and secondary colors with shades
   const statusColors = {
-    NEW: '#6BB8E5', // soft sky blue
-    IN_PROGRESS: '#FFE066', // warm pastel yellow
-    CONFIRMED_PROGRAM: '#7DDBA1', // minty soft green
-    HIRED: '#4CAF7D', // muted medium green
-    HOTEL_REJECTED: '#FF8A80', // soft coral red
-    APPLICANT_REJECTED: '#FF6B6B', // warm strawberry red
-    FIRED: '#D9534F', // softer brick red
+    NEW: 'oklch(0.56 0.25 296.2)',
+    IN_PROGRESS: 'oklch(0.56 0.25 296.2 / 0.8)',
+    CONFIRMED_PROGRAM: 'oklch(0.56 0.25 296.2 / 0.6)',
+    HIRED: 'oklch(0.56 0.25 296.2 / 0.4)',
+    HOTEL_REJECTED: 'oklch(0.72 0.2 35.5)',
+    APPLICANT_REJECTED: 'oklch(0.72 0.2 35.5 / 0.6)',
+    FIRED: 'oklch(0.72 0.2 35.5 / 0.4)',
   };
 
-  // Mock data - replace with real data later
-  const data: StatusData[] = [
-    {
-      id: 'NEW',
-      name: t('Common.statuses.new'),
-      value: 45,
-      color: statusColors.NEW,
-    },
-    {
-      id: 'IN_PROGRESS',
-      name: t('Common.statuses.inProgress'),
-      value: 145,
-      color: statusColors.IN_PROGRESS,
-    },
-    {
-      id: 'CONFIRMED_PROGRAM',
-      name: t('Common.statuses.confirmedProgram'),
-      value: 65,
-      color: statusColors.CONFIRMED_PROGRAM,
-    },
-    {
-      id: 'HIRED',
-      name: t('Common.statuses.hired'),
-      value: 89,
-      color: statusColors.HIRED,
-    },
-    {
-      id: 'HOTEL_REJECTED',
-      name: t('Common.statuses.hotelRejected'),
-      value: 34,
-      color: statusColors.HOTEL_REJECTED,
-    },
-    {
-      id: 'APPLICANT_REJECTED',
-      name: t('Common.statuses.applicantRejected'),
-      value: 32,
-      color: statusColors.APPLICANT_REJECTED,
-    },
-    {
-      id: 'FIRED',
-      name: t('Common.statuses.fired'),
-      value: 12,
-      color: statusColors.FIRED,
-    },
-  ];
+  const chartData = (data || []).map((item) => ({
+    ...item,
+    name: t(`Common.statuses.${item.id.toUpperCase()}`),
+    color: statusColors[item.id as keyof typeof statusColors],
+  }));
 
-  const calculateTotal = (data: StatusData[]) => {
+  const calculateTotal = (data: Array<{ value: number }>) => {
     return data.reduce((sum, item) => sum + item.value, 0);
   };
 
-  const total = calculateTotal(data);
+  const total = calculateTotal(chartData);
 
   return (
-    <div className="card-md ] h-[350px]">
+    <div className="card-md h-[350px]">
       <ResponsiveContainer width="100%" height="100%">
         <PieChart>
           <Pie
-            data={data}
+            data={chartData}
             cx="50%"
             cy="50%"
             innerRadius={70}
@@ -116,7 +91,7 @@ const ApplicantStatusChart: React.FC<IApplicantStatusChartProps> = () => {
             paddingAngle={2}
             dataKey="value"
           >
-            {data.map((entry) => (
+            {chartData.map((entry) => (
               <Cell key={entry.id} fill={entry.color} />
             ))}
           </Pie>
@@ -138,7 +113,8 @@ const ApplicantStatusChart: React.FC<IApplicantStatusChartProps> = () => {
                         {((data.value / total) * 100).toFixed(1)}%
                       </div>
                       <div className="text-muted-foreground col-span-2 text-xs">
-                        {data.value} applicants
+                        {data.value}{' '}
+                        {t('dashboard.charts.countries.tooltip.applicants')}
                       </div>
                     </div>
                   </div>
@@ -163,22 +139,24 @@ const ApplicantStatusChart: React.FC<IApplicantStatusChartProps> = () => {
 };
 
 const CustomLegend = ({ payload }: CustomLegendProps) => {
-  const total =
-    payload?.reduce((sum, item) => sum + (item.payload.value as number), 0) ||
-    0;
   if (!payload) return null;
+
+  const total = payload.reduce(
+    (sum, item) => sum + (item.payload.value as number),
+    0,
+  );
 
   return (
     <div className="flex flex-col gap-2">
-      {payload?.map((entry) => (
-        <div key={entry.value} className="flex items-center gap-2">
+      {payload.map((entry) => (
+        <div key={entry.payload.id} className="flex items-center gap-2">
           <div
             className="h-2 w-2 rounded-full"
             style={{ background: entry.payload.color }}
           />
-          <span className="text-xs">{entry.value}</span>
+          <span className="text-xs">{entry.payload.name}</span>
           <span className="text-muted-foreground text-xs">
-            {(((entry.payload.value || 0) / total) * 100)?.toFixed(1)}%
+            {((entry.payload.value / total) * 100).toFixed(1)}%
           </span>
         </div>
       ))}

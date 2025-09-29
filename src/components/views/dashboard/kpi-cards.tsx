@@ -3,55 +3,61 @@
 import { Users } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
-interface IApplicantKPICardsProps {}
+import { Skeleton } from '@/components/ui/skeleton';
+
+import { KPIData } from '@/utils/analytics';
+
+interface IApplicantKPICardsProps {
+  data?: KPIData;
+  isLoading?: boolean;
+}
 
 const statusColors = {
-  NEW: '#6BB8E5', // soft sky blue
-  IN_PROGRESS: '#FFE066', // warm pastel yellow
-  CONFIRMED_PROGRAM: '#7DDBA1', // minty soft green
-  HIRED: '#4CAF7D', // muted medium green
-  HOTEL_REJECTED: '#FF8A80', // soft coral red
-  APPLICANT_REJECTED: '#FF6B6B', // warm strawberry red
-  FIRED: '#D9534F', // softer brick red
+  NEW: 'oklch(0.85 0.12 230)', // soft warm blue
+  IN_PROGRESS: 'oklch(0.89 0.10 90)', // soft warm yellow
+  CONFIRMED_PROGRAM: 'oklch(0.88 0.10 150)', // soft warm green
+  HIRED: 'oklch(0.82 0.12 140)', // soft muted green
+  HOTEL_REJECTED: 'oklch(0.85 0.10 30)', // soft warm coral
+  APPLICANT_REJECTED: 'oklch(0.82 0.12 25)', // soft warm red
+  FIRED: 'oklch(0.75 0.15 20)', // muted warm red
 };
 
-const ApplicantKPICards: React.FC<IApplicantKPICardsProps> = () => {
+const ApplicantKPICards: React.FC<IApplicantKPICardsProps> = ({
+  data,
+  isLoading,
+}) => {
   const t = useTranslations();
 
-  // Temporary mock data
+  if (isLoading) return <Skeleton className="h-[350px] w-full" />;
+
   const kpiData = [
     {
       id: 'total',
-      value: 345,
-      trend: '+12%',
+      value: data?.total ?? 0,
       icon: Users,
       color: statusColors.CONFIRMED_PROGRAM,
     },
     {
       id: 'new',
-      value: 45,
-      trend: '+5%',
+      value: data?.new ?? 0,
       icon: Users,
       color: statusColors.NEW,
     },
     {
       id: 'in_progress',
-      value: 145,
-      trend: '+8%',
+      value: data?.inProgress ?? 0,
       icon: Users,
       color: statusColors.IN_PROGRESS,
     },
     {
       id: 'hired',
-      value: 89,
-      trend: '+15%',
+      value: data?.hired ?? 0,
       icon: Users,
       color: statusColors.HIRED,
     },
     {
       id: 'rejected',
-      value: 66,
-      trend: '-2%',
+      value: data?.rejected ?? 0,
       icon: Users,
       color: statusColors.HOTEL_REJECTED,
     },
@@ -64,33 +70,30 @@ const ApplicantKPICards: React.FC<IApplicantKPICardsProps> = () => {
         return (
           <div
             key={kpi.id}
-            className="rounded-lg p-4"
+            className="bg-popover rounded-lg p-4"
             style={{
-              backgroundColor: `${kpi.color}15`,
               borderLeft: `4px solid ${kpi.color}`,
+              borderRight: `0.5px solid ${kpi.color}`,
+              borderTop: `0.5px solid ${kpi.color}`,
+              borderBottom: `0.5px solid ${kpi.color}`,
             }}
           >
             <div className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <div className="flex items-center gap-2">
+                <Icon className="h-4 w-4" style={{ color: kpi.color }} />
+              </div>
               <h3 className="text-sm font-medium">
                 {t(`dashboard.kpi.${kpi.id}.title`)}
               </h3>
-              <Icon style={{ color: kpi.color }} className="h-4 w-4" />
             </div>
             <div className="pt-2">
               <div className="text-2xl font-bold">{kpi.value}</div>
               <p className="text-muted-foreground text-xs">
+                {t(`dashboard.kpi.${kpi.id}.title`)}
+              </p>
+              <p className="text-muted-foreground text-xs">
                 {t(`dashboard.kpi.${kpi.id}.description`)}
               </p>
-              <div
-                className={`mt-1 text-xs`}
-                style={{
-                  color: kpi.trend.startsWith('-')
-                    ? statusColors.HOTEL_REJECTED
-                    : statusColors.HIRED,
-                }}
-              >
-                {kpi.trend} from last month
-              </div>
             </div>
           </div>
         );

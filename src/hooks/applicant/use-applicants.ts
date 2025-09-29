@@ -61,6 +61,16 @@ export const useCreateApplicant = () => {
           ],
           type: 'all',
         });
+        queryClient.invalidateQueries({
+          queryKey: [
+            ...QueryKeys.applicants.all,
+            {
+              country: 'all',
+              partner: 'all',
+            },
+          ],
+          type: 'all',
+        });
         router.back();
       },
     },

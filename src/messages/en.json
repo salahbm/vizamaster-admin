@@ -136,6 +136,13 @@
     "alerts": "Alerts",
     "total": "Total Applicants",
     "statuses": {
+      "NEW": "New",
+      "IN_PROGRESS": "In Progress",
+      "CONFIRMED_PROGRAM": "Confirmed Program",
+      "HIRED": "Hired",
+      "HOTEL_REJECTED": "Hotel Rejected",
+      "APPLICANT_REJECTED": "Applicant Rejected",
+      "FIRED": "Fired",
       "new": "New",
       "inProgress": "In Progress",
       "confirmedProgram": "Confirmed Program",

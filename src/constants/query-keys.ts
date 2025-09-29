@@ -13,11 +13,12 @@ export const QueryKeys = {
     visa: ['applicants', 'visa'],
     comments: ['applicants', 'comments'],
   },
-
+  analytics: {
+    all: ['analytics'],
+  },
   alerts: {
     unread: ['alerts', 'unread'],
   },
-
   settings: {
     sidebar: {
       all: ['settings', 'sidebar'],

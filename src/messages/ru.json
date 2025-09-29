@@ -136,6 +136,13 @@
     "alerts": "Предупреждения",
     "total": "Все заявители",
     "statuses": {
+      "NEW": "Новая",
+      "IN_PROGRESS": "В обработке",
+      "CONFIRMED_PROGRAM": "Программа подтверждена",
+      "HIRED": "Нанят",
+      "HOTEL_REJECTED": "Отклонено отелем",
+      "APPLICANT_REJECTED": "Отклонено заявителем",
+      "FIRED": "Уволен",
       "new": "Новая",
       "inProgress": "В обработке",
       "confirmedProgram": "Программа подтверждена",

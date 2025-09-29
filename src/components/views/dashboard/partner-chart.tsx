@@ -23,18 +23,16 @@ interface IPartnerPerformanceChartProps {}
 const PartnerPerformanceChart: React.FC<IPartnerPerformanceChartProps> = () => {
   const t = useTranslations();
 
-  // Custom warm, soft colors for the chart
+  // Use secondary color with different shades
   const chartColors = [
-    '#E57373', // soft red
-    '#FFB74D', // soft orange
-    '#FFF176', // soft yellow
-    '#81C784', // soft green
-    '#64B5F6', // soft blue
-    '#9575CD', // soft purple
-    '#F06292', // soft pink
-    '#4DB6AC', // soft teal
-    '#A1887F', // soft brown
-    '#90A4AE', // soft blue-grey
+    'oklch(0.56 0.25 296.2)',
+    'oklch(0.56 0.25 296.2 / 0.9)',
+    'oklch(0.56 0.25 296.2 / 0.8)',
+    'oklch(0.56 0.25 296.2 / 0.7)',
+    'oklch(0.56 0.25 296.2 / 0.6)',
+    'oklch(0.56 0.25 296.2 / 0.5)',
+    'oklch(0.56 0.25 296.2 / 0.4)',
+    'oklch(0.56 0.25 296.2 / 0.3)',
   ];
 
   // Mock data - replace with real data later
