@@ -28,8 +28,6 @@ const ApplicantKPICards: React.FC<IApplicantKPICardsProps> = ({
 }) => {
   const t = useTranslations();
 
-  if (isLoading) return <Skeleton className="h-[350px] w-full" />;
-
   const kpiData = [
     {
       id: 'total',
@@ -65,41 +63,51 @@ const ApplicantKPICards: React.FC<IApplicantKPICardsProps> = ({
 
   return (
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
-      {kpiData.map((kpi) => {
-        const Icon = kpi.icon;
-        return (
-          <div
-            key={kpi.id}
-            className="bg-popover rounded-lg border p-4 shadow-lg"
-            // style={{
-            //   borderLeft: `4px solid ${kpi.color}`,
-            //   borderRight: `0.5px solid ${kpi.color}`,
-            //   borderTop: `0.5px solid ${kpi.color}`,
-            //   borderBottom: `0.5px solid ${kpi.color}`,
-            // }}
-          >
-            <div className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <div className="flex items-center gap-2">
-                <Icon className="text-muted-foreground h-4 w-4" />
+      {isLoading ? (
+        <Skeleton className="bg-popover h-[150px] w-full rounded-lg border p-4 shadow-lg" />
+      ) : (
+        kpiData.map((kpi) => {
+          const Icon = kpi.icon;
+          return (
+            <div
+              key={kpi.id}
+              className="bg-popover rounded-lg border p-4 shadow-lg"
+              // style={{
+              //   borderLeft: `4px solid ${kpi.color}`,
+              //   borderRight: `0.5px solid ${kpi.color}`,
+              //   borderTop: `0.5px solid ${kpi.color}`,
+              //   borderBottom: `0.5px solid ${kpi.color}`,
+              // }}
+            >
+              <div className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <div className="flex items-center gap-2">
+                  <Icon className="text-muted-foreground h-4 w-4" />
+                </div>
+                <h3
+                  className="text-sm font-medium"
+                  style={{ color: kpi.color }}
+                >
+                  {t(`dashboard.kpi.${kpi.id}.title`)}
+                </h3>
               </div>
-              <h3 className="text-sm font-medium" style={{ color: kpi.color }}>
-                {t(`dashboard.kpi.${kpi.id}.title`)}
-              </h3>
-            </div>
-            <div className="pt-2">
-              <div className="text-2xl font-bold" style={{ color: kpi.color }}>
-                {kpi.value}
+              <div className="pt-2">
+                <div
+                  className="text-2xl font-bold"
+                  style={{ color: kpi.color }}
+                >
+                  {kpi.value}
+                </div>
+                <p className="text-muted-foreground text-xs">
+                  {t(`dashboard.kpi.${kpi.id}.title`)}
+                </p>
+                <p className="text-muted-foreground text-xs">
+                  {t(`dashboard.kpi.${kpi.id}.description`)}
+                </p>
               </div>
-              <p className="text-muted-foreground text-xs">
-                {t(`dashboard.kpi.${kpi.id}.title`)}
-              </p>
-              <p className="text-muted-foreground text-xs">
-                {t(`dashboard.kpi.${kpi.id}.description`)}
-              </p>
             </div>
-          </div>
-        );
-      })}
+          );
+        })
+      )}
     </div>
   );
 };

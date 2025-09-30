@@ -444,7 +444,7 @@ const ApplicantUserInfo: React.FC<IApplicantUserInfoProps> = ({
 
             <FormFields
               name="workplace"
-              label={t('applicant.form.fields.jobTitle.label')}
+              label={t('applicant.form.fields.workplace.label')}
               control={form.control}
               render={({ field }) => (
                 <Combobox
