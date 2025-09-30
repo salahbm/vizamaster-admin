@@ -72,19 +72,19 @@ const DashboardView: React.FC = () => {
       <div className="space-y-3 sm:space-y-4">
         <div>
           <h2 className="font-title">{t('dashboard.kpi.title')}</h2>
-          <p className="font-caption-2 text-muted-foreground">
+          <p className="font-caption-2 text-muted-foreground line-clamp-2 h-12 text-ellipsis">
             {t('dashboard.kpi.description')}
           </p>
         </div>
         <ApplicantKPICards data={kpi} isLoading={isLoading} />
       </div>
 
-      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 sm:gap-4">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2 lg:gap-4">
         <div className="space-y-3 sm:space-y-4">
           {/* Status Distribution */}
           <div>
             <h2 className="font-title">{t('dashboard.charts.status.title')}</h2>
-            <p className="font-caption-2 text-muted-foreground">
+            <p className="font-caption-2 text-muted-foreground line-clamp-2 h-12 text-ellipsis">
               {t('dashboard.charts.status.description')}
             </p>
           </div>
@@ -95,7 +95,7 @@ const DashboardView: React.FC = () => {
           {/* Visa Status */}
           <div>
             <h2 className="font-title">{t('dashboard.charts.visa.title')}</h2>
-            <p className="font-caption-2 text-muted-foreground">
+            <p className="font-caption-2 text-muted-foreground line-clamp-2 h-12 text-ellipsis">
               {t('dashboard.charts.visa.description')}
             </p>
           </div>
@@ -107,7 +107,7 @@ const DashboardView: React.FC = () => {
       <div className="space-y-3 sm:space-y-4">
         <div>
           <h2 className="font-title">{t('dashboard.charts.trend.title')}</h2>
-          <p className="font-caption-2 text-muted-foreground">
+          <p className="font-caption-2 text-muted-foreground line-clamp-2 h-12 text-ellipsis">
             {t('dashboard.charts.trend.description')}
           </p>
         </div>
@@ -115,14 +115,14 @@ const DashboardView: React.FC = () => {
       </div>
 
       {/* currently no need for this keep commented for future use */}
-      {/* <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 sm:gap-4">
+      {/* <div className="grid grid-cols-1 gap-6 lg:grid-cols-2 lg:gap-4">
 
         <div className="space-y-3 sm:space-y-4">
           <div>
             <h2 className="font-title">
               {t('dashboard.charts.countries.title')}
             </h2>
-            <p className="font-caption-2 text-muted-foreground">
+            <p className="font-caption-2 text-muted-foreground line-clamp-2 h-12 text-ellipsis">
               {t('dashboard.charts.countries.description')}
             </p>
           </div>
@@ -134,7 +134,7 @@ const DashboardView: React.FC = () => {
             <h2 className="font-title">
               {t('dashboard.charts.partners.title')}
             </h2>
-            <p className="font-caption-2 text-muted-foreground">
+            <p className="font-caption-2 text-muted-foreground line-clamp-2 h-12 text-ellipsis">
               {t('dashboard.charts.partners.description')}
             </p>
           </div>

@@ -1,6 +1,6 @@
 'use client';
 
-import { Users } from 'lucide-react';
+import { BadgeCheck, UserCog, UserPlus, Users, XCircle } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
 import { Skeleton } from '@/components/ui/skeleton';
@@ -40,25 +40,25 @@ const ApplicantKPICards: React.FC<IApplicantKPICardsProps> = ({
     {
       id: 'new',
       value: data?.new ?? 0,
-      icon: Users,
+      icon: UserPlus,
       color: statusColors.NEW,
     },
     {
       id: 'in_progress',
       value: data?.inProgress ?? 0,
-      icon: Users,
+      icon: UserCog,
       color: statusColors.IN_PROGRESS,
     },
     {
       id: 'hired',
       value: data?.hired ?? 0,
-      icon: Users,
+      icon: BadgeCheck,
       color: statusColors.HIRED,
     },
     {
       id: 'rejected',
       value: data?.rejected ?? 0,
-      icon: Users,
+      icon: XCircle,
       color: statusColors.HOTEL_REJECTED,
     },
   ];
@@ -70,24 +70,26 @@ const ApplicantKPICards: React.FC<IApplicantKPICardsProps> = ({
         return (
           <div
             key={kpi.id}
-            className="bg-popover rounded-lg p-4"
-            style={{
-              borderLeft: `4px solid ${kpi.color}`,
-              borderRight: `0.5px solid ${kpi.color}`,
-              borderTop: `0.5px solid ${kpi.color}`,
-              borderBottom: `0.5px solid ${kpi.color}`,
-            }}
+            className="bg-popover rounded-lg border p-4 shadow-lg"
+            // style={{
+            //   borderLeft: `4px solid ${kpi.color}`,
+            //   borderRight: `0.5px solid ${kpi.color}`,
+            //   borderTop: `0.5px solid ${kpi.color}`,
+            //   borderBottom: `0.5px solid ${kpi.color}`,
+            // }}
           >
             <div className="flex flex-row items-center justify-between space-y-0 pb-2">
               <div className="flex items-center gap-2">
-                <Icon className="h-4 w-4" style={{ color: kpi.color }} />
+                <Icon className="text-muted-foreground h-4 w-4" />
               </div>
-              <h3 className="text-sm font-medium">
+              <h3 className="text-sm font-medium" style={{ color: kpi.color }}>
                 {t(`dashboard.kpi.${kpi.id}.title`)}
               </h3>
             </div>
             <div className="pt-2">
-              <div className="text-2xl font-bold">{kpi.value}</div>
+              <div className="text-2xl font-bold" style={{ color: kpi.color }}>
+                {kpi.value}
+              </div>
               <p className="text-muted-foreground text-xs">
                 {t(`dashboard.kpi.${kpi.id}.title`)}
               </p>
