@@ -49,6 +49,7 @@ const ApplicantUserInfo: React.FC<IApplicantUserInfoProps> = ({
   const { options: countryOptions } = useCodesStore();
   const { options: partnerOptions } = useCodesStore();
   const { options: vacancyOptions } = useCodesStore();
+  const { options: workPlaceOptions } = useCodesStore();
 
   // MEMOS
   const countryOfResidenceOptions = useMemo(() => getCountries(), []);
@@ -75,7 +76,7 @@ const ApplicantUserInfo: React.FC<IApplicantUserInfoProps> = ({
       });
   }, [applicant, form]);
 
-  if (isLoading || isPendingUpdateApplicant) return <FormSkeleton />;
+  if (isLoading) return <FormSkeleton />;
 
   const onSubmit = (data: TApplicantDto) => {
     if (id) {
@@ -379,6 +380,36 @@ const ApplicantUserInfo: React.FC<IApplicantUserInfoProps> = ({
           )}
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
             <FormFields
+              name="nationality"
+              label={t('applicant.form.fields.nationality.label')}
+              control={form.control}
+              render={({ field }) => (
+                <Combobox
+                  searchable
+                  options={countryOfResidenceOptions}
+                  placeholder={t(
+                    'applicant.form.fields.nationality.placeholder',
+                  )}
+                  {...field}
+                />
+              )}
+            />
+
+            <FormFields
+              name="languages"
+              label={t('applicant.form.fields.languages.label')}
+              control={form.control}
+              render={({ field }) => (
+                <Combobox
+                  multiple
+                  searchable
+                  options={languagesOptions}
+                  placeholder={t('applicant.form.fields.languages.placeholder')}
+                  {...field}
+                />
+              )}
+            />
+            <FormFields
               name="countryOfEmployment"
               label={t('applicant.form.fields.countryOfEmployment.label')}
               required
@@ -410,21 +441,21 @@ const ApplicantUserInfo: React.FC<IApplicantUserInfoProps> = ({
                 />
               )}
             />
+
             <FormFields
-              name="nationality"
-              label={t('applicant.form.fields.nationality.label')}
+              name="workplace"
+              label={t('applicant.form.fields.jobTitle.label')}
               control={form.control}
               render={({ field }) => (
                 <Combobox
                   searchable
-                  options={countryOfResidenceOptions}
-                  placeholder={t(
-                    'applicant.form.fields.nationality.placeholder',
-                  )}
+                  options={workPlaceOptions('group-workplaces', locale)}
+                  placeholder={t('applicant.form.fields.workplace.placeholder')}
                   {...field}
                 />
               )}
             />
+
             <FormFields
               name="preferredJobTitle"
               label={t('applicant.form.fields.jobTitle.label')}
@@ -434,20 +465,6 @@ const ApplicantUserInfo: React.FC<IApplicantUserInfoProps> = ({
                   searchable
                   options={vacancyOptions('group-vacancies', locale)}
                   placeholder={t('applicant.form.fields.jobTitle.placeholder')}
-                  {...field}
-                />
-              )}
-            />
-            <FormFields
-              name="languages"
-              label={t('applicant.form.fields.languages.label')}
-              control={form.control}
-              render={({ field }) => (
-                <Combobox
-                  multiple
-                  searchable
-                  options={languagesOptions}
-                  placeholder={t('applicant.form.fields.languages.placeholder')}
                   {...field}
                 />
               )}
@@ -463,7 +480,11 @@ const ApplicantUserInfo: React.FC<IApplicantUserInfoProps> = ({
           <Button
             type="submit"
             className="w-36"
-            disabled={isPendingCreateApplicant || !form.formState.isDirty}
+            disabled={
+              isPendingCreateApplicant ||
+              !form.formState.isDirty ||
+              isPendingUpdateApplicant
+            }
           >
             {t('applicant.form.buttons.submit')}
           </Button>

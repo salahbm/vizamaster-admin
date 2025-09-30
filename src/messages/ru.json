@@ -1,7 +1,7 @@
 {
   "Metadata": {
-    "title": "Добро пожаловать в админ-панель Vizamaster",
-    "description": "Это админ-панель для Vizamaster"
+    "title": "Добро пожаловать в админ-панель Viza Master",
+    "description": "Это админ-панель для Viza Master"
   },
   "Header": {
     "language": "Язык",
@@ -135,6 +135,7 @@
     "audits": "Аудит",
     "alerts": "Предупреждения",
     "total": "Все заявители",
+    "workplace": "Место работы",
     "statuses": {
       "NEW": "Новая",
       "IN_PROGRESS": "В обработке",
@@ -315,7 +316,7 @@
       "createError": "Ошибка создания комментария. Пожалуйста, попробуйте снова."
     },
     "columns": {
-      "userId": "ID пользователя",
+      "userId": "ID",
       "preferredJobTitle": "Должность"
     },
     "status": {
@@ -329,7 +330,7 @@
     },
     "form": {
       "buttons": {
-        "submit": "Отправить заявителя",
+        "submit": "Отправить",
         "cancel": "Отмена",
         "addWork": "Добавить опыт работы"
       },
@@ -466,6 +467,10 @@
         "jobTitle": {
           "label": "Должность",
           "placeholder": "например, Инженер-программист"
+        },
+        "workplace": {
+          "label": "Место работы",
+          "placeholder": "например, ТехКорп"
         },
         "company": {
           "label": "Компания",

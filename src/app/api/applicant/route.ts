@@ -26,6 +26,7 @@ export async function GET(request: NextRequest) {
     const partner = searchParams.get('partner') || undefined;
     const isArchived = searchParams.get('isArchived') === 'true';
     const status = searchParams.get('status') || undefined;
+    const workplace = searchParams.get('workplace') || undefined;
     const jobTitle = searchParams.get('jobTitle') || undefined;
     const userId = searchParams.get('userId') || undefined;
 
@@ -52,6 +53,7 @@ export async function GET(request: NextRequest) {
       isArchived,
       isAlert,
       status,
+      workplace,
       jobTitle,
       userId,
     );

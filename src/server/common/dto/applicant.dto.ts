@@ -27,6 +27,7 @@ export const ApplicantDto = z.object({
   partner: z.string().min(1),
   nationality: z.string().nullable(),
   languages: z.array(z.string()),
+  workplace: z.string().nullable(),
   preferredJobTitle: z.string().nullable(),
   status: z
     .enum([

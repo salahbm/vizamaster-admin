@@ -29,7 +29,7 @@ export const CodesTable = () => {
   const query = useQueryReader({
     sort: { type: 'object', defaultValue: [{ id: 'createdAt', desc: false }] },
     page: { type: 'number', defaultValue: 1 },
-    size: { type: 'number', defaultValue: 10 },
+    size: { type: 'number', defaultValue: 50 },
     search: { type: 'string', defaultValue: '' },
     groupCodeId: { type: 'string', defaultValue: '' },
   });

@@ -5,6 +5,7 @@ import {
   Bar,
   BarChart,
   CartesianGrid,
+  Cell,
   ResponsiveContainer,
   Tooltip,
   XAxis,
@@ -26,25 +27,32 @@ const VisaStatusChart: React.FC<IVisaStatusChartProps> = ({
 }) => {
   const t = useTranslations();
 
-  if (isLoading) return <Skeleton className="h-[350px] w-full" />;
+  if (isLoading || !data)
+    return (
+      <div className="card-md flex h-[350px] w-full items-end justify-evenly">
+        <Skeleton className="h-28 w-24 rounded-t-lg" />
+        <Skeleton className="h-40 w-24 rounded-t-lg" />
+        <Skeleton className="h-32 w-24 rounded-t-lg" />
+      </div>
+    );
 
   const chartData = [
     {
       name: t('dashboard.charts.visa.statuses.stillWorking'),
       value: data?.stillWorking ?? 0,
-      color: 'oklch(0.72 0.2 35.5 / 0.8)',
+      color: 'oklch(0.72 0.2 35.5 / 0.9)',
       status: 'stillWorking',
     },
     {
       name: t('dashboard.charts.visa.statuses.returned'),
       value: data?.returned ?? 0,
-      color: 'oklch(0.72 0.2 35.5 / 0.5)',
+      color: 'oklch(0.72 0.2 35.5 / 0.7)',
       status: 'returned',
     },
     {
       name: t('dashboard.charts.visa.statuses.departed'),
       value: data?.departed ?? 0,
-      color: 'oklch(0.72 0.2 35.5 / 0.2)',
+      color: 'oklch(0.72 0.2 35.5 / 0.5)',
       status: 'departed',
     },
   ];
@@ -103,8 +111,13 @@ const VisaStatusChart: React.FC<IVisaStatusChartProps> = ({
           <Bar
             dataKey="value"
             radius={[4, 4, 0, 0]}
-            fill="oklch(0.72 0.2 35.5)"
-          />
+            stroke="none"
+            fill="currentColor"
+          >
+            {chartData.map((entry, index) => (
+              <Cell key={`cell-${index}`} fill={entry.color} />
+            ))}
+          </Bar>
         </BarChart>
       </ResponsiveContainer>
     </div>

@@ -40,6 +40,7 @@ class ApplicantService {
     isArchived?: boolean,
     isAlert?: boolean,
     status?: string,
+    workplace?: string,
     jobTitle?: string,
     userId?: string,
   ) {
@@ -58,6 +59,7 @@ class ApplicantService {
           isArchived,
           isAlert,
           status,
+          workplace,
           jobTitle,
           userId,
         ),
@@ -68,6 +70,7 @@ class ApplicantService {
           isArchived,
           isAlert,
           status,
+          workplace,
           jobTitle,
           userId,
         ),

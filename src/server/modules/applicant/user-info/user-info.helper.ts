@@ -8,6 +8,7 @@ export class ApplicantHelper {
     isArchived,
     isAlert,
     status,
+    workplace,
     jobTitle,
     userId,
   }: {
@@ -17,6 +18,7 @@ export class ApplicantHelper {
     isArchived?: boolean;
     isAlert?: boolean;
     status?: string;
+    workplace?: string;
     jobTitle?: string;
     userId?: string;
   }): Prisma.ApplicantWhereInput {
@@ -49,6 +51,10 @@ export class ApplicantHelper {
       Object.values(ApplicantStatus).includes(status as ApplicantStatus)
     ) {
       where.status = status as ApplicantStatus;
+    }
+
+    if (workplace && typeof workplace === 'string' && workplace.length <= 100) {
+      where.workplace = workplace.trim();
     }
 
     if (jobTitle && typeof jobTitle === 'string' && jobTitle.length <= 100) {

@@ -89,6 +89,7 @@ export interface IGetAllApplicantsParams {
   isArchived?: boolean;
   isAlert?: boolean;
   status?: string;
+  workplace?: string;
   jobTitle?: string;
   userId?: string;
 }

@@ -11,8 +11,6 @@ import {
   YAxis,
 } from 'recharts';
 
-import { Skeleton } from '@/components/ui/skeleton';
-
 import { TrendData } from '@/utils/analytics';
 
 interface IApplicantTrendChartProps {
@@ -25,15 +23,62 @@ const ApplicantTrendChart: React.FC<IApplicantTrendChartProps> = ({
   isLoading,
 }) => {
   const t = useTranslations();
-  if (isLoading) return <Skeleton className="h-[350px] w-full" />;
-
-  const chartData = data || [];
+  if (isLoading || !data)
+    return (
+      <div className="card-md h-[350px]">
+        <ResponsiveContainer width="100%" height="100%">
+          <AreaChart margin={{ top: 10, right: 5, left: -30, bottom: 0 }}>
+            <defs>
+              <linearGradient id="skeletonGradient" x1="0" y1="0" x2="0" y2="1">
+                <stop
+                  offset="5%"
+                  stopColor="oklch(0.56 0.25 296.2 / 0.1)"
+                  stopOpacity={0.2}
+                />
+                <stop
+                  offset="95%"
+                  stopColor="oklch(0.56 0.25 296.2 / 0)"
+                  stopOpacity={0}
+                />
+              </linearGradient>
+            </defs>
+            <XAxis
+              tickLine={false}
+              axisLine={false}
+              tick={false}
+              tickMargin={10}
+            />
+            <YAxis
+              tickLine={false}
+              axisLine={false}
+              tick={false}
+              tickMargin={10}
+            />
+            <Area
+              type="monotone"
+              dataKey="value"
+              stroke="oklch(0.56 0.25 296.2 / 0.1)"
+              fill="url(#skeletonGradient)"
+              data={[
+                { value: 30 },
+                { value: 50 },
+                { value: 35 },
+                { value: 65 },
+                { value: 45 },
+                { value: 55 },
+                { value: 40 },
+              ]}
+            />
+          </AreaChart>
+        </ResponsiveContainer>
+      </div>
+    );
 
   return (
     <div className="card-md h-[350px]">
       <ResponsiveContainer width="100%" height="100%">
         <AreaChart
-          data={chartData}
+          data={data}
           margin={{ top: 10, right: 5, left: -30, bottom: 0 }}
         >
           <defs>

@@ -146,8 +146,9 @@ export const Combobox = React.forwardRef<HTMLButtonElement, ComboboxProps>(
           )}
           {...props}
         >
-          <span className="min-w-0 flex-1 truncate text-left capitalize">
-            {label ?? (localLabel as string)}
+          <span className="min-w-0 flex-1 truncate text-left">
+            {label ??
+              (typeof localLabel === 'string' ? localLabel : localLabel)}
           </span>
 
           <div className="flex flex-shrink-0 items-center gap-1">
@@ -194,7 +195,11 @@ export const Combobox = React.forwardRef<HTMLButtonElement, ComboboxProps>(
                         option.className,
                       )}
                     >
-                      <span>{option.label}</span>
+                      <span>
+                        {typeof option.label === 'string'
+                          ? option.label
+                          : option.label}
+                      </span>
                       {isSelected && <Check className="text-primary size-4" />}
                     </CommandItem>
                   );

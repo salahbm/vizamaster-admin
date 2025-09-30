@@ -143,6 +143,23 @@ export const APPLICANT_COLUMNS = (
     },
 
     {
+      accessorKey: 'workplace',
+      header: ({ column, table }) => (
+        <DataTableColumnHeader
+          column={column}
+          title={
+            table.options?.meta?.t
+              ? table.options.meta.t('applicant.form.fields.workplace.label')
+              : 'Workplace'
+          }
+        />
+      ),
+      cell: ({ row }) => <CellWorkplace row={row} />,
+      meta: {
+        label: 'applicant.form.fields.workplace.label',
+      },
+    },
+    {
       accessorKey: 'preferredJobTitle',
       header: ({ column, table }) => (
         <DataTableColumnHeader
@@ -177,26 +194,26 @@ export const APPLICANT_COLUMNS = (
       },
     },
 
-    {
-      accessorKey: 'createdAt',
-      header: ({ column, table }) => (
-        <DataTableColumnHeader
-          column={column}
-          title={
-            table.options?.meta?.t
-              ? table.options.meta.t('Common.createdAt')
-              : 'Created At'
-          }
-        />
-      ),
-      cell: ({ row }) => {
-        const date = new Date(row.getValue('createdAt'));
-        return <div>{format(date, 'dd.MM.yyyy')}</div>;
-      },
-      meta: {
-        label: 'Common.createdAt',
-      },
-    },
+    // {
+    //   accessorKey: 'createdAt',
+    //   header: ({ column, table }) => (
+    //     <DataTableColumnHeader
+    //       column={column}
+    //       title={
+    //         table.options?.meta?.t
+    //           ? table.options.meta.t('Common.createdAt')
+    //           : 'Created At'
+    //       }
+    //     />
+    //   ),
+    //   cell: ({ row }) => {
+    //     const date = new Date(row.getValue('createdAt'));
+    //     return <div>{format(date, 'dd.MM.yyyy')}</div>;
+    //   },
+    //   meta: {
+    //     label: 'Common.createdAt',
+    //   },
+    // },
     {
       accessorKey: 'updatedAt',
       header: ({ column, table }) => (
@@ -287,6 +304,12 @@ const CellStatus = ({ row }: { row: Row<Applicant> }) => {
       })}
     </Badge>
   );
+};
+
+const CellWorkplace = ({ row }: { row: Row<Applicant> }) => {
+  const { getLabel } = useCodesStore();
+
+  return <span>{getLabel(row.original.workplace as string)}</span>;
 };
 
 const CellJobTitle = ({ row }: { row: Row<Applicant> }) => {

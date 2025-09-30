@@ -154,6 +154,7 @@ model Applicant {
   partner               String
   status                ApplicantStatus @default(NEW)
   languages             String[]        @map("languages")
+  workplace             String?         
   createdBy             String          @default("System")
   updatedBy             String          @default("System")
   createdAt             DateTime        @default(now())

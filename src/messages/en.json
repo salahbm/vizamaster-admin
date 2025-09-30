@@ -135,6 +135,7 @@
     "audits": "Audits",
     "alerts": "Alerts",
     "total": "Total Applicants",
+    "workplace": "Workplace",
     "statuses": {
       "NEW": "New",
       "IN_PROGRESS": "In Progress",
@@ -329,7 +330,7 @@
     },
     "form": {
       "buttons": {
-        "submit": "Submit Applicant",
+        "submit": "Submit",
         "cancel": "Cancel",
         "addWork": "Add Work Experience"
       },
@@ -466,6 +467,10 @@
         "jobTitle": {
           "label": "Job Title",
           "placeholder": "e.g., Software Engineer"
+        },
+        "workplace": {
+          "label": "Workplace",
+          "placeholder": "e.g., Tech Corp"
         },
         "company": {
           "label": "Company",

@@ -86,6 +86,10 @@ export const ApplicantTable = ({
     'status',
     nuqs.parseAsString.withDefault('all'),
   );
+  const [workplaceParam, setWorkplaceParam] = useQueryState(
+    'workplace',
+    nuqs.parseAsString.withDefault(''),
+  );
   const [jobTitleParam, setJobTitleParam] = useQueryState(
     'jobTitle',
     nuqs.parseAsString.withDefault(''),
@@ -97,6 +101,7 @@ export const ApplicantTable = ({
       country: countryParam,
       partner: partnerParam,
       status: statusParam,
+      workplace: workplaceParam,
       jobTitle: jobTitleParam,
     },
   });
@@ -130,6 +135,7 @@ export const ApplicantTable = ({
     country: countryParam,
     partner: partnerParam,
     status: statusParam,
+    workplace: workplaceParam,
     jobTitle: jobTitleParam,
   });
 
@@ -161,6 +167,7 @@ export const ApplicantTable = ({
       setPartnerParam(data.partner || ''),
       setStatusParam(data.status || 'all'),
       setJobTitleParam(data.jobTitle || ''),
+      setWorkplaceParam(data.workplace || ''),
     ]);
   };
 
@@ -172,7 +179,11 @@ export const ApplicantTable = ({
       partner: '',
       status: 'all',
       jobTitle: '',
+      workplace: '',
     });
+
+    table.resetRowSelection();
+    table.resetSorting();
 
     // Reset URL params for form filters
     await Promise.all([
@@ -181,6 +192,7 @@ export const ApplicantTable = ({
       setPartnerParam(''),
       setStatusParam('all'),
       setJobTitleParam(''),
+      setWorkplaceParam(''),
     ]);
   };
 

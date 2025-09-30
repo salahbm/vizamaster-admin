@@ -97,6 +97,7 @@ export const UpsertApplicant: React.FC<IUpsertApplicantProps> = ({
           applicant={applicant}
           countryOfEmployment={countryOfEmployment}
           partner={partner}
+          isLoading={isLoading}
         />
       </TabsContent>
       <TabsContent value="professional-info">

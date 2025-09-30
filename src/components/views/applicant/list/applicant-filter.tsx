@@ -22,6 +22,7 @@ export type TApplicantFilter = {
   partner: string;
   status: string;
   jobTitle: string;
+  workplace: string;
 };
 
 interface IApplicantFilterProps {
@@ -67,6 +68,7 @@ const ApplicantFilter: React.FC<IApplicantFilterProps> = ({
   const { options: countryOptions } = useCodesStore();
   const { options: partnerOptions } = useCodesStore();
   const { options: vacancyOptions } = useCodesStore();
+  const { options: workplaceOptions } = useCodesStore();
 
   return (
     <Form {...form}>
@@ -149,9 +151,29 @@ const ApplicantFilter: React.FC<IApplicantFilterProps> = ({
             control={form.control}
             render={({ field }) => (
               <Combobox
-                id="jobTitle"
+                id="workplace"
                 placeholder={t('Common.jobTitle')}
                 options={vacancyOptions('group-vacancies', locale)}
+                value={field.value}
+                onChange={field.onChange}
+                onBlur={field.onBlur}
+              />
+            )}
+          />
+        </fieldset>
+        <fieldset className="filter-box">
+          <label htmlFor="workplace" className="filter-label">
+            {t('Common.workplace')}
+          </label>
+          <FormFields
+            name="workplace"
+            className="w-full md:max-w-[30rem]"
+            control={form.control}
+            render={({ field }) => (
+              <Combobox
+                id="workplace"
+                placeholder={t('Common.workplace')}
+                options={workplaceOptions('group-workplaces', locale)}
                 value={field.value}
                 onChange={field.onChange}
                 onBlur={field.onBlur}

@@ -37,6 +37,7 @@ export const applicantDefaults = (
     partner: partner,
     nationality: '',
     languages: [],
+    workplace: '',
     preferredJobTitle: '',
     status: 'NEW' as ApplicantStatus,
   };

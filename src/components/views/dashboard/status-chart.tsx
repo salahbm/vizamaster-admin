@@ -10,8 +10,6 @@ import {
   Tooltip,
 } from 'recharts';
 
-import { Skeleton } from '@/components/ui/skeleton';
-
 import { StatusData } from '@/utils/analytics';
 
 import { useIsMobile } from '@/hooks/common/use-mobile';
@@ -53,7 +51,40 @@ const ApplicantStatusChart: React.FC<IApplicantStatusChartProps> = ({
   const t = useTranslations();
   const isMobile = useIsMobile();
 
-  if (isLoading) return <Skeleton className="h-[350px] w-full" />;
+  if (isLoading || !data)
+    return (
+      <div className="card-md h-[350px]">
+        <ResponsiveContainer width="100%" height="100%">
+          <PieChart>
+            <Pie
+              data={[
+                { value: 30 },
+                { value: 25 },
+                { value: 20 },
+                { value: 15 },
+                { value: 10 },
+              ]}
+              cx="50%"
+              cy="50%"
+              innerRadius={70}
+              outerRadius={140}
+              paddingAngle={2}
+              dataKey="value"
+            >
+              {[
+                'oklch(0.56 0.25 296.2 / 0.1)',
+                'oklch(0.56 0.25 296.2 / 0.08)',
+                'oklch(0.56 0.25 296.2 / 0.06)',
+                'oklch(0.56 0.25 296.2 / 0.04)',
+                'oklch(0.56 0.25 296.2 / 0.02)',
+              ].map((color, index) => (
+                <Cell key={`cell-${index}`} fill={color} />
+              ))}
+            </Pie>
+          </PieChart>
+        </ResponsiveContainer>
+      </div>
+    );
 
   // Use primary and secondary colors with shades
   const statusColors = {
@@ -148,8 +179,8 @@ const CustomLegend = ({ payload }: CustomLegendProps) => {
 
   return (
     <div className="flex flex-col gap-2">
-      {payload.map((entry) => (
-        <div key={entry.payload.id} className="flex items-center gap-2">
+      {payload.map((entry, index) => (
+        <div key={index} className="flex items-center gap-2">
           <div
             className="h-2 w-2 rounded-full"
             style={{ background: entry.payload.color }}
