@@ -134,12 +134,12 @@
     color: transparent;
   }
 
-  .filter-label {
-    @apply text-foreground w-18 text-left font-sans font-semibold whitespace-nowrap lg:w-36;
+  .filter-box {
+    @apply flex w-full flex-col justify-start gap-2 lg:min-h-10 lg:flex-row lg:items-center lg:gap-5;
   }
 
-  .filter-box {
-    @apply flex min-h-10 w-full items-center justify-start gap-5;
+  .filter-label {
+    @apply text-foreground w-auto shrink-0 text-left font-sans text-[12px] font-semibold whitespace-nowrap lg:w-36 lg:text-[16px];
   }
 
   .card {

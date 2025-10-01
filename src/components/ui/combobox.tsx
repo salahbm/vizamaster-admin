@@ -173,7 +173,9 @@ export const Combobox = React.forwardRef<HTMLButtonElement, ComboboxProps>(
           className="w-full min-w-[var(--radix-popover-trigger-width)]"
         >
           <Command>
-            {searchable && <CommandInput placeholder={t('Common.search')} />}
+            {searchable && (
+              <CommandInput className="h-11" placeholder={t('Common.search')} />
+            )}
             <CommandList className="no-scrollbar max-h-80">
               <CommandEmpty>
                 <p className="font-body-2 text-muted-foreground">

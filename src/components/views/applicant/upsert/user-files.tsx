@@ -49,8 +49,8 @@ const ApplicantFiles: React.FC<IApplicantFilesProps> = ({
       </RadioGroup>
 
       <Uploader
-        maxFiles={5}
-        maxSizeMB={10}
+        maxFiles={20}
+        maxSizeMB={2.5}
         applicantId={id}
         fileType={fileType}
         value={files}
