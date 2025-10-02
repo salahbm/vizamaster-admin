@@ -274,67 +274,68 @@ export const ApplicantTable = ({
       />
       <TableAudit t={t} meta={applicants?.meta!} />
       <DataTable table={table} isLoading={isLoading || isFetching}>
-        {table.getFilteredSelectedRowModel()?.rows?.length > 0 && (
-          <div className="flex gap-2">
-            <Button
-              variant="destructive"
-              type="button"
-              size="sm"
-              onClick={() =>
-                alert({
-                  title: t('Common.delete'),
-                  description: t('Common.messages.deleteDescription'),
-                  onConfirm: async () =>
-                    deleteApplicants(
-                      table
-                        .getFilteredSelectedRowModel()
-                        .rows.map((row) => row.original.id),
-                    ),
-                  confirmText: t('Common.delete'),
-                })
-              }
-              disabled={isDeleting}
-            >
-              <Trash2 className="mr-2 h-4 w-4" />
-              {t('Common.delete')}
-            </Button>
-            <Button
-              type="button"
-              size="sm"
-              variant="outline"
-              disabled={isArchiving || isUnArchiving}
-              onClick={async () =>
-                // if tab is true then unarchive else archive
-                tabParam === 'true'
-                  ? await unarchiveApplicants(
-                      table
-                        .getFilteredSelectedRowModel()
-                        .rows.map((row) => row.original.id),
-                    )
-                  : alert({
-                      title: t('Common.archive'),
-                      description: t('Common.messages.archiveDescription'),
-                      onConfirm: async () =>
-                        archiveApplicants(
-                          table
-                            .getFilteredSelectedRowModel()
-                            .rows.map((row) => row.original.id),
-                        ),
-                      confirmText: t('Common.archive'),
-                    })
-              }
-            >
-              {tabParam === 'true' ? (
-                <FolderOpenDot className="mr-2 h-4 w-4" />
-              ) : (
-                <Archive className="mr-2 h-4 w-4" />
-              )}
-              {tabParam === 'true'
-                ? t('Common.unarchive')
-                : t('Common.archive')}
-            </Button>
-          </div>
-        )}
+        {table.getFilteredSelectedRowModel()?.rows?.length > 0 &&
+          user?.role !== 'EDITOR' && (
+            <div className="flex gap-2">
+              <Button
+                variant="destructive"
+                type="button"
+                size="sm"
+                onClick={() =>
+                  alert({
+                    title: t('Common.delete'),
+                    description: t('Common.messages.deleteDescription'),
+                    onConfirm: async () =>
+                      deleteApplicants(
+                        table
+                          .getFilteredSelectedRowModel()
+                          .rows.map((row) => row.original.id),
+                      ),
+                    confirmText: t('Common.delete'),
+                  })
+                }
+                disabled={isDeleting}
+              >
+                <Trash2 className="mr-2 h-4 w-4" />
+                {t('Common.delete')}
+              </Button>
+              <Button
+                type="button"
+                size="sm"
+                variant="outline"
+                disabled={isArchiving || isUnArchiving}
+                onClick={async () =>
+                  // if tab is true then unarchive else archive
+                  tabParam === 'true'
+                    ? await unarchiveApplicants(
+                        table
+                          .getFilteredSelectedRowModel()
+                          .rows.map((row) => row.original.id),
+                      )
+                    : alert({
+                        title: t('Common.archive'),
+                        description: t('Common.messages.archiveDescription'),
+                        onConfirm: async () =>
+                          archiveApplicants(
+                            table
+                              .getFilteredSelectedRowModel()
+                              .rows.map((row) => row.original.id),
+                          ),
+                        confirmText: t('Common.archive'),
+                      })
+                }
+              >
+                {tabParam === 'true' ? (
+                  <FolderOpenDot className="mr-2 h-4 w-4" />
+                ) : (
+                  <Archive className="mr-2 h-4 w-4" />
+                )}
+                {tabParam === 'true'
+                  ? t('Common.unarchive')
+                  : t('Common.archive')}
+              </Button>
+            </div>
+          )}
       </DataTable>
     </Fragment>
   );

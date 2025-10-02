@@ -59,7 +59,10 @@ const ApplicantVisaInfo: React.FC<IApplicantVisaInfoProps> = ({
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="space-y-8 overflow-x-hidden"
+      >
         <div>
           <h2 className="font-header text-xl">
             {t('applicant.form.sections.visaInfo.title')}
@@ -76,7 +79,7 @@ const ApplicantVisaInfo: React.FC<IApplicantVisaInfoProps> = ({
                   <span className="font-body-1">
                     {t('applicant.form.fields.issued.label')}
                   </span>
-                  <span className="text-muted-foreground font-caption-2">
+                  <span className="text-muted-foreground font-caption-2 line-clamp-2">
                     {t('applicant.form.fields.issued.message')}
                   </span>
                 </>

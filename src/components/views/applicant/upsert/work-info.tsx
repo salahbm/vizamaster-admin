@@ -109,14 +109,14 @@ const ApplicantWorkInfo: React.FC<IApplicantWorkInfoProps> = ({
                   type="button"
                   variant="ghost"
                   size="sm"
-                  className="absolute -top-8 right-3 lg:-top-9 lg:right-5"
+                  className="absolute -top-8 right-0 lg:-top-9 lg:right-5"
                   onClick={() => remove(index)}
                 >
                   {t('Common.delete')}
                   <Trash2 className="h-4 w-4" />
                 </Button>
 
-                <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+                <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
                   <FormFields
                     name={`workExperiences.${index}.jobTitle`}
                     label={t('applicant.form.fields.jobTitle.label')}
@@ -171,7 +171,7 @@ const ApplicantWorkInfo: React.FC<IApplicantWorkInfoProps> = ({
                       />
                     )}
                   />
-                  <div className="col-span-2">
+                  <div className="lg:col-span-2">
                     <FormFields
                       name={`workExperiences.${index}.responsibilities`}
                       label={t('applicant.form.fields.responsibilities.label')}
@@ -189,7 +189,7 @@ const ApplicantWorkInfo: React.FC<IApplicantWorkInfoProps> = ({
                       )}
                     />
                   </div>
-                  <div className="col-span-2">
+                  <div className="lg:col-span-2">
                     <FormFields
                       name={`workExperiences.${index}.achievements`}
                       label={t('applicant.form.fields.achievements.label')}
