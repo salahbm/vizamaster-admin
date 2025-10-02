@@ -107,7 +107,7 @@ const SidebarNav: FC = () => {
     <nav
       aria-label={'Sidebar Navigation'}
       className={cn(
-        'no-scrollbar h-full flex-1 overflow-y-auto px-2 py-5 transition-all duration-300',
+        'no-scrollbar h-full flex-1 overflow-y-auto px-2 py-5 pb-16 transition-all duration-300',
         isMinimized ? 'hidden w-0 lg:block lg:w-16' : 'w-64',
       )}
     >

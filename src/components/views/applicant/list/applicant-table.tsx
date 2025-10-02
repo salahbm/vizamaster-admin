@@ -9,7 +9,6 @@ import { useQueryState } from 'nuqs';
 import { useForm } from 'react-hook-form';
 
 import { DataTable, TableAudit } from '@/components/shared/data-table';
-import { DataTableSkeleton } from '@/components/skeletons/data-table-skeleton';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
@@ -196,8 +195,6 @@ export const ApplicantTable = ({
     ]);
   };
 
-  if (isLoading) return <DataTableSkeleton columnCount={columns.length} />;
-
   return (
     <Fragment>
       <Tabs
@@ -206,6 +203,7 @@ export const ApplicantTable = ({
         value={tabParam}
         onValueChange={(value) => {
           refetch();
+          table.resetRowSelection();
           setTabParam(value);
         }}
       >
@@ -245,24 +243,26 @@ export const ApplicantTable = ({
                   ))}
               </TooltipTrigger>
             </TabsTrigger>
-            <TooltipContent>
-              <p className="font-body-2 flex items-center justify-normal gap-2">
-                {alertCount.totalComments > 0 && (
-                  <span>
-                    {t('Common.messages.totalComments', {
-                      comments: alertCount.totalComments,
-                    })}
-                  </span>
-                )}
-                {alertCount.totalApplicants > 0 && (
-                  <span>
-                    {t('Common.messages.totalApplicants', {
-                      totalApplicants: alertCount.totalApplicants,
-                    })}
-                  </span>
-                )}
-              </p>
-            </TooltipContent>
+            {alertCount.totalComments > 0 && (
+              <TooltipContent>
+                <p className="font-body-2 flex items-center justify-normal gap-2">
+                  {alertCount.totalComments > 0 && (
+                    <span>
+                      {t('Common.messages.totalComments', {
+                        comments: alertCount.totalComments,
+                      })}
+                    </span>
+                  )}
+                  {alertCount.totalApplicants > 0 && (
+                    <span>
+                      {t('Common.messages.totalApplicants', {
+                        totalApplicants: alertCount.totalApplicants,
+                      })}
+                    </span>
+                  )}
+                </p>
+              </TooltipContent>
+            )}
           </Tooltip>
         </TabsList>
       </Tabs>
@@ -306,7 +306,7 @@ export const ApplicantTable = ({
                 disabled={isArchiving || isUnArchiving}
                 onClick={async () =>
                   // if tab is true then unarchive else archive
-                  tabParam === 'true'
+                  tabParam === 'archived'
                     ? await unarchiveApplicants(
                         table
                           .getFilteredSelectedRowModel()
@@ -325,12 +325,12 @@ export const ApplicantTable = ({
                       })
                 }
               >
-                {tabParam === 'true' ? (
+                {tabParam === 'archived' ? (
                   <FolderOpenDot className="mr-2 h-4 w-4" />
                 ) : (
                   <Archive className="mr-2 h-4 w-4" />
                 )}
-                {tabParam === 'true'
+                {tabParam === 'archived'
                   ? t('Common.unarchive')
                   : t('Common.archive')}
               </Button>

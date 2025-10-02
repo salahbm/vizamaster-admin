@@ -44,6 +44,7 @@ export const CODES_COLUMNS: ColumnDef<GroupCodes>[] = [
       label: 'Common.name',
     },
     enableSorting: false,
+    maxSize: 250,
   },
   {
     accessorKey: 'code',
@@ -55,6 +56,7 @@ export const CODES_COLUMNS: ColumnDef<GroupCodes>[] = [
         }
       />
     ),
+    maxSize: 250,
     meta: {
       label: 'Common.code',
     },
@@ -74,6 +76,7 @@ export const CODES_COLUMNS: ColumnDef<GroupCodes>[] = [
     meta: {
       label: 'Common.groupCode',
     },
+    enableSorting: false,
   },
   {
     accessorKey: 'createdAt',

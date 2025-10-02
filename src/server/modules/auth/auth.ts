@@ -39,6 +39,7 @@ const adapter = prismaAdapter(prisma, { provider: 'postgresql' });
 
 export const auth = betterAuth({
   appName: 'vizamaster-admin',
+  trustedOrigins: ['http://localhost:3000', 'https://admin.vizamaster.uz'],
   database: adapter,
   plugins: [nextCookies()],
   user: {

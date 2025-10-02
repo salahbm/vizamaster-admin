@@ -17,6 +17,7 @@ import { getLastSixMonths } from '@/utils/date';
 
 import { useAnalytics } from '@/hooks/analytics';
 import { useDebounceValue } from '@/hooks/common/use-debounce-val';
+import { useAllCodes } from '@/hooks/settings/codes';
 
 import ApplicantKPICards from './kpi-cards';
 import ApplicantStatusChart from './status-chart';
@@ -33,6 +34,8 @@ const DashboardView: React.FC = () => {
   const debouncedRange = useDebounceValue(range, 500);
 
   const { data, isLoading } = useAnalytics(debouncedRange);
+
+  useAllCodes();
 
   const { kpi, status, visa, trend } = useMemo(() => {
     if (!data)

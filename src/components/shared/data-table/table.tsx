@@ -80,7 +80,7 @@ export function DataTable<TData>({
             </Button>
           )}
           <DataTableViewOptions table={table} />
-          {table.options.meta?.includeResetSortings && (
+          {table.options.meta?.includeResetSortings !== false && (
             <DataTableResetSortings
               table={table}
               includePagination={table.options.meta?.includePaginationReset}

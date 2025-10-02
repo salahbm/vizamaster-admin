@@ -73,7 +73,7 @@ const ApplicantFilter: React.FC<IApplicantFilterProps> = ({
   return (
     <Form {...form}>
       <form
-        className="card my-5 w-full space-y-6 overflow-hidden md:my-10"
+        className="my-5 w-full space-y-6 overflow-hidden rounded border-b pb-6 md:my-10 md:border md:p-2 lg:p-6"
         onSubmit={form.handleSubmit(onSubmit)}
       >
         <fieldset className="filter-box">
@@ -109,6 +109,7 @@ const ApplicantFilter: React.FC<IApplicantFilterProps> = ({
                 className="w-full md:max-w-[30rem]"
                 render={({ field }) => (
                   <Combobox
+                    searchable
                     id="country"
                     placeholder={t('Common.country')}
                     options={countryOptions('group-countries', locale)}
@@ -129,6 +130,7 @@ const ApplicantFilter: React.FC<IApplicantFilterProps> = ({
                 className="w-full md:max-w-[30rem]"
                 render={({ field }) => (
                   <Combobox
+                    searchable
                     id="partner"
                     placeholder={t('Common.partner')}
                     options={partnerOptions('group-partners', locale)}
@@ -151,6 +153,7 @@ const ApplicantFilter: React.FC<IApplicantFilterProps> = ({
             control={form.control}
             render={({ field }) => (
               <Combobox
+                searchable
                 id="workplace"
                 placeholder={t('Common.jobTitle')}
                 options={vacancyOptions('group-vacancies', locale)}
@@ -171,6 +174,7 @@ const ApplicantFilter: React.FC<IApplicantFilterProps> = ({
             control={form.control}
             render={({ field }) => (
               <Combobox
+                searchable
                 id="workplace"
                 placeholder={t('Common.workplace')}
                 options={workplaceOptions('group-workplaces', locale)}

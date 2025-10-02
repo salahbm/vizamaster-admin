@@ -19,6 +19,9 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  compiler: {
+    removeConsole: process.env.NODE_ENV === 'production',
+  },
   // Explicitly set the root directory to resolve the lockfile warning
   turbopack: {
     root: path.join(process.cwd()),

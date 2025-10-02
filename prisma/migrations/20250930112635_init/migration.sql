@@ -1,6 +1,3 @@
--- CreateSchema
-CREATE SCHEMA IF NOT EXISTS "public";
-
 -- CreateEnum
 CREATE TYPE "public"."FileType" AS ENUM ('PASSPORT', 'VISA', 'CV', 'INSURANCE', 'FLIGHT_DOCUMENT', 'OTHER');
 
@@ -62,6 +59,18 @@ CREATE TABLE "public"."accounts" (
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "accounts_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "public"."verification" (
+    "id" TEXT NOT NULL,
+    "identifier" TEXT NOT NULL,
+    "value" TEXT NOT NULL,
+    "expiresAt" TIMESTAMP(3) NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "verification_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -138,6 +147,7 @@ CREATE TABLE "public"."applicants" (
     "partner" TEXT NOT NULL,
     "status" "public"."ApplicantStatus" NOT NULL DEFAULT 'NEW',
     "languages" TEXT[],
+    "workplace" TEXT,
     "createdBy" TEXT NOT NULL DEFAULT 'System',
     "updatedBy" TEXT NOT NULL DEFAULT 'System',
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -217,7 +227,7 @@ CREATE TABLE "public"."alerts" (
     "is_read" BOOLEAN NOT NULL DEFAULT false,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
-    "applicant_id" TEXT,
+    "applicant_id" TEXT NOT NULL,
 
     CONSTRAINT "alerts_pkey" PRIMARY KEY ("id")
 );
@@ -347,4 +357,3 @@ ALTER TABLE "public"."alerts" ADD CONSTRAINT "alerts_comment_id_fkey" FOREIGN KE
 
 -- AddForeignKey
 ALTER TABLE "public"."alerts" ADD CONSTRAINT "alerts_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-

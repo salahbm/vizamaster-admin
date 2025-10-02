@@ -11,7 +11,6 @@ import {
   Command,
   CommandEmpty,
   CommandGroup,
-  CommandInput,
   CommandItem,
   CommandList,
 } from '@/components/ui/command';
@@ -63,7 +62,6 @@ export function DataTableViewOptions<TData>({
       </PopoverTrigger>
       <PopoverContent align="end" className="w-44 p-0">
         <Command>
-          <CommandInput placeholder="Search columns..." />
           <CommandList>
             <CommandEmpty>{t('Common.noData')}</CommandEmpty>
             <CommandGroup>
