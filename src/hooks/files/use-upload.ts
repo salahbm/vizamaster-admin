@@ -4,7 +4,7 @@ import agent from '@/lib/agent';
 
 import { QueryKeys } from '@/constants/query-keys';
 
-import { FileType } from '@/generated/prisma';
+import { Applicant, FileType } from '@/generated/prisma';
 import { TFileDto } from '@/server/common/dto/files.dto';
 import { IResponse } from '@/types/global';
 
@@ -15,6 +15,10 @@ interface UploadParams {
   applicantId: string;
   fileType: FileType;
 }
+
+type MutationContext = {
+  previousData: TFileDto[] | undefined;
+};
 
 const upload = async ({ file, applicantId, fileType }: UploadParams) => {
   const formData = new FormData();
@@ -42,13 +46,81 @@ export const useUpload = () => {
   return useMutation({
     mutationFn: upload,
     options: {
-      onSuccess: (data, variables) => {
-        queryClient.invalidateQueries({
+      onMutate: (variables: UploadParams) => {
+        queryClient.cancelQueries({
           queryKey: [
             ...QueryKeys.applicants.details,
             { id: variables.applicantId },
           ],
         });
+
+        const previousData = queryClient.getQueryData<
+          Applicant & { files: TFileDto[] }
+        >([...QueryKeys.applicants.details, { id: variables.applicantId }]);
+
+        queryClient.setQueryData(
+          [...QueryKeys.applicants.details, { id: variables.applicantId }],
+          (oldData: Applicant & { files: TFileDto[] }) => {
+            if (!oldData) return oldData;
+
+            const newFile = {
+              id: 'temp-' + Date.now(),
+              fileName: variables.file.name,
+              fileType: variables.fileType,
+              fileSize: variables.file.size,
+              fileUrl: '',
+              createdAt: new Date().toISOString(),
+              updatedAt: new Date().toISOString(),
+            };
+
+            const updatedList = {
+              ...oldData,
+              files: [...oldData.files, newFile],
+            };
+
+            return updatedList;
+          },
+        );
+
+        return { previousData };
+      },
+      // If the mutation fails,
+      // use the context returned from onMutate to roll back
+      onError: (_err, variables, context: unknown) => {
+        const mutationContext = context as MutationContext;
+        if (mutationContext?.previousData) {
+          queryClient.setQueryData(
+            [...QueryKeys.applicants.details, { id: variables.applicantId }],
+            mutationContext.previousData,
+          );
+        }
+      },
+      onSuccess: (data, variables) => {
+        // Instead of invalidating, update the query data with the actual server response
+        queryClient.setQueryData(
+          [...QueryKeys.applicants.details, { id: variables.applicantId }],
+          (oldData: (Applicant & { files: TFileDto[] }) | undefined) => {
+            if (!oldData) return oldData;
+
+            // Find the temporary file and replace it with the actual file from the server
+            const actualFile = data.data;
+            const updatedFiles = oldData.files.map((file) => {
+              // Replace the temporary file with the actual file
+              if (
+                file.id.startsWith('temp-') &&
+                file.fileName === actualFile.fileName
+              ) {
+                return actualFile;
+              }
+              return file;
+            });
+
+            return {
+              ...oldData,
+              files: updatedFiles,
+            };
+          },
+        );
       },
     },
   });

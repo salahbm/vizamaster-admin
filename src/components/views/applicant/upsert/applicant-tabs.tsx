@@ -42,7 +42,7 @@ export const UpsertApplicant: React.FC<IUpsertApplicantProps> = ({
         <TabsList
           variant="outline"
           className={cn(
-            'no-scrollbar mb-4 flex items-center justify-start overflow-x-auto lg:mb-10',
+            'no-scrollbar mb-4 flex items-center justify-start gap-6 overflow-x-auto lg:mb-10',
             step === 'comments' && 'mb-0',
             isLoading && 'animate-pulse',
           )}
@@ -50,42 +50,42 @@ export const UpsertApplicant: React.FC<IUpsertApplicantProps> = ({
           <TabsTrigger
             value="user-info"
             variant="outline"
-            className="w-auto lg:max-w-fit lg:min-w-32"
+            className="truncate text-ellipsis"
           >
             {t('Common.userInfo')}
           </TabsTrigger>
           <TabsTrigger
             value="professional-info"
             variant="outline"
-            className="w-auto lg:max-w-fit lg:min-w-32"
+            className="truncate text-ellipsis"
           >
             {t('Common.professionalInfo')}
           </TabsTrigger>
           <TabsTrigger
             value="visa-info"
             variant="outline"
-            className="w-auto lg:max-w-fit lg:min-w-32"
+            className="truncate text-ellipsis"
           >
             {t('Common.visaInfo')}
           </TabsTrigger>
           <TabsTrigger
             value="files"
             variant="outline"
-            className="w-auto lg:max-w-fit lg:min-w-32"
+            className="truncate text-ellipsis"
           >
             {t('Common.files')}
           </TabsTrigger>
           <TabsTrigger
             value="comments"
             variant="outline"
-            className="w-auto lg:max-w-fit lg:min-w-32"
+            className="truncate text-ellipsis"
           >
             {t('Common.comments')}
           </TabsTrigger>
           <TabsTrigger
             value="audits"
             variant="outline"
-            className="w-auto lg:max-w-fit lg:min-w-32"
+            className="truncate text-ellipsis"
           >
             {t('Common.audits')}
           </TabsTrigger>
