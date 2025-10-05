@@ -1,3 +1,3 @@
 export const BRAND = {
-  name: 'Viza Master',
+  name: 'Brand Name',
 };

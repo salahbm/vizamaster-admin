@@ -1,7 +1,7 @@
 {
   "Metadata": {
-    "title": "Welcome to Viza Master Admin",
-    "description": "This is the admin panel for Viza Master"
+    "title": "Welcome to {brand} Admin",
+    "description": "This is the admin panel for {brand}"
   },
   "Header": {
     "language": "Language",
@@ -208,7 +208,7 @@
     },
     "signUp": {
       "title": "Create an account",
-      "subtitle": "Sign up to get started with Viza Master",
+      "subtitle": "Sign up to get started with {brand}",
       "usernameLabel": "Username",
       "usernamePlaceholder": "Enter your username",
       "emailLabel": "Email",
@@ -234,9 +234,9 @@
     "resetPassword": {
       "title": "Reset Your Password",
       "description": "Enter your new password below",
-      "emailSubject": "Reset Your Password - Viza Master Admin",
+      "emailSubject": "Reset Your Password - {brand} Admin",
       "emailTitle": "Password Reset Request",
-      "emailDescription": "You requested a password reset for your Viza Master Admin account.",
+      "emailDescription": "You requested a password reset for your {brand} Admin account.",
       "emailInstructions": "Click the button below to reset your password:",
       "resetButton": "Reset Password",
       "emailDisclaimer": "If you didn't request this, please ignore this email.",

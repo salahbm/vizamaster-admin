@@ -12,6 +12,8 @@ import { Button } from '@/components/ui/button';
 import { Form } from '@/components/ui/form';
 import { Input, PasswordInput } from '@/components/ui/input';
 
+import { BRAND } from '@/constants/brand';
+
 import { useRegister } from '@/hooks/auth';
 import { SignUpSchema, signUpSchema } from '@/server/common/dto';
 
@@ -37,7 +39,7 @@ export function SignUpView() {
         <div className="text-center">
           <h1 className="font-header">{t('signUp.title')}</h1>
           <p className="font-body-2 text-muted-foreground mt-2">
-            {t('signUp.subtitle')}
+            {t('signUp.subtitle', { brand: BRAND.name })}
           </p>
         </div>
 

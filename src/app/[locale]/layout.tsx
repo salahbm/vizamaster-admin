@@ -11,6 +11,7 @@ import Loader from '@/components/ui/loader';
 
 import { cn } from '@/lib/utils';
 
+import { BRAND } from '@/constants/brand';
 import { manrope } from '@/constants/fonts';
 
 import { routing } from '@/i18n/routing';
@@ -26,22 +27,22 @@ export async function generateMetadata({
   const t = await getTranslations({ locale, namespace: 'Metadata' });
 
   return {
-    title: t('title'),
-    description: t('description'),
-    metadataBase: new URL(`https://admin.visamaster.uz`),
+    title: t('title', { brand: BRAND.name }),
+    description: t('description', { brand: BRAND.name }),
+    metadataBase: new URL(`https://admin.brand.uz`),
     openGraph: {
-      title: t('title'),
-      description: t('description'),
+      title: t('title', { brand: BRAND.name }),
+      description: t('description', { brand: BRAND.name }),
     },
     twitter: {
-      title: t('title'),
-      description: t('description'),
+      title: t('title', { brand: BRAND.name }),
+      description: t('description', { brand: BRAND.name }),
     },
     robots: {
       index: true,
       follow: true,
     },
-    keywords: ['vizamaster', 'admin', 'dashboard'],
+    keywords: ['admin', 'dashboard'],
     icons: [
       {
         rel: 'icon',

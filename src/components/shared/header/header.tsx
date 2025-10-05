@@ -35,11 +35,11 @@ export default function Header() {
           <Link href="/" className="flex items-center">
             <Image
               src={IMAGES.logo}
-              alt="Viza Master Logo"
+              alt={`${BRAND.name} Logo`}
               width={60}
               height={60}
               priority
-              className="size-12 lg:size-16"
+              className="h size-12 lg:size-16 dark:brightness-0 dark:hue-rotate-0 dark:invert"
             />
             <h1 className="linear-gradient text-md font-roboto font-bold lg:text-2xl">
               {BRAND.name}

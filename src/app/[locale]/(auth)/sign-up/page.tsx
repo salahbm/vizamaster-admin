@@ -4,6 +4,8 @@ import { Metadata } from 'next';
 
 import { SignUpView } from '@/components/views/auth/sign-up';
 
+import { BRAND } from '@/constants/brand';
+
 export async function generateMetadata({
   params,
 }: {
@@ -14,7 +16,7 @@ export async function generateMetadata({
 
   return {
     title: t('signUp.title'),
-    description: t('signUp.subtitle'),
+    description: t('signUp.subtitle', { brand: BRAND.name }),
   };
 }
 

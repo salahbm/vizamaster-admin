@@ -2,6 +2,8 @@ import { getTranslations } from 'next-intl/server';
 
 import nodemailer from 'nodemailer';
 
+import { BRAND } from '@/constants/brand';
+
 export class EmailService {
   private transporter: nodemailer.Transporter;
 
@@ -23,16 +25,16 @@ export class EmailService {
 
     try {
       const info = await this.transporter.sendMail({
-        from: `"Viza Master" <${process.env.SMTP_USER}>`,
+        from: `"${BRAND.name}" <${process.env.SMTP_USER}>`,
         to,
-        subject: t('emailSubject'),
+        subject: t('emailSubject', { brand: BRAND.name }),
         html: `
           <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
             <h2>${t('emailTitle')}</h2>
             <p>${t('emailDescription')}</p>
             <p>${t('emailInstructions')}</p>
             <a href="${resetUrl}" style="display: inline-block; background-color: oklch(0.56 0.25 296.2); color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; margin: 16px 0;">${t('resetButton')}</a>
-            <p>${t('emailDisclaimer')}</p>
+            <p>${t('emailDisclaimer', { brand: BRAND.name })}</p>
             <p>${t('emailExpiry')}</p>
             <hr style="margin: 24px 0; border: none; border-top: 1px solid #eee;" />
             <p style="color: #666; font-size: 12px;">${t('emailFooter')}</p>

@@ -1,7 +1,7 @@
 {
   "Metadata": {
-    "title": "Добро пожаловать в админ-панель Viza Master",
-    "description": "Это админ-панель для Viza Master"
+    "title": "Добро пожаловать в админ-панель {brand}",
+    "description": "Это админ-панель для {brand}"
   },
   "Header": {
     "language": "Язык",
@@ -234,9 +234,9 @@
     "resetPassword": {
       "title": "Сброс пароля",
       "description": "Введите новый пароль",
-      "emailSubject": "Сброс пароля - Viza Master Admin",
+      "emailSubject": "Сброс пароля - {brand} Admin",
       "emailTitle": "Запрос на сброс пароля",
-      "emailDescription": "Вы запросили сброс пароля для вашей учетной записи Viza Master Admin.",
+      "emailDescription": "Вы запросили сброс пароля для вашей учетной записи {brand} Admin.",
       "emailInstructions": "Нажмите на кнопку ниже, чтобы сбросить пароль:",
       "resetButton": "Сбросить пароль",
       "emailDisclaimer": "Если вы не запрашивали сброс пароля, проигнорируйте это письмо.",
