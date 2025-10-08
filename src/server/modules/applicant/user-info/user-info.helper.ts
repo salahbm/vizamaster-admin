@@ -66,6 +66,7 @@ export class ApplicantHelper {
         { firstName: { contains: search.trim(), mode: 'insensitive' } },
         { lastName: { contains: search.trim(), mode: 'insensitive' } },
         { userId: { contains: search.trim(), mode: 'insensitive' } },
+        { createdBy: { contains: search.trim(), mode: 'insensitive' } },
       ];
     }
 
