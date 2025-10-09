@@ -54,6 +54,7 @@ const ApplicantFiles: React.FC<IApplicantFilesProps> = ({
         applicantId={id}
         fileType={fileType}
         value={files}
+        accept="image/png,image/jpeg,image/jpg,image/gif,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document" // pdf, images, word
       />
     </div>
   );
