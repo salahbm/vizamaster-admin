@@ -65,7 +65,7 @@ export const DatePicker: React.FC<DatePickerProps> = ({
   disabled = false,
   className,
   dateFormat = 'PPP',
-  minDate = new Date('1900-01-01'),
+  minDate = new Date('1955-01-01'),
   maxDate = new Date('2100-12-31'),
   dropdownCalendar = true,
   error,
@@ -205,7 +205,7 @@ export const DatePicker: React.FC<DatePickerProps> = ({
             onSelect={(range) => handleRangeSelection(range, onChange)}
             disabled={(date) =>
               date > (maxDate || new Date()) ||
-              date < (minDate || new Date('1900-01-01'))
+              date < (minDate || new Date('1955-01-01'))
             }
             captionLayout={dropdownCalendar ? 'dropdown' : 'label'}
             numberOfMonths={2}
@@ -219,7 +219,7 @@ export const DatePicker: React.FC<DatePickerProps> = ({
             onSelect={onChange}
             disabled={(date) =>
               date > (maxDate || new Date()) ||
-              date < (minDate || new Date('1900-01-01'))
+              date < (minDate || new Date('1955-01-01'))
             }
             captionLayout={dropdownCalendar ? 'dropdown' : 'label'}
           />

@@ -50,7 +50,7 @@ const ApplicantFiles: React.FC<IApplicantFilesProps> = ({
 
       <Uploader
         maxFiles={20}
-        maxSizeMB={2.5}
+        maxSizeMB={10}
         applicantId={id}
         fileType={fileType}
         value={files}

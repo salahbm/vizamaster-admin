@@ -28,8 +28,32 @@ export type FileUploadState = {
 };
 
 export const makeAcceptString = (accept: string) => {
-  const types = accept.split(',');
-  return types.map((type) => type.split('/')[1]).join(', ');
+  if (accept === '*') return 'All files';
+
+  const types = accept.split(',').map((type) => type.trim());
+  const fileTypes = [];
+
+  // Check for images
+  if (types.some((type) => type.startsWith('image/'))) {
+    fileTypes.push('Images');
+  }
+
+  // Check for PDF
+  if (types.includes('application/pdf')) {
+    fileTypes.push('PDF');
+  }
+
+  // Check for Word documents
+  if (
+    types.includes('application/msword') ||
+    types.includes(
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    )
+  ) {
+    fileTypes.push('Word');
+  }
+
+  return fileTypes.length > 0 ? fileTypes.join(', ') : '';
 };
 
 export const stripExtended = (file: ExtendedFileDto): TFileDto => ({

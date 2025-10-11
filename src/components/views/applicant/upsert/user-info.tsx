@@ -165,7 +165,9 @@ const ApplicantUserInfo: React.FC<IApplicantUserInfoProps> = ({
               name="dateOfBirth"
               label={t('applicant.form.fields.dateOfBirth.label')}
               control={form.control}
-              render={({ field }) => <DatePicker {...field} />}
+              render={({ field }) => (
+                <DatePicker {...field} minDate={new Date('1955-01-01')} />
+              )}
             />
             <FormFields
               name="passportNumber"
