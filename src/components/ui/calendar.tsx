@@ -180,7 +180,24 @@ function Calendar({
           const isYearDropdown =
             name === 'year' || (options && options.length > 12);
 
+          // Get min and max dates from props.hidden
+          const minDate = (props.hidden as { before: Date })?.before;
+          const maxDate = (props.hidden as { after: Date })?.after;
+
           let formattedOptions = options;
+
+          if (isYearDropdown && minDate && maxDate) {
+            formattedOptions = options?.filter((option) => {
+              // Create a date object for January 1st of the year
+              const year = Number(option.value);
+
+              // Compare with minDate and maxDate
+              const minYear = minDate.getFullYear();
+              const maxYear = maxDate.getFullYear();
+
+              return year >= minYear && year <= maxYear;
+            });
+          }
 
           if (isMonthDropdown) {
             formattedOptions = options?.map((option) => {
@@ -229,6 +246,7 @@ function Calendar({
                   ...option,
                   value: String(option.value),
                   label: String(option.label),
+                  className: 'capitalize',
                 }))}
                 className="flex h-auto w-full cursor-pointer items-center justify-center gap-2 border-none px-0 py-0"
                 searchable={isYearDropdown}

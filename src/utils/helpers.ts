@@ -26,11 +26,11 @@ export const downloadCsv = (data: string) => {
 /**
  * Formats a passport number by removing non-alphanumeric characters
  * @param passportNumber The passport number to format
- * @returns The formatted passport number only numbers and english letters
+ * @returns The formatted passport number only numbers and english letters , if small case it will be converted to upper case
  */
 export const formatPassportNumber = (passportNumber: string) => {
-  const formatted = passportNumber.replace(/[^A-Z0-9]/g, '');
-  return formatted;
+  const formatted = passportNumber.replace(/[^a-zA-Z0-9]/g, '');
+  return formatted.toUpperCase();
 };
 
 /**

@@ -14,6 +14,21 @@ export class ApplicantRepository {
     this.applicantHelper = new ApplicantHelper();
   }
 
+  // find applicant
+  async findApplicant(
+    firstName: string,
+    lastName: string,
+    passportNumber: string,
+  ) {
+    return await this.prismaApplicant.findFirst({
+      where: {
+        firstName,
+        lastName,
+        passportNumber,
+      },
+    });
+  }
+
   // Create sidebar
   async createApplicant(
     data: Omit<Applicant, 'id' | 'createdAt' | 'updatedAt'>,

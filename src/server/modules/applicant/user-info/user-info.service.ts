@@ -1,6 +1,8 @@
 import { Applicant } from '@/generated/prisma';
+import { API_CODES } from '@/server/common/codes';
 import {
   BadRequestError,
+  ConflictError,
   NotFoundError,
   handlePrismaError,
 } from '@/server/common/errors';
@@ -18,11 +20,22 @@ class ApplicantService {
 
   async createApplicant(data: Applicant) {
     try {
+      const doesApplicantExist = await this.repository.findApplicant(
+        data.firstName,
+        data.lastName,
+        data.passportNumber,
+      );
+
+      if (doesApplicantExist) {
+        throw new ConflictError(
+          'Applicant already exists',
+          API_CODES.APPLICANT_ALREADY_EXISTS,
+        );
+      }
+
       const applicant = await this.repository.createApplicant(data);
 
-      if (!applicant) {
-        throw new BadRequestError('Applicant cannot be created');
-      }
+      if (!applicant) throw new BadRequestError('Applicant cannot be created');
 
       return createResponse(applicant);
     } catch (error) {

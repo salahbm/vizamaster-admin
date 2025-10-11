@@ -189,7 +189,10 @@
       "fileExists": "Файл уже существует",
       "success": "Успех",
       "totalApplicants": "из {totalApplicants, plural, one {# кандидата} few {# кандидатов} many {# кандидатов} other {# кандидатов}}",
-      "totalComments": "{comments, plural, one {# комментарий} few {# комментария} many {# комментариев} other {# комментариев}}"
+      "totalComments": "{comments, plural, one {# комментарий} few {# комментария} many {# комментариев} other {# комментариев}}",
+      "applicantAlreadyExists": "Кандидат уже существует",
+      "applicantAlreadyExistsDescription": "Пожалуйста, проверьте данные кандидата и попробуйте снова.",
+      "formError": "Пожалуйста, заполните все обязательные поля"
     }
   },
   "auth": {

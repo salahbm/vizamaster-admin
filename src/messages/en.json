@@ -189,7 +189,10 @@
       "fileExists": "File already exists",
       "success": "Success",
       "totalApplicants": "from {totalApplicants, plural, one {# applicant} other {# applicants}}",
-      "totalComments": "{comments, plural, one {# comment} other {# comments}}"
+      "totalComments": "{comments, plural, one {# comment} other {# comments}}",
+      "applicantAlreadyExists": "Applicant already exists",
+      "applicantAlreadyExistsDescription": "Please check the applicant details and try again.",
+      "formError": "Please fill in all required fields"
     }
   },
   "auth": {

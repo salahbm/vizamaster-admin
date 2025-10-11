@@ -43,6 +43,17 @@ export const useError = () => {
             });
           }
           break;
+
+        case API_CODES.APPLICANT_ALREADY_EXISTS: // e.g., 4093
+          return alert({
+            title: t('Common.messages.applicantAlreadyExists'),
+            description: t('Common.messages.applicantAlreadyExistsDescription'),
+            icon: 'error',
+            cancelText: t('Common.goBack'),
+            confirmText: t('Common.ok'),
+            onCancel: () => router.back(),
+          });
+
         case API_CODES.VALIDATION_ERROR: // e.g., 4220
           return toast.error(
             data && data === Object && 'errors' in data && data.errors

@@ -5,6 +5,7 @@ import { useEffect, useMemo } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useLocale, useTranslations } from 'next-intl';
 import { useForm } from 'react-hook-form';
+import { toast } from 'sonner';
 
 import { DatePicker } from '@/components/shared/date-pickers';
 import { FormFields } from '@/components/shared/form-fields';
@@ -88,7 +89,12 @@ const ApplicantUserInfo: React.FC<IApplicantUserInfoProps> = ({
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+      <form
+        onSubmit={form.handleSubmit(onSubmit, () =>
+          toast.error(t('Common.messages.formError')),
+        )}
+        className="space-y-8"
+      >
         {!id && <Separator />}
         {/* Personal Information */}
         <div>

@@ -62,7 +62,7 @@ async function main() {
   });
 
   await prisma.applicant.createMany({ data: applicants });
-  console.log('✅ 50 applicants created');
+  console.info('✅ 50 applicants created');
 }
 
 main()

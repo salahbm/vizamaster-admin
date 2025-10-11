@@ -59,7 +59,10 @@ const QueryProvider = ({ children }: PropsWithChildren) => {
         }),
         mutationCache: new MutationCache({
           onError: (error: Error | ApiError) => {
-            console.warn('Mutation error:', error ?? 'Unknown error');
+            console.warn(
+              'Mutation error:',
+              JSON.stringify(error, null, 2) ?? 'Unknown error',
+            );
             if (isErrorData(error)) return errorHandler(error);
           },
 

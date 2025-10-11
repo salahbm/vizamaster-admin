@@ -3,7 +3,33 @@ import { ErrorTypes } from './types';
 /**
  * API error codes for consistent error handling
  * Format: HTTP status code + specific error code
- * Example: 4010 = 401 (Unauthorized) + 0 (Generic unauthorized error)
+ * Example: 4010 = 401 (unauthorized) + 0 (generic unauthorized error)
+ *
+ * @property {number} SUCCESS - 2000
+ * @property {number} BAD_REQUEST - 4000
+ * @property {number} INVALID_INPUT - 4001
+ * @property {number} MISSING_REQUIRED_FIELD - 4002
+ * @property {number} INVALID_FORMAT - 4003
+ * @property {number} APPLICANT_ALREADY_EXISTS - 4005
+ * @property {number} UNAUTHORIZED - 4010
+ * @property {number} INVALID_CREDENTIALS - 4011
+ * @property {number} EXPIRED_TOKEN - 4012
+ * @property {number} INVALID_TOKEN - 4013
+ * @property {number} NOT_AUTHORIZED_ROLE - 4014
+ * @property {number} ACCOUNT_INACTIVE - 4015
+ * @property {number} FORBIDDEN - 4030
+ * @property {number} INSUFFICIENT_PERMISSIONS - 4031
+ * @property {number} NOT_FOUND - 4040
+ * @property {number} USER_NOT_FOUND - 4041
+ * @property {number} RESOURCE_NOT_FOUND - 4042
+ * @property {number} CONFLICT - 4090
+ * @property {number} DUPLICATE_EMAIL - 4091
+ * @property {number} DUPLICATE_USERNAME - 4092
+ * @property {number} VALIDATION_ERROR - 4220
+ * @property {number} SERVER_ERROR - 5000
+ * @property {number} DATABASE_ERROR - 5001
+ * @property {number} EXTERNAL_SERVICE_ERROR - 5002
+ * @property {number} FAILED_TO_CREATE_USER - 5003
  */
 export const API_CODES = {
   // 200 Success (2000-2099)
@@ -35,7 +61,7 @@ export const API_CODES = {
   // 409 Conflict (4090-4099)
   CONFLICT: 4090,
   DUPLICATE_EMAIL: 4091,
-  DUPLICATE_USERNAME: 4092,
+  APPLICANT_ALREADY_EXISTS: 4093,
 
   // 422 Validation Error (4220-4299)
   VALIDATION_ERROR: 4220,

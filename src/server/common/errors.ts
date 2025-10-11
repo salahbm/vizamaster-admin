@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 
+import { APIError } from 'better-auth';
 import z from 'zod';
 
 import { Prisma } from '@/generated/prisma';
@@ -107,9 +108,11 @@ export async function handleApiError(error: unknown): Promise<NextResponse> {
 }
 
 export function handlePrismaError(
-  error: unknown,
+  error: unknown | APIError,
   resource: string = 'Resource',
 ): ApiError {
+  if (error instanceof ApiError) return error;
+
   if (error instanceof Prisma.PrismaClientKnownRequestError) {
     switch (error.code) {
       case 'P2002':
@@ -124,7 +127,6 @@ export function handlePrismaError(
             : {},
           4221,
         );
-      // Add other common Prisma error codes as needed
       default:
         return new InternalServerError(
           `Database error: ${error.message}`,
@@ -138,6 +140,6 @@ export function handlePrismaError(
   // For non-Prisma errors, rethrow or wrap as generic
   return new InternalServerError(
     `Unexpected error: ${error instanceof Error ? error.message : 'Unknown'}`,
-    5000,
+    error instanceof ApiError ? error.code : 5000,
   );
 }

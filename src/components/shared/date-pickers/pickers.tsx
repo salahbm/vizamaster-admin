@@ -203,12 +203,10 @@ export const DatePicker: React.FC<DatePickerProps> = ({
             mode="range"
             selected={getSelectedRange(value)}
             onSelect={(range) => handleRangeSelection(range, onChange)}
-            disabled={(date) =>
-              date > (maxDate || new Date()) ||
-              date < (minDate || new Date('1955-01-01'))
-            }
+            disabled={(date) => date > maxDate || date < minDate}
             captionLayout={dropdownCalendar ? 'dropdown' : 'label'}
             numberOfMonths={2}
+            hidden={{ before: minDate, after: maxDate }}
           />
         );
       default:
@@ -217,11 +215,9 @@ export const DatePicker: React.FC<DatePickerProps> = ({
             mode="single"
             selected={value as Date}
             onSelect={onChange}
-            disabled={(date) =>
-              date > (maxDate || new Date()) ||
-              date < (minDate || new Date('1955-01-01'))
-            }
+            disabled={(date) => date > maxDate || date < minDate}
             captionLayout={dropdownCalendar ? 'dropdown' : 'label'}
+            hidden={{ before: minDate, after: maxDate }}
           />
         );
     }
