@@ -10,7 +10,7 @@ export const ApplicantDto = z.object({
   passportNumber: z.string().min(1),
 
   // Contact Information
-  email: z.email(),
+  email: z.email().nullable(),
   phoneNumber: z.string().min(1),
   phoneNumberAdditional: z.string().nullable(),
 

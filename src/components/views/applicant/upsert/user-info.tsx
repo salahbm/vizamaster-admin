@@ -205,18 +205,6 @@ const ApplicantUserInfo: React.FC<IApplicantUserInfoProps> = ({
           </p>
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
             <FormFields
-              name="email"
-              label={t('applicant.form.fields.email.label')}
-              required
-              control={form.control}
-              render={({ field }) => (
-                <Input
-                  placeholder={t('applicant.form.fields.email.placeholder')}
-                  {...field}
-                />
-              )}
-            />
-            <FormFields
               name="phoneNumber"
               label={t('applicant.form.fields.phoneNumber.label')}
               required
@@ -239,6 +227,17 @@ const ApplicantUserInfo: React.FC<IApplicantUserInfoProps> = ({
                   placeholder={t(
                     'applicant.form.fields.phoneNumberAdditional.placeholder',
                   )}
+                  {...field}
+                />
+              )}
+            />
+            <FormFields
+              name="email"
+              label={t('applicant.form.fields.email.label')}
+              control={form.control}
+              render={({ field }) => (
+                <Input
+                  placeholder={t('applicant.form.fields.email.placeholder')}
                   {...field}
                 />
               )}

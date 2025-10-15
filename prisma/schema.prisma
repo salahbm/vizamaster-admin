@@ -139,7 +139,7 @@ model Applicant {
   passportNumber        String          @map("passport_number")
   phoneNumber           String          @map("phone_number")
   phoneNumberAdditional String?         @map("phone_number_additional")
-  email                 String
+  email                 String?
   countryOfResidence    String          @map("country_of_residence")
   addressLine1          String          @map("address_line_1")
   addressLine2          String?         @map("address_line_2")

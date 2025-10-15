@@ -21,7 +21,13 @@ interface CodesStore {
   options: (
     groupCode: string,
     locale: string,
-  ) => { value: string; label: string }[];
+  ) => {
+    value: string;
+    label: string;
+    className: string;
+    groupCode: string;
+    groupCodeId: string;
+  }[];
 }
 
 export const useCodesStore = create<CodesStore>()(
@@ -49,6 +55,8 @@ export const useCodesStore = create<CodesStore>()(
             value: item.code,
             label: locale === 'ru' ? item.labelRu : item.labelEn,
             className: 'capitalize',
+            groupCode: item.groupCode,
+            groupCodeId: item.groupCodeId,
           })) ?? []
         );
       },

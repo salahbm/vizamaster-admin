@@ -2,11 +2,10 @@ import { Fragment } from 'react';
 
 import { getTranslations } from 'next-intl/server';
 
+import { capitalize } from 'lodash';
 import { Metadata } from 'next';
 
 import { UpsertApplicant } from '@/components/views/applicant';
-
-import { capitalizeFirstLetter } from '@/lib/utils';
 
 export async function generateMetadata({
   params,
@@ -38,8 +37,8 @@ export default async function ApplicantEditPage({
           {t('metadata.editDescription')}
           {country !== 'all' ? (
             <>
-              <strong>{capitalizeFirstLetter(country)}</strong> &{' '}
-              <strong>{capitalizeFirstLetter(partner)}</strong>
+              <strong>{capitalize(country)}</strong> &{' '}
+              <strong>{capitalize(partner)}</strong>
             </>
           ) : null}
         </p>

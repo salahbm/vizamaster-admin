@@ -4,12 +4,11 @@ import Link from 'next/link';
 
 import { getTranslations } from 'next-intl/server';
 
+import { capitalize } from 'lodash';
 import { Plus } from 'lucide-react';
 import { Metadata, NextPage } from 'next';
 
 import { ApplicantTable } from '@/components/views/applicant';
-
-import { capitalizeFirstLetter } from '@/lib/utils';
 
 export async function generateMetadata({
   params,
@@ -46,8 +45,8 @@ const ApplicantPage: NextPage<IApplicantPageProps> = async ({ params }) => {
             {t('applicant.metadata.description')}
             {country !== 'all' ? (
               <>
-                <strong>{capitalizeFirstLetter(country)}</strong> &{' '}
-                <strong>{capitalizeFirstLetter(partner)}</strong>
+                <strong>{capitalize(country)}</strong> &{' '}
+                <strong>{capitalize(partner)}</strong>
               </>
             ) : null}
           </p>

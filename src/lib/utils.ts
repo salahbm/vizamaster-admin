@@ -60,6 +60,3 @@ export const mapOptions = (
     label: locale === 'ru' ? option.labelRu : option.labelEn,
     className: 'capitalize',
   })) || [];
-
-export const capitalizeFirstLetter = (str: string): string =>
-  str.charAt(0).toUpperCase() + str.slice(1);

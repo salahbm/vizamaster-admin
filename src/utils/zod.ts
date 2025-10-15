@@ -31,7 +31,7 @@ export function zRequired<T extends ZodType>(
   return schema.superRefine((value, ctx) => {
     if (isEmptyValue(value)) {
       ctx.addIssue({
-        code: z.ZodIssueCode.custom,
+        code: 'custom',
         params: { i18n: i18nKey },
       });
       return;
@@ -41,7 +41,7 @@ export function zRequired<T extends ZodType>(
       value.forEach((item, index) => {
         if (isEmptyValue(item)) {
           ctx.addIssue({
-            code: z.ZodIssueCode.custom,
+            code: 'custom',
             path: [index], // attach to specific array item
             params: { i18n: i18nKey },
           });
@@ -70,7 +70,7 @@ export function requiredField(
   if (!condition) {
     ctx.addIssue({
       path,
-      code: z.ZodIssueCode.custom,
+      code: 'custom',
 
       params: { i18n: i18nKey },
     });
