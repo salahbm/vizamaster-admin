@@ -13,13 +13,14 @@ interface IApplicantKPICardsProps {
 }
 
 const statusColors = {
-  NEW: 'oklch(0.85 0.12 230)', // soft warm blue
-  IN_PROGRESS: 'oklch(0.89 0.10 90)', // soft warm yellow
-  CONFIRMED_PROGRAM: 'oklch(0.88 0.10 150)', // soft warm green
-  HIRED: 'oklch(0.82 0.12 140)', // soft muted green
-  HOTEL_REJECTED: 'oklch(0.85 0.10 30)', // soft warm coral
-  APPLICANT_REJECTED: 'oklch(0.82 0.12 25)', // soft warm red
-  FIRED: 'oklch(0.75 0.15 20)', // muted warm red
+  TOTAL: 'oklch(0.88 0.12 260)', // calm indigo-blue
+  NEW: 'oklch(0.90 0.14 230)', // friendly sky blue
+  IN_PROGRESS: 'oklch(0.88 0.14 95)', // bright soft yellow
+  CONFIRMED_PROGRAM: 'oklch(0.85 0.15 145)', // natural green
+  HIRED: 'oklch(0.80 0.14 150)', // confident soft teal-green
+  HOTEL_REJECTED: 'oklch(0.80 0.14 25)', // muted coral-orange
+  APPLICANT_REJECTED: 'oklch(0.76 0.16 20)', // deeper red for clarity
+  FIRED: 'oklch(0.68 0.16 15)', // darker muted red
 };
 
 const ApplicantKPICards: React.FC<IApplicantKPICardsProps> = ({
@@ -33,8 +34,15 @@ const ApplicantKPICards: React.FC<IApplicantKPICardsProps> = ({
       id: 'total',
       value: data?.total ?? 0,
       icon: Users,
+      color: statusColors.TOTAL,
+    },
+    {
+      id: 'confirmed_program',
+      value: data?.confirmedProgram ?? 0,
+      icon: Users,
       color: statusColors.CONFIRMED_PROGRAM,
     },
+
     {
       id: 'new',
       value: data?.new ?? 0,
@@ -62,9 +70,9 @@ const ApplicantKPICards: React.FC<IApplicantKPICardsProps> = ({
   ];
 
   return (
-    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
+    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
       {isLoading
-        ? Array.from({ length: 5 }).map((_, index) => (
+        ? Array.from({ length: 6 }).map((_, index) => (
             <Skeleton
               key={index}
               className="bg-popover h-[130px] w-full rounded-lg border p-4 shadow-lg"
@@ -88,8 +96,8 @@ const ApplicantKPICards: React.FC<IApplicantKPICardsProps> = ({
                     <Icon className="text-muted-foreground h-4 w-4" />
                   </div>
                   <h3
-                    className="text-sm font-medium"
-                    style={{ color: kpi.color }}
+                    className="text-muted-foreground text-sm font-medium"
+                    // style={{ color: kpi.color }}
                   >
                     {t(`dashboard.kpi.${kpi.id}.title`)}
                   </h3>
@@ -101,10 +109,7 @@ const ApplicantKPICards: React.FC<IApplicantKPICardsProps> = ({
                   >
                     {kpi.value}
                   </div>
-                  <p className="text-muted-foreground text-xs">
-                    {t(`dashboard.kpi.${kpi.id}.title`)}
-                  </p>
-                  <p className="text-muted-foreground text-xs">
+                  <p className="text-card-foreground mt-2 text-xs">
                     {t(`dashboard.kpi.${kpi.id}.description`)}
                   </p>
                 </div>

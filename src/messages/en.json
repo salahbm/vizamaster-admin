@@ -85,6 +85,10 @@
       "rejected": {
         "title": "Rejected",
         "description": "Applications that were not successful"
+      },
+      "confirmed_program": {
+        "title": "Confirmed Program",
+        "description": "Applications that have been confirmed"
       }
     }
   },

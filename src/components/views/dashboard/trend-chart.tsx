@@ -59,15 +59,10 @@ const ApplicantTrendChart: React.FC<IApplicantTrendChartProps> = ({
               dataKey="value"
               stroke="oklch(0.56 0.25 296.2 / 0.1)"
               fill="url(#skeletonGradient)"
-              data={[
-                { value: 30 },
-                { value: 50 },
-                { value: 35 },
-                { value: 65 },
-                { value: 45 },
-                { value: 55 },
-                { value: 40 },
-              ]}
+              data={data?.map((d) => ({
+                ...d,
+                value: Math.max(d.count, 1),
+              }))}
             />
           </AreaChart>
         </ResponsiveContainer>

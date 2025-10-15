@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from 'react';
 
-import { useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 
 import { DatePicker } from '@/components/shared/date-pickers';
 import { Separator } from '@/components/ui/separator';
@@ -25,6 +25,7 @@ import ApplicantTrendChart from './trend-chart';
 import VisaStatusChart from './visa-chart';
 
 const DashboardView: React.FC = () => {
+  const locale = useLocale();
   const t = useTranslations();
   const [range, setRange] = useState<{ from: Date; to: Date }>({
     from: getLastSixMonths(),
@@ -49,9 +50,9 @@ const DashboardView: React.FC = () => {
       kpi: groupKPIData(data),
       status: groupStatusData(data),
       visa: groupVisaData(data),
-      trend: groupTrendData(data),
+      trend: groupTrendData(data, locale),
     };
-  }, [data]);
+  }, [data, locale]);
 
   return (
     <div className="space-y-12 overflow-x-hidden pb-8 sm:space-y-12">

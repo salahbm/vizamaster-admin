@@ -1,4 +1,6 @@
 import { format } from 'date-fns';
+import { enUS, ru } from 'date-fns/locale';
+import { capitalize } from 'lodash';
 
 import { TAnalyticsData } from '@/hooks/analytics/use-analytics';
 
@@ -8,6 +10,7 @@ export interface KPIData {
   inProgress: number;
   hired: number;
   rejected: number;
+  confirmedProgram: number;
 }
 
 export interface StatusData {
@@ -45,10 +48,20 @@ export const groupKPIData = (data: TAnalyticsData[]): KPIData => {
         case 'APPLICANT_REJECTED':
           acc.rejected++;
           break;
+        case 'CONFIRMED_PROGRAM':
+          acc.confirmedProgram++;
+          break;
       }
       return acc;
     },
-    { total: 0, new: 0, inProgress: 0, hired: 0, rejected: 0 },
+    {
+      total: 0,
+      new: 0,
+      inProgress: 0,
+      hired: 0,
+      rejected: 0,
+      confirmedProgram: 0,
+    },
   );
 
   return counts;
@@ -93,10 +106,15 @@ export const groupVisaData = (data: TAnalyticsData[]): VisaData => {
   );
 };
 
-export const groupTrendData = (data: TAnalyticsData[]): TrendData[] => {
+export const groupTrendData = (
+  data: TAnalyticsData[],
+  locale: string,
+): TrendData[] => {
   const countsByMonth = data.reduce(
     (acc, curr) => {
-      const monthKey = format(new Date(curr.createdAt), 'MMM yyyy');
+      const monthKey = format(new Date(curr.createdAt), 'MMM yyyy', {
+        locale: locale == 'ru' ? ru : enUS,
+      });
       acc[monthKey] = (acc[monthKey] || 0) + 1;
       return acc;
     },
@@ -104,7 +122,7 @@ export const groupTrendData = (data: TAnalyticsData[]): TrendData[] => {
   );
 
   return Object.entries(countsByMonth).map(([date, count]) => ({
-    date,
+    date: capitalize(date),
     count,
   }));
 };
