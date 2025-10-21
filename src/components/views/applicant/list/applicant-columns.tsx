@@ -215,28 +215,28 @@ export const APPLICANT_COLUMNS = (
     //   },
     // },
     {
-      accessorKey: 'updatedAt',
+      accessorKey: 'createdAt',
       header: ({ column, table }) => (
         <DataTableColumnHeader
           column={column}
           title={
             table.options?.meta?.t
-              ? table.options.meta.t('Common.updatedAt')
-              : 'Updated At'
+              ? table.options.meta.t('Common.createdAt')
+              : 'Created At'
           }
         />
       ),
       cell: ({ row }) => {
-        const date = new Date(row.getValue('updatedAt'));
+        const date = new Date(row.getValue('createdAt'));
         return (
           <div>
             <p>{format(date, 'dd.MM.yyyy')}</p>
-            <p className="font-caption-2">{row.original.updatedBy}</p>
+            <p className="font-caption-2">{row.original.createdBy}</p>
           </div>
         );
       },
       meta: {
-        label: 'Common.updatedAt',
+        label: 'Common.createdAt',
       },
     },
     {
