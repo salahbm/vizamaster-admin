@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 
 import { handleApiError } from '@/server/common/errors';
+import { authGuard } from '@/server/common/guard/auth.guard';
 import { parsePaginationAndSortParams } from '@/server/common/utils';
 import { AuthService } from '@/server/modules/auth';
 
@@ -9,6 +10,9 @@ const authService = new AuthService();
 // GET /api/admins
 export async function GET(request: NextRequest) {
   try {
+    // Check authentication
+    await authGuard.requireAuth();
+
     // Get query parameters
     const searchParams = new URL(request.url).searchParams;
 

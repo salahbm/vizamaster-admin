@@ -10,7 +10,13 @@ export const downloadFile = (url: string, name: string) => {
 };
 
 export const dateStringIntoDate = (dateString: string) => {
-  return new Date(dateString);
+  if (!dateString) return undefined;
+
+  // Replace dashes with slashes to avoid timezone conversion
+  // yyyy-mm-dd considers timezone, yyyy/mm/dd does not
+  const normalized = dateString.split('T')[0].replace(/-/g, '/');
+
+  return new Date(normalized);
 };
 
 export const downloadCsv = (data: string) => {

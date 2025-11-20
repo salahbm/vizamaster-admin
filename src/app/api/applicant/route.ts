@@ -1,11 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
 
 import { handleApiError } from '@/server/common/errors';
+import { authGuard } from '@/server/common/guard/auth.guard';
 import { parsePaginationAndSortParams } from '@/server/common/utils';
 import { applicantService } from '@/server/modules/applicant';
 
 export async function POST(request: NextRequest) {
   try {
+    // Check authentication
+    await authGuard.requireAuth();
+
     const body = await request.json();
 
     const result = await applicantService.createApplicant(body);
@@ -18,6 +22,9 @@ export async function POST(request: NextRequest) {
 
 export async function GET(request: NextRequest) {
   try {
+    // Check authentication
+    await authGuard.requireAuth();
+
     // Get query parameters
     const searchParams = new URL(request.url).searchParams;
 

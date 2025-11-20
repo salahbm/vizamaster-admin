@@ -147,6 +147,7 @@ export const DatePicker: React.FC<DatePickerProps> = ({
                   onSelect={handleDateChange}
                   disabled={(date) => isDateDisabled(date, minDate, maxDate)}
                   captionLayout={dropdownCalendar ? 'dropdown' : 'label'}
+                  defaultMonth={value ? (value as Date) : minDate}
                 />
               </TabsContent>
               <TabsContent value="time" className="mt-2">
@@ -214,10 +215,11 @@ export const DatePicker: React.FC<DatePickerProps> = ({
           <Calendar
             mode="single"
             selected={value as Date}
-            onSelect={onChange}
+            onSelect={handleDateChange}
             disabled={(date) => date > maxDate || date < minDate}
             captionLayout={dropdownCalendar ? 'dropdown' : 'label'}
             hidden={{ before: minDate, after: maxDate }}
+            defaultMonth={value ? (value as Date) : minDate}
           />
         );
     }

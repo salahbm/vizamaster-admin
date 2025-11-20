@@ -7,7 +7,11 @@ import { useLocale, useTranslations } from 'next-intl';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 
-import { DatePicker } from '@/components/shared/date-pickers';
+import {
+  DatePicker,
+  normalizeDateForSubmission,
+  parseDateOnly,
+} from '@/components/shared/date-pickers';
 import { FormFields } from '@/components/shared/form-fields';
 import { FormSkeleton } from '@/components/skeletons';
 import { Button } from '@/components/ui/button';
@@ -71,19 +75,22 @@ const ApplicantUserInfo: React.FC<IApplicantUserInfoProps> = ({
     if (applicant)
       form.reset({
         ...applicant,
-        dateOfBirth: applicant.dateOfBirth
-          ? new Date(applicant.dateOfBirth)
-          : undefined,
+        dateOfBirth: parseDateOnly(applicant.dateOfBirth),
       });
   }, [applicant, form]);
 
   if (isLoading) return <FormSkeleton />;
 
   const onSubmit = (data: TApplicantDto) => {
+    const normalizedData = {
+      ...data,
+      dateOfBirth: normalizeDateForSubmission(data.dateOfBirth),
+    };
+
     if (id) {
-      updateApplicant({ ...data, id });
+      updateApplicant({ ...normalizedData, id });
     } else {
-      createApplicant(data);
+      createApplicant(normalizedData);
     }
   };
 

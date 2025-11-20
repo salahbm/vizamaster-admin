@@ -1,4 +1,4 @@
-import { Locale, format } from 'date-fns';
+import { Locale, format, parse } from 'date-fns';
 import { enUS, ru } from 'date-fns/locale';
 
 type SupportedLocale = 'en' | 'ru';
@@ -31,11 +31,20 @@ export function formatDate(
  * @param date The date to convert
  * @returns The ISO string representation of the date
  */
-export const normalizeToUTC = (date: Date): string => {
-  const utc = new Date(
-    Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()),
-  );
-  return utc.toISOString(); // e.g., "2000-05-10T00:00:00.000Z"
+export const normalizeToDate = (value: unknown): Date | undefined => {
+  if (!value) return undefined;
+
+  if (value instanceof Date) {
+    return isNaN(value.getTime()) ? undefined : value;
+  }
+
+  if (typeof value === 'string') {
+    // Parse as explicit date-only to avoid timezone shift
+    const parsed = parse(value, 'yyyy-MM-dd', new Date());
+    return isNaN(parsed.getTime()) ? undefined : parsed;
+  }
+
+  return undefined;
 };
 
 /**
