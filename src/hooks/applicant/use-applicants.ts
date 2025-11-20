@@ -35,6 +35,7 @@ const createApplicant = (
     userId,
     gender: data.gender as Gender,
     status: ApplicantStatus.NEW,
+    email: data.email!,
     createdBy: creatorEmail,
     updatedBy: creatorEmail,
   };

@@ -21,20 +21,41 @@ type MutationContext = {
 };
 
 const upload = async ({ file, applicantId, fileType }: UploadParams) => {
-  const formData = new FormData();
+  // Step 1: Get presigned URL from our API (no file buffer sent to Vercel)
+  const presignedResponse = await agent.post<
+    IResponse<{ signedUrl: string; fileKey: string }>
+  >('/api/files/presigned-url', {
+    fileName: file.name,
+    contentType: file.type,
+    applicantId,
+    fileType,
+  });
 
-  formData.append('file', file);
-  formData.append('fileName', file.name);
-  formData.append('contentType', file.type);
-  formData.append('applicantId', applicantId);
-  formData.append('fileType', fileType);
-  formData.append('fileSize', file.size.toString());
+  const { signedUrl, fileKey } = presignedResponse.data;
 
+  // Step 2: Upload file directly to R2 using presigned URL (bypasses Vercel)
+  const uploadResponse = await fetch(signedUrl, {
+    method: 'PUT',
+    body: file,
+    headers: {
+      'Content-Type': file.type,
+    },
+  });
+
+  if (!uploadResponse.ok) {
+    throw new Error('Failed to upload file to R2');
+  }
+
+  // Step 3: Create file record in database
   const res = await agent.post<IResponse<TFileDto>>(
-    '/api/files/upload',
-    formData,
+    '/api/files/confirm-upload',
     {
-      headers: { Accept: 'application/json' },
+      fileName: file.name,
+      contentType: file.type,
+      applicantId,
+      fileType,
+      fileKey,
+      fileSize: file.size,
     },
   );
 
